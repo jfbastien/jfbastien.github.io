@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Inconsolata:bold' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+      .body {
+        margin: 0 auto;
+        max-width: 80em;
+      }
+      a {
+        color: #455A64;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: #37474F;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        padding-left: 1em;
+        padding-right: 3em;
+        text-decoration: none;
+        opacity: 0;
+      }
+      a.headerlink:hover {
+        opacity: 1;
+      }
+      .field-name {
+        text-align: right;
+        padding-right: 1em;
+      }
+      tt, .highlight {
+        color: #263238;
+        background-color: #ECEFF1;
+        font-family: 'Inconsolata', monospace;
+        font-weight: bold;
+      }
+      tt {
+        padding: 0em 0.5em;
+      }
+      .highlight {
+        margin: 0em 1em;
+        padding: 0.1em 1em;
+      }
+    </style>
+    <title>P0154R0 constexpr std::hardware_{constructive,destructive}_interference_size</title> 
+  </head>
+  <body>
+    <div class="body">
+
+  <div class="section" id="p0154r0-constexpr-std-hardware-constructive-destructive-interference-size">
+<h1>P0154R0 <tt class="docutils literal"><span class="pre">constexpr</span> <span class="pre">std::hardware_{constructive,destructive}_interference_size</span></tt><a class="headerlink" href="#p0154r0-constexpr-std-hardware-constructive-destructive-interference-size" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">JF Bastien</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:jfb&#37;&#52;&#48;google&#46;com">jfb<span>&#64;</span>google<span>&#46;</span>com</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Olivier Giroux</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:ogiroux&#37;&#52;&#48;nvidia&#46;com">ogiroux<span>&#64;</span>nvidia<span>&#46;</span>com</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">2015-10-24</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Previous:</th><td class="field-body"><a class="reference external" href="http://wg21.link/N4523">http://wg21.link/N4523</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">URL:</th><td class="field-body"><a class="reference external" href="https://github.com/jfbastien/papers/blob/master/source/P0154R0.rst">https://github.com/jfbastien/papers/blob/master/source/P0154R0.rst</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="rationale">
+<h2>Rationale<a class="headerlink" href="#rationale" title="Permalink to this headline">¶</a></h2>
+<p>Starting with C++11, the library includes
+<tt class="docutils literal"><span class="pre">std::thread::hardware_concurrency()</span></tt> to provide an implementation quantity
+useful in the design of control structures in multi-threaded programs: the
+extent of threads that do not interfere (to the first-order). Established
+practice throughout the industry also relies on a second implementation
+quantity, used instead in the design of data structures in the same programs.
+This quantity is the granularity of memory that does not interfere (to the
+first-order), commonly referred to as the <em>cache-line size</em>.</p>
+<p>Uses of <em>cache-line size</em> fall into two broad categories:</p>
+<ul class="simple">
+<li>Avoiding destructive interference (false-sharing) between objects with
+temporally disjoint runtime access patterns from different
+threads. e.g. Producer-consumer queues.</li>
+<li>Promoting constructive interference (true-sharing) between objects which have
+temporally local runtime access patterns. e.g. The <tt class="docutils literal"><span class="pre">barrier</span></tt> example, as
+illustrated in <a class="reference external" href="http://wg21.link/P0153R0">P0153R0</a>.</li>
+</ul>
+<p>The most sigificant issue with this useful implementation quantity is the
+questionable portability of the methods used in current practice to determine
+its value, despite their pervasiveness and popularity as a group. In the
+<a class="reference internal" href="#appendix">appendix</a> we review several different compile-time and run-time methods. The
+portability problem with most of these methods is that they expose a
+micro-architectural detail without accounting for the intent of the implementors
+(such as we are) over the life of the ISA or ABI.</p>
+<p>We aim to contribute a modest invention for this cause, abstractions for this
+quantity that can be conservatively defined for given purposes by
+implementations:</p>
+<ul class="simple">
+<li><em>Destructive interference size</em>: a number that&#8217;s suitable as an offset between
+two objects to likely avoid false-sharing due to different runtime access
+patterns from different threads.</li>
+<li><em>Constructive interference size</em>: a number that&#8217;s suitable as a limit on two
+objects&#8217; combined memory footprint size and base alignment to likely promote
+true-sharing between them.</li>
+</ul>
+<p>In both cases these values are provided on a quality of implementation basis,
+purely as hints that are likely to improve performance. These are ideal portable
+values to use with the <tt class="docutils literal"><span class="pre">alignas()</span></tt> keyword, for which there currently exists
+nearly no standard-supported portable uses.</p>
+</div>
+<div class="section" id="proposed-addition">
+<h2>Proposed addition<a class="headerlink" href="#proposed-addition" title="Permalink to this headline">¶</a></h2>
+<p>Below, substitute the <cite>�</cite> character with a number the editor finds appropriate
+for the sub-section. We propose adding the following to the standard:</p>
+<p>Under 20.7.2 Header <tt class="docutils literal"><span class="pre">&lt;memory&gt;</span></tt> synopsis [<strong>memory.syn</strong>]:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">namespace</span> <span class="n">std</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+  <span class="c1">// 20.7.� Hardware interference size</span>
+  <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">size_t</span> <span class="n">hardware_destructive_interference_size</span> <span class="o">=</span> <span class="n">implementation</span><span class="o">-</span><span class="n">defined</span><span class="p">;</span>
+  <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">size_t</span> <span class="n">hardware_constructive_interference_size</span> <span class="o">=</span> <span class="n">implementation</span><span class="o">-</span><span class="n">defined</span><span class="p">;</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Under 20.7.� Hardware interference size [<strong>hardware.interference</strong>]:</p>
+<p><tt class="docutils literal"><span class="pre">constexpr</span> <span class="pre">size_t</span> <span class="pre">hardware_destructive_interference_size</span> <span class="pre">=</span> <span class="pre">implementation-defined;</span></tt></p>
+<p>This number is the minimum recommended offset between two concurrently-accessed
+objects to avoid additional performance degradation due to contention introduced
+by the implementation. It shall be a valid alignment value for any type.</p>
+<p>[<em>Example:</em></p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">struct</span> <span class="n">apart</span> <span class="p">{</span>
+  <span class="n">alignas</span><span class="p">(</span><span class="n">hardware_destructive_interference_size</span><span class="p">)</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">flag1</span><span class="p">,</span> <span class="n">flag2</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>— <em>end example</em>]</p>
+<p><tt class="docutils literal"><span class="pre">constexpr</span> <span class="pre">size_t</span> <span class="pre">hardware_constructive_interference_size</span> <span class="pre">=</span> <span class="pre">implementation-defined;</span></tt></p>
+<p>This number is the minimum recommended alignment of contiguous memory occupied
+by two objects accessed with temporal locality by concurrent threads. It shall
+be a valid alignment value for any type.</p>
+<p>[<em>Note:</em> This number is also the maximum recommended size of contiguous memory
+occupied by two objects accessed in this manner. — <em>end note</em>]</p>
+<p>[<em>Example:</em></p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">alignas</span><span class="p">(</span><span class="n">hardware_constructive_interference_size</span><span class="p">)</span> <span class="k">struct</span> <span class="n">colocated</span> <span class="p">{</span>
+  <span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">flag</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">tinydata</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">static_assert</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">colocated</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">hardware_constructive_interference_size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>— <em>end example</em>]</p>
+<p>The <tt class="docutils literal"><span class="pre">__cpp_lib_thread_hardware_interference_size</span></tt> feature test macro should be
+added.</p>
+</div>
+<div class="section" id="appendix">
+<span id="id1"></span><h2>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="compile-time-cache-line-size">
+<h3>Compile-time <em>cache-line size</em><a class="headerlink" href="#compile-time-cache-line-size" title="Permalink to this headline">¶</a></h3>
+<p>We informatively list a few ways in which the L1 <em>cache-line size</em> is obtained
+in different open-source projects at compile-time.</p>
+<p>The Linux kernel defines the <tt class="docutils literal"><span class="pre">__cacheline_aligned</span></tt> macro which is configured
+for each architecture through <tt class="docutils literal"><span class="pre">L1_CACHE_BYTES</span></tt>. On some architectures this
+value is determined through the configure-time option
+<tt class="docutils literal"><span class="pre">CONFIG_&lt;ARCH&gt;_L1_CACHE_SHIFT</span></tt>, and on others the value of <tt class="docutils literal"><span class="pre">L1_CACHE_SHIFT</span></tt>
+is hard-coded in the architecture&#8217;s <tt class="docutils literal"><span class="pre">include/asm/cache.h</span></tt> header.</p>
+<p>Many open-source projects from Google contain a <tt class="docutils literal"><span class="pre">base/port.h</span></tt> header which
+defines the <tt class="docutils literal"><span class="pre">CACHELINE_ALIGNED</span></tt> macro based on an explicit list of
+architecture detection macros. These header files have often diverged. A token
+example from the <a class="reference external" href="https://github.com/google/autofdo/blob/master/base/port.h">autofdo</a> project is:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Cache line alignment</span>
+<span class="cp">#if defined(__i386__) || defined(__x86_64__)</span>
+<span class="cp">#define CACHELINE_SIZE 64</span>
+<span class="cp">#elif defined(__powerpc64__)</span>
+<span class="c1">// TODO(dougkwan) This is the L1 D-cache line size of our Power7 machines.</span>
+<span class="c1">// Need to check if this is appropriate for other PowerPC64 systems.</span>
+<span class="cp">#define CACHELINE_SIZE 128</span>
+<span class="cp">#elif defined(__arm__)</span>
+<span class="c1">// Cache line sizes for ARM: These values are not strictly correct since</span>
+<span class="c1">// cache line sizes depend on implementations, not architectures.  There</span>
+<span class="c1">// are even implementations with cache line sizes configurable at boot</span>
+<span class="c1">// time.</span>
+<span class="cp">#if defined(__ARM_ARCH_5T__)</span>
+<span class="cp">#define CACHELINE_SIZE 32</span>
+<span class="cp">#elif defined(__ARM_ARCH_7A__)</span>
+<span class="cp">#define CACHELINE_SIZE 64</span>
+<span class="cp">#endif</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#ifndef CACHELINE_SIZE</span>
+<span class="c1">// A reasonable default guess.  Note that overestimates tend to waste more</span>
+<span class="c1">// space, while underestimates tend to waste more time.</span>
+<span class="cp">#define CACHELINE_SIZE 64</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#define CACHELINE_ALIGNED __attribute__((aligned(CACHELINE_SIZE)))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="runtime-cache-line-size">
+<h3>Runtime <em>cache-line size</em><a class="headerlink" href="#runtime-cache-line-size" title="Permalink to this headline">¶</a></h3>
+<p>We informatively list a few ways in which the L1 <em>cache-line size</em> can be
+obtained on different operating systems and architectures at runtime. Libraries
+such as <a class="reference external" href="http://www.open-mpi.org/projects/hwloc/">hwloc</a> perform these queries, and could also be added to the standard as
+a separate proposal.</p>
+<p>On OSX one would use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">sysctlbyname</span><span class="p">(</span><span class="s">&quot;hw.cachelinesize&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cacheline_size</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sizeof_cacheline_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>On Windows one would use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">GetLogicalProcessorInformation</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">sizeof_buf</span><span class="p">);</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">sizeof_buf</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">SYSTEM_LOGICAL_PROCESSOR_INFORMATION</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">buf</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Relationship</span> <span class="o">==</span> <span class="n">RelationCache</span> <span class="o">&amp;&amp;</span> <span class="n">buf</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Cache</span><span class="p">.</span><span class="n">Level</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">cacheline_size</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">Cache</span><span class="p">.</span><span class="n">LineSize</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>On Linux one would either use:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">&quot;/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+<span class="n">fscanf</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cacheline_size</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">sysconf</span><span class="p">(</span><span class="n">_SC_LEVEL1_DCACHE_LINESIZE</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>On x86 one would use the <tt class="docutils literal"><span class="pre">CPUID</span></tt> Instruction with <tt class="docutils literal"><span class="pre">EAX</span> <span class="pre">=</span> <span class="pre">80000005h</span></tt>, which
+leaves the result in <tt class="docutils literal"><span class="pre">ECX</span></tt>, which needs further work to extract.</p>
+<p>On ARM one would use <tt class="docutils literal"><span class="pre">mrs</span> <span class="pre">%[ctr],</span> <span class="pre">ctr_el0</span></tt>, which needs further work to
+extract.</p>
+</div>
+</div>
+</div>
+
+
+    </div>
+  </body>
+</html>

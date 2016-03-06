@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Inconsolata:bold' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+      .body {
+        margin: 0 auto;
+        max-width: 80em;
+      }
+      a {
+        color: #455A64;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: #37474F;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        padding-left: 1em;
+        padding-right: 3em;
+        text-decoration: none;
+        opacity: 0;
+      }
+      a.headerlink:hover {
+        opacity: 1;
+      }
+      .field-name {
+        text-align: right;
+        padding-right: 1em;
+      }
+      tt, .highlight {
+        color: #263238;
+        background-color: #ECEFF1;
+        font-family: 'Inconsolata', monospace;
+        font-weight: bold;
+      }
+      tt {
+        padding: 0em 0.5em;
+      }
+      .highlight {
+        margin: 0em 1em;
+        padding: 0.1em 1em;
+      }
+    </style>
+    <title>N4455 No Sane Compiler Would Optimize Atomics</title> 
+  </head>
+  <body>
+    <div class="body">
+
+  <div class="section" id="n4455-no-sane-compiler-would-optimize-atomics">
+<h1>N4455 No Sane Compiler Would Optimize Atomics<a class="headerlink" href="#n4455-no-sane-compiler-would-optimize-atomics" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">JF Bastien</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:jfb&#37;&#52;&#48;google&#46;com">jfb<span>&#64;</span>google<span>&#46;</span>com</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">2015-04-10</td>
+</tr>
+<tr class="field-even field"><th class="field-name">URL:</th><td class="field-body"><a class="reference external" href="https://github.com/jfbastien/papers/blob/master/source/N4455.rst">https://github.com/jfbastien/papers/blob/master/source/N4455.rst</a></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="abstract">
+<h2>Abstract<a class="headerlink" href="#abstract" title="Permalink to this headline">¶</a></h2>
+<p>False.</p>
+<p>Compilers do optimize atomics, memory accesses around atomics, and utilize
+architecture-specific knowledge. This paper illustrates a few such
+optimizations, and discusses their implications.</p>
+</div>
+<div class="section" id="sample-optimizations">
+<h2>Sample Optimizations<a class="headerlink" href="#sample-optimizations" title="Permalink to this headline">¶</a></h2>
+<p>We list optimizations that are either implemented in LLVM, or will be readily
+implemented. A general rule to keep in mind is that the compiler performs many
+of its optimizations on and around atomics based on the <em>as-if</em> rule. This
+implies that the compiler can make operations <strong>more</strong> atomic as long as it
+doesn&#8217;t violate forward progress requirements, and can make them <strong>less</strong> atomic
+as long as it doesn&#8217;t add non-benign race which weren&#8217;t already present in the
+original program. Put another way, correct programs must work under all
+executions an implementation is allowed to create.</p>
+<div class="section" id="optimizations-on-atomics">
+<h3>Optimizations on Atomics<a class="headerlink" href="#optimizations-on-atomics" title="Permalink to this headline">¶</a></h3>
+<p>Atomics themselves can be optimized. A non-contentious example is constant
+propagation into atomics without other intervening atomics:</p>
+<div class="code highlight-python"><div class="highlight"><pre>void inc(std::atomic&lt;int&gt; *y) {
+  *y += 1;
+}
+
+std::atomic&lt;int&gt; x;
+void two() {
+  inc(&amp;x);
+  inc(&amp;x);
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>std::atomic&lt;int&gt; x;
+void two() {
+  x += 2;
+}
+</pre></div>
+</div>
+<p>The above optimization adds atomicity but cannot hinder forward progress, and is
+therefore correct. This leads to further optimizations such as using the locked
+<tt class="docutils literal"><span class="pre">inc</span></tt>/<tt class="docutils literal"><span class="pre">dec</span></tt> instructions instead of locked <tt class="docutils literal"><span class="pre">add</span></tt>/<tt class="docutils literal"><span class="pre">sub</span></tt> when
+adding/subtracting <tt class="docutils literal"><span class="pre">1</span></tt> to an atomic on x86:</p>
+<div class="code highlight-python"><div class="highlight"><pre>std::atomic&lt;int&gt; x;
+void inc(int val) {
+  x += 1;
+  x += val;
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>_Z3inci:
+  lock incl x(%rip)
+  lock addl %edi, x(%rip)
+  retq
+</pre></div>
+</div>
+<p>In a similar vein, some opportunities for strength reduction will show up
+because non-trivial code gets inlined which then exposes fairly silly code, such
+as in the following trivial example:</p>
+<div class="code highlight-python"><div class="highlight"><pre>template&lt;typename T&gt;
+bool silly(std::atomic&lt;T&gt; *x, T expected, T desired) {
+  x-&gt;compare_exchange_strong(expected, desired); // Inlined.
+  return expected == desired;
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>template&lt;typename T&gt;
+bool silly(std::atomic&lt;T&gt; *x, T expected, T desired) {
+  return x-&gt;compare_exchange_strong(expected, desired);
+}
+</pre></div>
+</div>
+<p>The following works for any memory order but <tt class="docutils literal"><span class="pre">release</span></tt> and <tt class="docutils literal"><span class="pre">acq_rel</span></tt>:</p>
+<div class="code highlight-python"><div class="highlight"><pre>template&lt;typename T&gt;
+bool optme(std::atomic&lt;T&gt; *x, T desired) {
+  T expected = desired;
+  return x-&gt;compare_exchange_strong(expected, desired
+    std::memory_order_seq_cst, std::memory_order_relaxed);
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>template&lt;typename T&gt;
+bool optme(std::atomic&lt;T&gt; *x, T desired) {
+  return x-&gt;load(std::memory_order_seq_cst) == desired;
+}
+</pre></div>
+</div>
+<p>The above optimization may require that the compiler mark the transformed load
+as a <em>release sequence</em> as defined in section 1.10 of the C++ standard.</p>
+<p>Similarly, while keeping the resulting memory order stronger or equal to the
+individual ones, the following can occur:</p>
+<div class="code highlight-python"><div class="highlight"><pre>template&lt;typename T&gt;
+T optmetoo(std::atomic&lt;T&gt; *x, T y) {
+  T z = x-&gt;load();
+  x-&gt;store(y);
+  return z;
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>template&lt;typename T&gt;
+T optmetoo(std::atomic&lt;T&gt; *x, T y) {
+  return x-&gt;exchange(y);
+}
+</pre></div>
+</div>
+<p>This may not always pay off! In particular, architectures with weaker memory
+models may benefit from having write-after-read operations to the same location
+instead of having an atomic exchange.</p>
+<p>Other simple optimizations can also occur because of inlining and constant
+propagation such as turning <tt class="docutils literal"><span class="pre">atomic&lt;T&gt;::fetch_and(~(T)0)</span></tt> into
+<tt class="docutils literal"><span class="pre">atomic&lt;T&gt;::load()</span></tt>. The same applies for <tt class="docutils literal"><span class="pre">fetch_or(0)</span></tt> and
+<tt class="docutils literal"><span class="pre">fetch_xor(0)</span></tt>, as well as <tt class="docutils literal"><span class="pre">fetch_and(0)</span></tt> becoming <tt class="docutils literal"><span class="pre">store(0)</span></tt>.</p>
+<p>As a slightly different example, the value for <tt class="docutils literal"><span class="pre">std::is_lock_free</span></tt> can be
+determined at compile time for some architectures, but for others the compiler
+can&#8217;t know the value for all sub-architectures and cannot return a compile-time
+constant. The compiler may be given a specific sub-architecture flag to work
+around this (restricting which machines the code will execute correctly on) or
+must defer to feature detection followed by patching when the program is
+loaded. This is the case, for example, for x86&#8217;s <tt class="docutils literal"><span class="pre">LOCK</span> <span class="pre">CMPXCHG16B</span></tt> instruction
+which is used to implement lock-free 16-byte operations.</p>
+<p>These optimizations aren&#8217;t traditionally performed when using inline assembly
+and showcases the strengths of hoisting abstractions to the language level.</p>
+<p>The reader for <a class="reference external" href="https://en.wikipedia.org/wiki/Seqlock">seqlock</a> bounds ticket acquisition and release with a load and a
+fence. This lets the data reads get reordered in-between ticket acquire/release
+by using <tt class="docutils literal"><span class="pre">relaxed</span></tt> memory ordering for data. The algorithm retries if the
+ticket changed or data was being modified by the writer:</p>
+<div class="code highlight-python"><div class="highlight"><pre>std::tuple&lt;T, T&gt; reader() {
+  T d1, d2;
+  unsigned seq0, seq1;
+  do {
+    seq0 = seq.load(std::memory_order_acquire);
+    d1 = data1.load(std::memory_order_relaxed);
+    d2 = data2.load(std::memory_order_relaxed);
+    std::atomic_thread_fence(std::memory_order_acquire);
+    seq1 = seq.load(std::memory_order_relaxed);
+  } while (seq0 != seq1 || seq0 &amp; 1);
+  return {d1, d2};
+}
+
+void writer(T d1, T d2) {
+  unsigned seq0 = seq.load(std::memory_order_relaxed);
+  seq.store(seq0 + 1, std::memory_order_relaxed);
+  data1.store(d1, std::memory_order_release);
+  data2.store(d2, std::memory_order_release);
+  seq.store(seq0 + 2, std::memory_order_release);
+}
+</pre></div>
+</div>
+<p>The reader&#8217;s last ticket load effectively act as a <tt class="docutils literal"><span class="pre">release</span></tt> load, which
+doesn&#8217;t exist in the current memory model but would better express the intent of
+the code while allowing subsequent operations to be moved into the critical
+section if profitable. Hans Boehm <a class="reference external" href="http://www.hpl.hp.com/techreports/2012/HPL-2012-68.pdf">suggests</a> using a <tt class="docutils literal"><span class="pre">release</span></tt> fetch-add of
+zero, and shows that on x86 the code can be written as follows:</p>
+<div class="code highlight-python"><div class="highlight"><pre>T d1, d2;
+unsigned seq0, seq1;
+do {
+  seq0 = seq.load(std::memory_order_acquire);
+  d1 = data1.load(std::memory_order_relaxed);
+  d2 = data2.load(std::memory_order_relaxed);
+  seq1 = seq.fetch_add(0, std::memory_order_release);
+} while (seq0 != seq1 || seq0 &amp; 1);
+</pre></div>
+</div>
+<p>This rewritten code then generates the following x86 assembly:</p>
+<div class="code highlight-python"><div class="highlight"><pre>.LBB0_1:
+      movl    seq(%rip), %esi
+      movl    data1(%rip), %ecx
+      movl    data2(%rip), %eax
+      mfence
+      movl    seq(%rip), %edi
+      movl    %esi, %edx
+      andl    $1, %edx
+      cmpl    %edi, %esi
+      jne     .LBB0_1
+      testl   %edx, %edx
+      jne     .LBB0_1
+</pre></div>
+</div>
+<p>This x86 assembly reduces contention by replacing <tt class="docutils literal"><span class="pre">fetch_add</span></tt>—an instruction
+requiring exclusive cache line access—to a simple <tt class="docutils literal"><span class="pre">movl</span></tt>. This optimization is
+currently only known to be correct on x86, is probably correct for other
+architectures, and is <a class="reference external" href="http://reviews.llvm.org/D5091">currently implemented in LLVM</a>.</p>
+<p>Similar to the above <tt class="docutils literal"><span class="pre">release</span></tt> fetch-add of zero serving as a <tt class="docutils literal"><span class="pre">release</span></tt>
+load, one could also use an <tt class="docutils literal"><span class="pre">acquire</span></tt> exchange when an <tt class="docutils literal"><span class="pre">acquire</span></tt> store is
+desired.</p>
+<p>Traditional compiler optimizations, such as dead store elimination, can be
+performed on atomic operations, even sequentially consistent ones. Optimizers
+have to be careful to avoid doing so across synchronization points because
+another thread of execution can observe or modify memory, which means that the
+traditional optimizations have to consider more intervening instructions than
+they usually would when considering optimizations to atomic operations. In the
+case of dead store elimination it isn&#8217;t sufficient to prove that an atomic store
+post-dominates and aliases another to eliminate the other store.</p>
+<p>A trickier example is fusion of <tt class="docutils literal"><span class="pre">relaxed</span></tt> atomic operations, even when
+interleaved:</p>
+<div class="code highlight-python"><div class="highlight"><pre>std::atomic&lt;int&gt; x, y;
+void relaxed() {
+  x.fetch_add(1, std::memory_order_relaxed);
+  y.fetch_add(1, std::memory_order_relaxed);
+  x.fetch_add(1, std::memory_order_relaxed);
+  y.fetch_add(1, std::memory_order_relaxed);
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>std::atomic&lt;int&gt; x, y;
+void relaxed() {
+  x.fetch_add(2, std::memory_order_relaxed);
+  y.fetch_add(2, std::memory_order_relaxed);
+}
+</pre></div>
+</div>
+<p>We aren&#8217;t aware of compilers performing this optimization yet, but <a class="reference external" href="https://llvm.org/bugs/show_bug.cgi?id=16477">it is being
+discussed</a>. <tt class="docutils literal"><span class="pre">std::atomic_signal_fence</span></tt> could be used to prevent this
+reordering and fusion, or one could use a stronger memory ordering for the
+operations: this optimization is only valid on relaxed operations which aren&#8217;t
+ordered with respect to each other.</p>
+<p>A compiler can tag all functions on whether they have atomic instructions or
+not, and optimize around call sites accordingly. This could even be done for all
+virtual overrides when we can enumerate them, and can be used to carve out
+different <a class="reference external" href="http://www.hpl.hp.com/techreports/2011/HPL-2011-57.pdf">inteference-free regions</a>.</p>
+<p>Fence instructions are generated as a consequence of C++&#8217;s
+<tt class="docutils literal"><span class="pre">std::atomic_thread_fence</span></tt> as well as, on some architectures, atomic
+operations. Fence instructions tend to be expensive, and removing redundant ones
+as well as positioning them optimally leads to great performance gains, while
+keeping the code correct and simple. This is <a class="reference external" href="http://reviews.llvm.org/D5758">currently under review in LLVM</a>.</p>
+<p>Not all compiler optimizations are valid on atomics, this topic is still under
+<a class="reference external" href="http://www.di.ens.fr/~zappa/readings/c11comp.pdf">active research</a>.</p>
+</div>
+<div class="section" id="optimizations-around-atomics">
+<h3>Optimizations Around Atomics<a class="headerlink" href="#optimizations-around-atomics" title="Permalink to this headline">¶</a></h3>
+<p>Compilers can optimize non-atomic memory accesses before and after atomic
+accesses. A somewhat surprising example is that the following code can be (<a class="reference external" href="http://reviews.llvm.org/D4845">and
+is</a>!) transformed as shown, where <tt class="docutils literal"><span class="pre">x</span></tt> is a non-atomic global.</p>
+<div class="code highlight-python"><div class="highlight"><pre>int x = 0;
+std::atomic&lt;int&gt; y;
+int dso() {
+  x = 0;
+  int z = y.load(std::memory_order_seq_cst);
+  y.store(0, std::memory_order_seq_cst);
+  x = 1;
+  return z;
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>int x = 0;
+std::atomic&lt;int&gt; y;
+int dso() {
+  // Dead store eliminated.
+  int z = y.load(std::memory_order_seq_cst);
+  y.store(0, std::memory_order_seq_cst);
+  x = 1;
+  return z;
+}
+</pre></div>
+</div>
+<p>The intuition behind the dead store elimination optimization is that the only
+way another thread could have observed the dead store elimination is if their
+code had been racy in the first place: only a <tt class="docutils literal"><span class="pre">release</span></tt>/<tt class="docutils literal"><span class="pre">acquire</span></tt> pair could
+have been synchronized with another thread that observed the store (see <a class="reference external" href="http://www.di.ens.fr/~zappa/readings/pldi13.pdf">this
+paper</a> for details). Sequentially consistent accesses are
+<tt class="docutils literal"><span class="pre">acquire</span></tt>/<tt class="docutils literal"><span class="pre">release</span></tt>, the key in this example is having the <tt class="docutils literal"><span class="pre">release</span></tt> store
+come before the <tt class="docutils literal"><span class="pre">acquire</span></tt> load and synchronize with another thread (which the
+loop does by observing changes in <tt class="docutils literal"><span class="pre">y</span></tt>).</p>
+<p>The following code, with a different store/load ordering and using
+<tt class="docutils literal"><span class="pre">release</span></tt>/<tt class="docutils literal"><span class="pre">acquire</span></tt> memory ordering, can also be transformed as shown (but
+currently isn&#8217;t, at least in LLVM).</p>
+<div class="code highlight-python"><div class="highlight"><pre>int x = 0;
+std::atomic&lt;int&gt; y;
+int rlo() {
+  x = 0;
+  y.store(0, std::memory_order_release);
+  int z = y.load(std::memory_order_acquire);
+  x = 1;
+  return z;
+}
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>int x = 0;
+std::atomic&lt;int&gt; y;
+int rlo() {
+  // Dead store eliminated.
+  y.store(0, std::memory_order_release);
+  // Redundant load eliminated.
+  x = 1;
+  return 0; // Stored value propagated here.
+}
+</pre></div>
+</div>
+<p>The above example&#8217;s load can be eliminated because there was no synchronization
+with another thread: even if the <tt class="docutils literal"><span class="pre">release</span></tt> is followed by an <tt class="docutils literal"><span class="pre">acquire</span></tt> the
+compiler is allowed to assume that the stored value wasn&#8217;t modified before the
+subsequent load, and that the load is therefore redundant.</p>
+<p>Whereas the following code must (and does!) remain the same:</p>
+<div class="code highlight-python"><div class="highlight"><pre>int x = 0;
+std::atomic&lt;int&gt; y;
+int no() {
+  x = 0;
+  y.store(0, std::memory_order_release);
+  while (!y.load(std::memory_order_acquire));
+  x = 1;
+  return z;
+}
+</pre></div>
+</div>
+<p>Other optimizations such as global value ordering across atomics can be applied.</p>
+</div>
+<div class="section" id="mutex-safer-than-atomics">
+<h3>Mutex: Safer than Atomics?<a class="headerlink" href="#mutex-safer-than-atomics" title="Permalink to this headline">¶</a></h3>
+<p>The same optimization potential applies to C++&#8217;s <tt class="docutils literal"><span class="pre">std::mutex</span></tt>: locking a mutex
+is equivalent to <tt class="docutils literal"><span class="pre">acquire</span></tt> memory ordering, and unlocking a mutex is
+equivalent to <tt class="docutils literal"><span class="pre">release</span></tt> memory ordering. Using a mutex correctly is slightly
+easier because the API is simpler than atomic&#8217;s API.</p>
+<p>Some current implementations rely on pthread&#8217;s mutex, which may not expose all
+optimization opportunities because the compiler may not know how to handle the
+slow-path futex (usually a syscall), or because the implementation is in a
+different translation unit. The optimization difficulties can be overcome by
+teaching the compiler to treat <tt class="docutils literal"><span class="pre">std::mutex</span></tt> or pthread specially, or by
+<a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4195.pdf">making it practical to implement mutexes in pure C++</a>. Optimization across
+translation units, such as through link-time optimizations, or optimizations
+relying on escape analysis, can also help expose more opportunities.</p>
+</div>
+<div class="section" id="optimizations-without-atomics">
+<h3>Optimizations without Atomics<a class="headerlink" href="#optimizations-without-atomics" title="Permalink to this headline">¶</a></h3>
+<p>Another interesting optimization is to use potentially shared memory locations
+(on the stack, heap and globals) as scratch storage, if the compiler can prove
+that they are not accessed in other threads concurrently. This is spelled out in
+the C++11 standard in section 1.10 ¶22. For example the following transformation
+could occur:</p>
+<div class="code highlight-python"><div class="highlight"><pre>// Some code, but no synchronization.
+*p = 1; // Can be on stack, heap or global.
+</pre></div>
+</div>
+<p>Becomes:</p>
+<div class="code highlight-python"><div class="highlight"><pre>// ...
+*p = RAX; // Spill temporary value.
+// ...
+RAX = *p; // Restore temporary value.
+// ...
+*p = 1;
+</pre></div>
+</div>
+<p>Since we write to <tt class="docutils literal"><span class="pre">*p</span></tt> and there is no synchronization operations, other
+threads do not read/write <tt class="docutils literal"><span class="pre">*p</span></tt> without exercising undefined behavior. We can
+therefore use it as scratch storage—and thus reduce stack frame size—without
+changing the observable behavior of the program. This requires escape analysis:
+the compiler must see the full scope of memory location <tt class="docutils literal"><span class="pre">p</span></tt>, or must know that
+leaf functions don&#8217;t capture <tt class="docutils literal"><span class="pre">p</span></tt> and aren&#8217;t used concurrently, for this
+optimization to be valid.</p>
+</div>
+<div class="section" id="architecture-and-implementation-specific-optimizations">
+<h3>Architecture and Implementation Specific Optimizations<a class="headerlink" href="#architecture-and-implementation-specific-optimizations" title="Permalink to this headline">¶</a></h3>
+<p>Optimizations can sometimes be made per-architecture, or even per specific
+implementation of an architecture. Compilers can usually be told to target
+specific architectures, CPUs or attributes using flags such as <tt class="docutils literal"><span class="pre">-march</span></tt>,
+<tt class="docutils literal"><span class="pre">-mcpu</span></tt>, <tt class="docutils literal"><span class="pre">-mattr</span></tt>.</p>
+<p>Spinloops are usually implemented with an <tt class="docutils literal"><span class="pre">acquire</span></tt> load, which are equivalent
+to a <tt class="docutils literal"><span class="pre">relaxed</span></tt> load followed by an <tt class="docutils literal"><span class="pre">acquire</span></tt> fence in the loop. On some
+architecture implementations it may make sense to hoist the fence outside the
+loop, but how and when to do this is architecture specific. In a similar way,
+mutexes usually want to be implemented as a spinloop with exponential randomized
+backoff followed by a futex. The right implementation of mutexes is highly
+platform-dependent.</p>
+<p>Instructions can also be implemented in manners that are nominally incorrect for
+the architecture in general, but happen to be correct for specific
+implementations of the architecture. For example, <tt class="docutils literal"><span class="pre">release</span></tt> fences should lower to
+<tt class="docutils literal"><span class="pre">dmb</span> <span class="pre">ish</span></tt> on ARM, but <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/Week-of-Mon-20130701/thread.html#179911">on Apple&#8217;s Swift processor</a> they lower to <tt class="docutils literal"><span class="pre">dmb</span>
+<span class="pre">ishst</span></tt> instead, which would be incorrect on other ARM processors. Some ARM
+processors can go even further and remove all <tt class="docutils literal"><span class="pre">dmb</span></tt> which aren&#8217;t system-wide
+because their memory model is much stronger than ARM&#8217;s prescribed model.</p>
+<p>Some architectures support transactional memory. A compiler can use this
+knowledge to make many consecutive atomic writes into a single atomic
+transaction, and retry on commit failure. It can also speculate that many reads
+and writes aren&#8217;t accessed concurrently, or that certain locks aren&#8217;t contended,
+and fall back to a slow path, or to smaller transactions, if a commit failure
+limit is reached. Such approaches have been implemented using Intel&#8217;s <a class="reference external" href="https://queue.acm.org/detail.cfm?id=2579227">RTM and
+HLE</a> extensions.</p>
+<p>Other architectures do dynamic binary translation behind the scenes, and also
+use transactional memory. This can lead to further in-hardware optimizations as
+well as fairly hard to predict behavior: sometimes races aren&#8217;t observed because
+big transactions commit, and other times they do occur because transactions are
+smaller. This certainly makes micro-benchmarking hard, if not impossible.</p>
+<p>The same applies for simulators and emulators which often just-in-time translate
+the code they&#8217;re executing—leading to hard-to-predict behavior—and which also
+often emulate multi-core systems using cooperative thread switching—leading to
+predictable interleaving which is easier to optimize for the simulator.</p>
+</div>
+<div class="section" id="volatility">
+<h3>Volatility<a class="headerlink" href="#volatility" title="Permalink to this headline">¶</a></h3>
+<p>Atomic operations are unsuitable to express that memory locations can be
+externally modified. Indeed, <tt class="docutils literal"><span class="pre">volatile</span></tt> (or <tt class="docutils literal"><span class="pre">volatile</span> <span class="pre">atomic</span></tt>) should be
+used in these circumstances.</p>
+<p>Shared memory isn&#8217;t explicitly defined by the C++ standard, yet programmers
+often use operating system APIs to map the same physical memory location onto
+multiple virtual addresses in the same process, or across processes. A
+sufficiently advanced compiler, performing some of the optimizations described
+above, can seriously harm code which uses shared memory naïvely.</p>
+<p>The C++ standard says that lock-free atomic operations must be <em>address free</em> to
+address such issues, but this mandate isn&#8217;t normative.</p>
+</div>
+</div>
+<div class="section" id="takeaways">
+<h2>Takeaways<a class="headerlink" href="#takeaways" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="for-the-standards-committee">
+<h3>For the Standards Committee<a class="headerlink" href="#for-the-standards-committee" title="Permalink to this headline">¶</a></h3>
+<p>Don&#8217;t assume that these optimizations don&#8217;t occur, but rather encourage
+them. Standardize more common practice that enable to-the-metal
+optimizations. Provide more libraries that make it easy to use concurrency and
+parallelism and hard to get it wrong.</p>
+</div>
+<div class="section" id="for-developers">
+<h3>For Developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h3>
+<p>Drop assembly: it can&#8217;t be optimized as well and is only tuned to the
+architectures that existed when you originally wrote the code. File bugs when
+performance expectations aren&#8217;t met by the compiler. Suggest to the standard
+committee new idiomatic patterns which enable concurrency and parallelism. Use
+the tooling available to you, such as ThreadSanitizer, to find races in your
+code.</p>
+</div>
+<div class="section" id="for-hardware-vendors">
+<h3>For Hardware vendors<a class="headerlink" href="#for-hardware-vendors" title="Permalink to this headline">¶</a></h3>
+<p>Showcase your hardware&#8217;s strengths.</p>
+</div>
+<div class="section" id="for-compiler-writers">
+<h3>For Compiler Writers<a class="headerlink" href="#for-compiler-writers" title="Permalink to this headline">¶</a></h3>
+<p>Get back to work, there&#8217;s so much more to optimize… and so much code to break!
+Help users write good code: the compiler should provide diagnostics when it
+detects anti-patterns or misuses of atomics.</p>
+</div>
+</div>
+<div class="section" id="acknowledgement">
+<h2>Acknowledgement<a class="headerlink" href="#acknowledgement" title="Permalink to this headline">¶</a></h2>
+<p>Thanks to Robin Morisset, Dmitry Vyukov, Chandler Carruth, Jeffrey Yasskin, Paul
+McKenney, Lawrence Crowl, Hans Boehm and Torvald Riegel for their reviews,
+corrections and ideas.</p>
+</div>
+</div>
+
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Inconsolata:bold' rel='stylesheet' type='text/css'>
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+      }
+      .body {
+        margin: 0 auto;
+        max-width: 80em;
+      }
+      a {
+        color: #455A64;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: #37474F;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        padding-left: 1em;
+        padding-right: 3em;
+        text-decoration: none;
+        opacity: 0;
+      }
+      a.headerlink:hover {
+        opacity: 1;
+      }
+      .field-name {
+        text-align: right;
+        padding-right: 1em;
+      }
+      tt, .highlight {
+        color: #263238;
+        background-color: #ECEFF1;
+        font-family: 'Inconsolata', monospace;
+        font-weight: bold;
+      }
+      tt {
+        padding: 0em 0.5em;
+      }
+      .highlight {
+        margin: 0em 1em;
+        padding: 0.1em 1em;
+      }
+    </style>
+    <title>N4509 constexpr atomic&lt;T&gt;::is_always_lock_free</title> 
+  </head>
+  <body>
+    <div class="body">
+
+  <div class="section" id="n4509-constexpr-atomic-t-is-always-lock-free">
+<h1>N4509 <tt class="docutils literal"><span class="pre">constexpr</span> <span class="pre">atomic&lt;T&gt;::is_always_lock_free</span></tt><a class="headerlink" href="#n4509-constexpr-atomic-t-is-always-lock-free" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Olivier Giroux</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:ogiroux&#37;&#52;&#48;nvidia&#46;com">ogiroux<span>&#64;</span>nvidia<span>&#46;</span>com</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">JF Bastien</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:jfb&#37;&#52;&#48;google&#46;com">jfb<span>&#64;</span>google<span>&#46;</span>com</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Jeff Snyder</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:jeff-isocpp&#37;&#52;&#48;caffeinated&#46;me&#46;uk">jeff-isocpp<span>&#64;</span>caffeinated<span>&#46;</span>me<span>&#46;</span>uk</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">2015-05-05</td>
+</tr>
+<tr class="field-even field"><th class="field-name">URL:</th><td class="field-body"><a class="reference external" href="https://github.com/jfbastien/papers/blob/master/source/N4509.rst">https://github.com/jfbastien/papers/blob/master/source/N4509.rst</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Source:</th><td class="field-body"><a class="reference external" href="https://github.com/jfbastien/papers/blob/master/source/N4509.cc">https://github.com/jfbastien/papers/blob/master/source/N4509.cc</a></td>
+</tr>
+</tbody>
+</table>
+<p>The current design for <tt class="docutils literal"><span class="pre">std::atomic&lt;T&gt;</span></tt> affords implementations the critical
+freedom to revert to critical sections when hardware support for atomic
+operations does not meet the size or semantic requirements for the associated
+type <tt class="docutils literal"><span class="pre">T</span></tt>. This:</p>
+<ul class="simple">
+<li>Preserves C++ support on aging hardware.</li>
+<li>Supports developers who don&#8217;t target a specific architecture e.g. with the
+<tt class="docutils literal"><span class="pre">-march=xxx</span></tt> flag.</li>
+<li>Improves the portability of abstract representations for C++ programs,
+e.g. when compiling C++ code to execute portably within a web browser.</li>
+</ul>
+<p>The Standard also ensures that developers can be informed of the
+implementation&#8217;s lock-freedom guarantees, by using the <tt class="docutils literal"><span class="pre">is_lock_free()</span></tt> member
+and free-functions. This is important because programmers may want to select
+algorithm implementations, or even select algorithms, based on this
+knowledge. Developers are equally likely to do so for correctness and
+performance reasons.</p>
+<p><strong>The software design shipped in C++11 and C++14 is, however, somewhat sandbagged.</strong></p>
+<p>There is poor support for static determination of lock-freedom guarantees.</p>
+<p>At the present time the Standard has limited support in this domain: the
+<tt class="docutils literal"><span class="pre">ATOMIC_..._LOCK_FREE</span></tt> macros that return <tt class="docutils literal"><span class="pre">2</span></tt>, <tt class="docutils literal"><span class="pre">1</span></tt> or <tt class="docutils literal"><span class="pre">0</span></tt> if the
+corresponding atomic type is <em>always</em> lock-free, sometimes lock-free or never
+lock-free, respectively. These macros are little more than a consolation prize
+because they do not work with an arbitrary type <tt class="docutils literal"><span class="pre">T</span></tt> (as the C++ native
+<tt class="docutils literal"><span class="pre">std::atomic&lt;T&gt;</span></tt> library intends) and they leave adaptation for generic
+programming entirely up to the developer.</p>
+<p>This leads to the present, counter-intuitive state of the art whereby
+non-traditional uses of C++ have better support than high-performance
+computing. We aim to make the smallest possible change that improves the
+situation for HPC while leaving all other uses untouched.</p>
+<p>We propose a <tt class="docutils literal"><span class="pre">static</span> <span class="pre">constexpr</span></tt> complement of <tt class="docutils literal"><span class="pre">is_lock_free()</span></tt> that is
+suitable for use with SFINAE and <tt class="docutils literal"><span class="pre">static_assert</span></tt>.</p>
+<div class="section" id="proposed-addition">
+<h2>Proposed addition<a class="headerlink" href="#proposed-addition" title="Permalink to this headline">¶</a></h2>
+<p>Under 29.5 Atomic types [<strong>atomics.types.generic</strong>]:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">namespace</span> <span class="n">std</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">atomic</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span> <span class="o">=</span> <span class="cm">/* implementation-defined */</span><span class="p">;</span>
+    <span class="c1">// Omitting all other members for brevity.</span>
+  <span class="p">};</span>
+  <span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">integral</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span> <span class="o">=</span> <span class="cm">/* implementation-defined */</span><span class="p">;</span>
+    <span class="c1">// Omitting all other members for brevity.</span>
+  <span class="p">};</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span> <span class="o">=</span> <span class="cm">/* implementation-defined */</span><span class="p">;</span>
+    <span class="c1">// Omitting all other members for brevity.</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After paragraph 2:</p>
+<p>The <tt class="docutils literal"><span class="pre">static</span></tt> data member <tt class="docutils literal"><span class="pre">is_always_lock_free</span></tt> is true if the atomic type&#8217;s
+operations are always lock-free, and false otherwise. The value of
+<tt class="docutils literal"><span class="pre">is_always_lock_free</span></tt> shall be consistent with the value of the corresponding
+<tt class="docutils literal"><span class="pre">ATOMIC_..._LOCK_FREE</span></tt> macro, if defined.</p>
+<p>Under 29.6.5 Requirements for operations on atomic types
+[<strong>atomics.types.operations.req</strong>], in paragraph 7:</p>
+<p>The return value of the <tt class="docutils literal"><span class="pre">is_lock_free</span></tt> member function shall be consistent
+with the value of <tt class="docutils literal"><span class="pre">is_always_lock_free</span></tt> for the same type.</p>
+<p>[<em>Example:</em> the following should never fail,</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_always_lock_free</span><span class="p">)</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">atomic</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">().</span><span class="n">is_lock_free</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>— <em>end example</em>]</p>
+<p>The <tt class="docutils literal"><span class="pre">__cpp_lib_atomic_is_always_lock_free</span></tt> feature test macro should be added.</p>
+</div>
+<div class="section" id="additional-material">
+<h2>Additional material<a class="headerlink" href="#additional-material" title="Permalink to this headline">¶</a></h2>
+<p>We did not provide the <tt class="docutils literal"><span class="pre">atomic_is_always_lock_free</span></tt> C-style free functions
+(which the <tt class="docutils literal"><span class="pre">is_lock_free</span></tt> functions have) because these require a
+pointer. This makes the free functions significantly less useful as compile-time
+<tt class="docutils literal"><span class="pre">constexpr</span></tt>.</p>
+<p>We show a sample implementation:</p>
+<div class="highlight-c++"><div class="highlight"><pre><span class="k">namespace</span> <span class="n">std</span> <span class="p">{</span>
+
+  <span class="k">namespace</span> <span class="n">detail</span> <span class="p">{</span>
+    <span class="c1">// It is implementation-defined what this returns, as long as:</span>
+    <span class="c1">//</span>
+    <span class="c1">// if (std::atomic&lt;T&gt;::is_always_lock_free)</span>
+    <span class="c1">//   assert(std::atomic&lt;T&gt;()::is_lock_free());</span>
+    <span class="c1">//</span>
+    <span class="c1">// An implementation may therefore have more variable template</span>
+    <span class="c1">// specializations than the ones shown below.</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+
+    <span class="c1">// Implementations must match the C ATOMIC_*_LOCK_FREE macro values.</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_BOOL_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_CHAR_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">signed</span> <span class="kt">char</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_CHAR_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">char</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_CHAR_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">char16_t</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_CHAR16_T_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">char32_t</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_CHAR32_T_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">wchar_t</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_WCHAR_T_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">short</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_SHORT_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">short</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_SHORT_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_INT_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_INT_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_LONG_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_LONG_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_LLONG_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_LLONG_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_POINTER_LOCK_FREE</span><span class="p">;</span>
+    <span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="kt">nullptr_t</span><span class="o">&gt;</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">==</span> <span class="n">ATOMIC_POINTER_LOCK_FREE</span><span class="p">;</span>
+
+    <span class="c1">// The macros do not support float, double, long double, but C++ does</span>
+    <span class="c1">// support atomics of these types. An implementation shall ensure that these</span>
+    <span class="c1">// types, as well as user-defined types, guarantee the above invariant that</span>
+    <span class="c1">// is_always_lock_free implies is_lock_free for the same type.</span>
+  <span class="p">}</span>
+
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+  <span class="k">struct</span> <span class="n">atomic_n4509</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="k">static</span> <span class="n">constexpr</span> <span class="kt">bool</span> <span class="n">is_always_lock_free</span> <span class="o">=</span> <span class="n">detail</span><span class="o">::</span><span class="n">is_always_lock_free</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="c1">// ...</span>
+  <span class="p">};</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+  </body>
+</html>
