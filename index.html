@@ -1,21 +1,326 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>JF Bastien on github</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" type="text/css">
-<style>
-  body { font-family: "Roboto"; font-weight: 300; }
-</style>
-</head>
-<body>
-<h1>JF Bastien on github</h1>
-<ul>
-  <li>Compiler engineer on Google Chrome, currently working on <a href="https://github.com/WebAssembly/design">WebAssembly</a>.</li>
-  <li>Frequent contributor to <a href="https://github.com/llvm-mirror/">LLVM</a>.</li>
-  <li>Member of the <a href="papers/">C++ standard committee</a>.</li>
-  <li><a href="https://twitter.com/jfbastien">@jfbastien</a> on twitter.</li>
-</ul>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>JF Bastien</title>
+    <style>
+      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 100; src: local('Alegreya Sans Thin'), local('AlegreyaSans-Thin'), url('./fonts/AlegreyaSans-Thin.woff2') format('woff2'), url('./fonts/AlegreyaSans-Thin.woff') format('woff'); }
+      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 300; src: local('Alegreya Sans Light'), local('AlegreyaSans-Light'), url('./fonts/AlegreyaSans-Light.woff2') format('woff2'), url('./fonts/AlegreyaSans-Light.woff') format('woff'); }
+      @font-face { font-family: 'Alegreya Sans'; font-style: italic; font-weight: 300; src: local('Alegreya Sans Light Italic'), local('AlegreyaSans-LightItalic'), url('./fonts/AlegreyaSans-LightItalic.woff2') format('woff2'), url('./fonts/AlegreyaSans-LightItalic.woff') format('woff'); }
+      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 400; src: local('Alegreya Sans Regular'), local('AlegreyaSans-Regular'), url('./fonts/AlegreyaSans-Regular.woff2') format('woff2'), url('./fonts/AlegreyaSans-Regular.woff') format('woff'); }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 300; src: local('Alegreya Sans SC Light'), local('AlegreyaSansSC-Light'), url('../fonts/AlegreyaSansSC-Light.woff2') format('woff2'), url('../fonts/AlegreyaSansSC-Light.woff') format('woff'); }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 400; src: local('Alegreya Sans SC Regular'), local('AlegreyaSansSC-Regular'), url('../fonts/AlegreyaSansSC-Regular.woff2') format('woff2'), url('../fonts/AlegreyaSansSC-Regular.woff') format('woff'); }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 800; src: local('Alegreya Sans SC ExtraBold'), local('AlegreyaSansSC-ExtraBold'), url('../fonts/AlegreyaSansSC-ExtraBold.woff2') format('woff2'), url('../fonts/AlegreyaSansSC-ExtraBold.woff') format('woff'); }
+
+      body { font-family: "Alegreya Sans"; font-weight: 300; }
+      header { max-width: 50em; margin: 0 auto; padding: 0 1em; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
+      header h1 { font-family: "Alegreya Sans SC"; font-weight: 800; margin-bottom: 0; display: flex; flex-direction: column; }
+      header div { display: flex; flex-direction: column; margin: 1em 0 0 0; }
+      header p { margin: 0; text-align: right; }
+      header p:first-child { font-family: "Alegreya Sans SC"; font-weight: 300; }
+      h2 { font-family: "Alegreya Sans SC"; font-weight: 400; }
+      main { max-width: 50em; margin: 0 auto; padding: 0 1em; }
+      article { padding: 1em 0; }
+      ul { list-style-type: circle; }
+      .grid .entry { padding: 1em 0 1em 0; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
+      .grid h3 { margin: 0; font-weight: 400; }
+      .grid .entry .where { display: flex; flex-direction: column; flex-basis: 8em; }
+      .grid p, .grid ul { margin: 0; }
+      .grid ul { padding: 0 0 0 1em; }
+      .grid .where p { font-weight: 100; }
+      .grid .entry .what { display: flex; flex-direction: column; flex-basis: 30em; }
+      .grid .short { padding: 0.2em 0 0.2em 0; }
+      .grid .short .where { display: flex; flex-direction: row; }
+      .grid .short .where h3, .grid .short .where p { width: 5em; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>JF Bastien</h1>
+      <div>
+      <p>systems &amp; compiler enthusiast</p>
+      <p> 🐦 <a href="https://twitter.com/jfbastien">@jfbastien</a></p>
+      </div>
+    </header>
+    <main>
+      <article>
+        <h2>About Me</h2>
+        <p>I'm a low-level systems and compiler engineer with a track record of delivering high-impact and novel code to my employers.</p>
+        <p>I enjoy efficient code, measurably improving security, data-mining, crafting nifty visualizations, working on and speaking about open-source software, bootstrapping skilled teams, mentoring, and improving my field through cross-company standardization efforts. To this end, I’m an active participant in the <a href="https://isocpp.org/std/the-committee">C++ Standards Committees</a> where I chair the language evolution working group, and former chair of the <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a> community group.</p>
+      </article>
+      <article>
+        <h2>Work Experience</h2>
+        <div class=grid>
+          <div class=entry>
+            <div class=where><h3>Apple</h3>
+              <p>Compiler engineer</p>
+              <p>2016-08/2020-09</p>
+            </div>
+            <div class=what>
+              <p>Security through compiler technology.</p>
+              <ul>
+                <li>C++ lead and compiler engineer on the <a href="https://llvm.org">LLVM</a> team: substantially increased the security of iOS and macOS through compiler technologies which I designed, implemented, and lead a team to deploy strategically to high-value attack targets.</li>
+                <li>Compiler engineer on <a href="https://webkit.org">WebKit</a>'s JavaScriptCore: implement <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, performance tune WebAssembly and JavaScript, <a href="https://meltdownattack.com">Spectre</a> mitigations.</li>
+              </ul>
+            </div>
+          </div>
+          <div class=entry>
+            <div class=where><h3>Google</h3>
+              <p>Compiler engineer</p>
+              <p>2012-08/2016-08</p>
+            </div>
+            <div class=what>
+              <p>Bring portable, fast and secure native code to the Web.</p>
+              <ul>
+                <li>Instigator, co-designer, compiler engineer on <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>.</li>
+                <li>Techical lead of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Portable Native Client</a>, shipping LLVM to over a billion users.</li>
+                <li>Implementor of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Native Client</a>'s ARM sandbox.</li>
+              </ul>
+            </div>
+          </div>
+          <div class=entry>
+            <div class=where><h3>NVIDIA</h3>
+              <p>Compiler engineer</p>
+              <p>2009-08/2012-08</p>
+            </div>
+            <div class=what>
+              <p>Dynamic binary translation from ARMv8 to VLIW on the <a href="https://en.wikipedia.org/wiki/Project_Denver">Denver</a> CPU.</p>
+              <ul>
+                <li>A32, T32, and A64 decode and optimization.</li>
+                <li>Supervisor runtime.</li>
+                <li>High performance in-memory column-oriented database / programming language, used to instrument and analyze hardware and software simulations.</li>
+              </ul>
+            </div>
+          </div>
+          <div class=entry>
+            <div class=where><h3>CAE</h3>
+              <p>Systems engineer</p>
+              <p>2006-05/2009-08</p>
+            </div>
+            <div class=what>
+              <p>Reduce <a href="https://en.wikipedia.org/wiki/CAE_Inc.">aircraft simulation</a> development effort an order of magnitude.</p>
+              <ul>
+                <li>Design and implement a “modern” C++03 runtime.</li>
+                <li>C++ reflection framework.</li>
+                <li>Binary / source compatibility validator.</li>
+                <li>Avionics systems engineering using the above-mentioned runtime.</li>
+                <li>Maintain older Fortran / C code.</li>
+              </ul>
+            </div>
+          </div>
+          <div class=entry>
+            <div class=where><h3>Bombardier</h3>
+              <p>Engineer intern</p>
+              <p>2004/2005</p>
+            </div>
+            <div class=what>
+              <p>Mechanical engineering design on the <a href="https://en.wikipedia.org/wiki/Bombardier_Global_Express">Global Express</a> business jet.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article>
+        <h2>Education</h2>
+        <div class=grid>
+          <div class=entry>
+            <div class=where><h3>Stanford</h3>
+              <p>Master’s degree</p>
+              <p>Computer science</p>
+              <p>2010/2015</p>
+            </div>
+            <div class=what>
+              <p>Part-time graduate studies in computer sciences, focusing on compilers, systems and hardware.</p>
+              <p>I completed ⅔ of a degree, which rounds toward −∞.</p>
+            </div>
+          </div>
+          <div class=entry>
+            <div class=where><h3>McGill</h3>
+              <p>Bachelor’s degree</p>
+              <p>Mechanical eng.</p>
+              <p>2002/2006</p>
+            </div>
+            <div class=what>
+              <ul>
+                <li>Lead teaching assistant, 7 semesters, for Computers in Engineering—Fortran, C, and Algorithms.</li>
+                <li>Thesis: <em>Rapid Decompression Simulation in an Aircraft and Related Hardware Optimization</em>, used to automatically optimize aircraft design while meeting FAA/JAA regulations; Bombardier Aerospace.</li>
+                <li>Final project: <em>Aircraft Assembly Optimization</em>; Bombardier Aerospace.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article>
+        <h2>Selected Publications &amp; Public Speaking</h2>
+        <div class=grid>
+          <div class="short entry">
+            <div class=where><h3>PLDI</h3>
+              <p>2017</p>
+            </div>
+            <div class=what>
+              <p><a href="https://github.com/WebAssembly/spec/raw/master/papers/pldi2017.pdf">Bringing the Web up to Speed with WebAssembly</a>.</p>
+              <p><em>Best paper award.</em></p>
+              <p><em>Re-published as a Communications of the ACM Research Highlight.</em></p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>ASPLOS</h3>
+              <p>2017</p>
+            </div>
+            <div class=what>
+              <p><a href="https://theory.stanford.edu/~aiken/publications/papers/asplos17.pdf">Sound Loop Superoptimization for Google Native Client</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>TACAS</h3>
+              <p>2018</p>
+            </div>
+            <div class=what>
+              <p><a href="https://arxiv.org/pdf/1801.10140.pdf">EMME: a formal tool for the ECMAScript Memory Model Evaluation</a>.</p>
+            </div>
+          </div>
+          <div class=entry>
+            <div class=where><h3>C++ Committee</h3>
+            </div>
+            <div class=what>
+              <ul>
+                <li><a href="https://wg21.link/p1152">p1152</a> Deprecating volatile</li>
+                <li><a href="https://wg21.link/p0907">p0907</a> Signed Integers are Two's Complement</li>
+                <li><a href="https://wg21.link/p1860">p1860</a> C++ Networking Must Be Secure By Default</li>
+                <li><a href="https://wg21.link/n4455">n4455</a> No Sane Compiler Would Optimize Atomics</li>
+                <li><a href="https://wg21.link/p0323">p0323</a> std::expected</li>
+                <li><a href="https://wg21.link/p1225">p1225</a> Feedback on 2D Graphics</li>
+                <li><a href="https://wg21.link/p1482">p1482</a> Modules feedback</li>
+                <li><a href="https://wg21.link/p1746">p1746</a> Feedback on std::audio</li>
+                <li><a href="https://wg21.link/p0476">p0476</a> Bit-casting object representations</li>
+                <li><a href="https://wg21.link/p1382">p1382</a> volatile load and volatile store</li>
+                <li><a href="https://wg21.link/p0750">p0750</a> Consume</li>
+                <li><a href="https://wg21.link/p0690">p0690</a> Tearable Atomics</li>
+                <li><a href="https://wg21.link/p0995">p0995</a> Improving atomic_flag</li>
+                <li><a href="https://wg21.link/p1135">p1135</a> The C++20 synchronization library</li>
+                <li><a href="https://wg21.link/n4509">n4509</a> constexpr atomic::is_always_lock_free</li>
+                <li><a href="https://wg21.link/p0502">p0502</a> Throwing out of a parallel algorithm terminates</li>
+                <li><a href="https://wg21.link/p0154">p0154</a> Hardware constructive/destructive interference size</li>
+                <li><a href="https://wg21.link/p1119">p1119</a> ABI for interference size</li>
+                <li><a href="https://wg21.link/p0528">p0528</a> Padding bits, atomic compare-and-exchange</li>
+                <li><a href="https://wg21.link/p1205">p1205</a> Teleportation via co_await</li>
+                <li><a href="https://wg21.link/p0193">p0193</a> Where is Vectorization in C++‽</li>
+                <li><a href="https://wg21.link/p0394">p0394</a> Hotel Parallelifornia</li>
+                <li><a href="https://wg21.link/p0020">p0020</a> Floating Point Atomic</li>
+                <li><a href="https://wg21.link/p0153">p0153</a> Atomic object fence</li>
+                <li><a href="https://wg21.link/p0097">p0097</a> Use Cases for Thread-Local Storage</li>
+                <li><a href="https://wg21.link/p0566">p0566</a> Hazard pointer, RCU</li>
+                <li><a href="https://wg21.link/p0418">p0418</a> Fail or succeed: there is no atomic lattice</li>
+                <li><a href="https://wg21.link/p1102">p1102</a> Down with ()!</li>
+                <li><a href="https://wg21.link/p1110">p1110</a> A placeholder with no name</li>
+                <li><a href="https://wg21.link/p1153">p1153</a> Copying volatile subobjects is not trivial</li>
+                <li><a href="https://wg21.link/p1245">p1245</a> export module containing [[attribute]];</li>
+                <li><a href="https://wg21.link/p1246">p1246</a> The no_float function attribute</li>
+                <li><a href="https://wg21.link/p1247">p1247</a> Disabling static destructors</li>
+              </ul>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>WWDC</h3>
+              <p>2019</p>
+            </div>
+            <div class=what>
+              <p><a href="https://developer.apple.com/videos/play/wwdc2019/409/">What’s new in Clang and LLVM?</a></p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>LLVM</h3>
+              <p>2019</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=I-XUHPimq3o">Making undefined behavior hurt less</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>LLVM</h3>
+              <p>2018</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=LJ4au7WEIBg">Hardware interference size: new in C++17, add it to libc++</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>LLVM</h3>
+              <p>2018</p>
+            </div>
+            <div class=what>
+              <p>Migrating to C++14, and beyond!.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>LLVM</h3>
+              <p>2015</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=5W7NkofUtAw">WebAssembly: Here Be Dragons</a>.</p>
+              <p><em>Conference keynote.</em></p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>EuroLLVM</h3>
+              <p>2015</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=H-R-yW1-fbQ">C++ on the web: ponies for developers without pwn'ing users</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>EuroLLVM</h3>
+              <p>2014</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=iYBSgdvv0BY">Portable Native Client. Fast, Secure, Simple: Pick Three</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>CppCon</h3>
+              <p>2019</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=KJW_DLaVXIY">Deprecating volatile</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>CppCon</h3>
+              <p>2018</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=JhUxIVf1qok">Signed Integers are Two’s Complement</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>CppCon</h3>
+              <p>2016</p>
+            </div>
+            <div class=what>
+              <p><a href="https://www.youtube.com/watch?v=IB57wIf9W1k">No sane compiler would optimize atomics</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>CppCast</h3>
+              <p>2018</p>
+            </div>
+            <div class=what>
+              <p><a href="https://cppcast.com/jf-bastien-san-diego-ewgi">San Diego EWGI trip report</a>.</p>
+            </div>
+          </div>
+          <div class="short entry">
+            <div class=where><h3>CppCast</h3>
+              <p>2015</p>
+            </div>
+            <div class=what>
+              <p><a href="https://cppcast.com/jf-bastien-webassembly">WebAssembly</a>.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </main>
+    <footer>
+    </footer>
+  </body>
 </html>
