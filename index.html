@@ -9,9 +9,9 @@
       @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 300; src: local('Alegreya Sans Light'), local('AlegreyaSans-Light'), url('./fonts/AlegreyaSans-Light.woff2') format('woff2'), url('./fonts/AlegreyaSans-Light.woff') format('woff'); font-display: fallback; }
       @font-face { font-family: 'Alegreya Sans'; font-style: italic; font-weight: 300; src: local('Alegreya Sans Light Italic'), local('AlegreyaSans-LightItalic'), url('./fonts/AlegreyaSans-LightItalic.woff2') format('woff2'), url('./fonts/AlegreyaSans-LightItalic.woff') format('woff'); font-display: fallback; }
       @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 400; src: local('Alegreya Sans Regular'), local('AlegreyaSans-Regular'), url('./fonts/AlegreyaSans-Regular.woff2') format('woff2'), url('./fonts/AlegreyaSans-Regular.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 300; src: local('Alegreya Sans SC Light'), local('AlegreyaSansSC-Light'), url('../fonts/AlegreyaSansSC-Light.woff2') format('woff2'), url('../fonts/AlegreyaSansSC-Light.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 400; src: local('Alegreya Sans SC Regular'), local('AlegreyaSansSC-Regular'), url('../fonts/AlegreyaSansSC-Regular.woff2') format('woff2'), url('../fonts/AlegreyaSansSC-Regular.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 800; src: local('Alegreya Sans SC ExtraBold'), local('AlegreyaSansSC-ExtraBold'), url('../fonts/AlegreyaSansSC-ExtraBold.woff2') format('woff2'), url('../fonts/AlegreyaSansSC-ExtraBold.woff') format('woff'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 300; src: local('Alegreya Sans SC Light'), local('AlegreyaSansSC-Light'), url('./fonts/AlegreyaSansSC-Light.woff2') format('woff2'), url('./fonts/AlegreyaSansSC-Light.woff') format('woff'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 400; src: local('Alegreya Sans SC Regular'), local('AlegreyaSansSC-Regular'), url('./fonts/AlegreyaSansSC-Regular.woff2') format('woff2'), url('./fonts/AlegreyaSansSC-Regular.woff') format('woff'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 800; src: local('Alegreya Sans SC ExtraBold'), local('AlegreyaSansSC-ExtraBold'), url('./fonts/AlegreyaSansSC-ExtraBold.woff2') format('woff2'), url('./fonts/AlegreyaSansSC-ExtraBold.woff') format('woff'); font-display: fallback; }
 
       body { font-family: "Alegreya Sans", Arial, Helvetica, sans-serif; font-weight: 300; }
       header { max-width: 50em; margin: 0 auto; padding: 0 1em; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
@@ -25,32 +25,42 @@
       ul { list-style-type: circle; }
       .grid .entry { padding: 1em 0 1em 0; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
       .grid h3 { margin: 0; font-weight: 400; }
-      .grid .entry .where { display: flex; flex-direction: column; flex-basis: 8em; }
+      .grid .entry .where { display: flex; flex-direction: column; flex-basis: 9em; }
       .grid p, .grid ul, .grid ol { margin: 0; }
       .grid ul, .grid ol { padding: 0 0 0 1em; }
       .grid .where p { font-weight: 100; }
-      .grid .entry .what { display: flex; flex-direction: column; flex-basis: 30em; }
+      .grid .entry .what { display: flex; flex-direction: column; flex-basis: 35em; }
       .grid .short { padding: 0.2em 0 0.2em 0; }
       .grid .short .where { display: flex; flex-direction: row; }
       .grid .short .where h3, .grid .short .where p { width: 5em; }
+      footer { font-family: "Alegreya Sans SC", Arial, Helvetica, sans-serif; font-weight: 300; text-align: center; margin-top: 2em; }
     </style>
-    <link rel="icon" type="image/png" href="/favicon-256.png" sizes="32x32 64x64 256x256">
+    <style media="print">
+      html, body { width: 100%; height: 100%; font-size: 10.5pt; color: #000; background: none; margin: 0; padding: 0; }
+      @page { size: A4; margin: 0.75in 0.75in 0.75in 0.75in; }
+      a { text-decoration: underline; color: #000; }
+      main { margin: 0; padding: 0; width: 100%; }
+      h1, h2, h3 { page-break-after: avoid; }
+      p, li { orphans: 3; widows: 3; }
+      .grid .entry, .grid .short.entry { page-break-inside: avoid; }
+    </style>
+    <link rel="icon" type="image/png" href="./favicon-256.png" sizes="32x32 64x64 256x256">
   </head>
   <body>
     <header>
       <h1>JF Bastien</h1>
       <div>
-      <p>platform creator &amp; maintainer</p>
-      <p> 🐦 <a href="https://twitter.com/jfbastien">@jfbastien</a></p>
-      <p> 🐘 <a rel="me" href="https://mastodon.social/@jfbastien">@jfbastien@mastodon.social</a>
-      <p> 🦋 <a href="https://bsky.app/profile/jfbastien.com">@jfbastien.com</a></p>
+        <p>build &amp; scale platforms</p>
+        <p> 📧 <a href="mailto:me@jfbastien.com" rel="me">me@jfbastien.com</a></p>
+        <p> 🐦 <a href="https://twitter.com/jfbastien">@jfbastien</a></p>
+        <p> 🐘 <a rel="me" href="https://mastodon.social/@jfbastien">@jfbastien@mastodon.social</a>
+        <p> 🦋 <a href="https://bsky.app/profile/jfbastien.com">@jfbastien.com</a></p>
       </div>
     </header>
     <main>
       <article>
         <h2>About Me</h2>
-        <p>I am a systems and compiler engineer specializing in creating and maintaining foundational software platforms. With a proven track record as both an individual contributor and technical leader, I have delivered high-impact and innovative platforms to my employers.</p>
-        <p>My expertise includes developing efficient code, enhancing security through measurable improvements, and building scalable software platforms. I am passionate about open-source software, team building, mentoring, and advancing the software engineering field through cross-company standardization efforts. As part of this commitment, I actively participate in the <a href="https://isocpp.org/std/the-committee">C++ Standards Committees</a>, chairing the language evolution working group, and previously chaired the <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a> community group.</p>
+        <p>Systems and compiler engineer building and scaling platforms. Deliver high-impact foundational platforms through hands-on technical leadership, security engineering, and standardization. Passionate about open-source, team-building, and advancing the field through cross-company collaboration. Chair the <a href="https://isocpp.org/std/the-committee">C++ Language Evolution Working Group</a>, and previously chaired the <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a> community group. I thrive at the intersection of hardware and software, from low-level silicon-aware optimization to building user-facing platforms.</p>
       </article>
       <article>
         <h2>Work Experience</h2>
@@ -61,59 +71,69 @@
               <p>2020-08/present</p>
             </div>
             <div class=what>
-              <p>Design and create a software platform for safety-critical vehicle development.</p>
+              <p>As the most senior engineer in the company, serve as technical lead for a safety-critical software platform driving Toyota’s transformation to a software-first mobility company. Build novel technical foundations while navigating the human and business challenges of scaling software at the world’s largest automaker.</p>
+              <ul>
+                <li>Design, hire for, and scale foundational safety software infrastructure for vehicle development.</li>
+                <li>Lead hardware / software co-design strategy across the electrical and electronic supply chain.</li>
+                <li>Architect safety qualification of software toolchains, enabling OEM-controlled development environments across C, C++, and Rust.</li>
+                <li>Drive Toyota’s adoption of Rust for safety-critical systems, founding the <a href="https://rustfoundation.org/media/announcing-the-safety-critical-rust-consortium/">Safety-Critical Rust Consortium</a> and lead rollout.</li>
+                <li>Champion platform security initiatives to meet emerging automotive cybersecurity regulations.</li>
+                <li>Chair C++ language evolution, delivering contracts and reflection; build a team advancing safety and security in C and <a href="https://misra.org.uk/">MISRA</a>.</li>
+                <li>Define Toyota’s open source strategy in collaboration with the new Open Source Program Office.</li>
+                <li>As a vice president and executive, shape the organization to scale from startup to production-oriented change agent for Toyota Group.</li>
+              </ul>
             </div>
           </div>
           <div class=entry>
             <div class=where><h3>Apple</h3>
-              <p>Compiler engineer</p>
+              <p>Compiler Engineer</p>
               <p>2016-08/2020-08</p>
             </div>
             <div class=what>
               <p>Security through compiler technology.</p>
               <ul>
-                <li>C++ lead and compiler engineer on the <a href="https://llvm.org">LLVM</a> team: substantially increased the security of iOS and macOS through compiler technologies which I designed, implemented, and lead a team to deploy strategically to high-value attack targets. Founder of the <a href="https://www.llvm.org/docs/Security.html">LLVM Security Group</a>.</li>
-                <li>Compiler engineer on <a href="https://webkit.org">WebKit</a>'s JavaScriptCore: implement <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, performance tune WebAssembly and JavaScript, <a href="https://meltdownattack.com">Spectre</a> mitigations.</li>
+                <li>C++ lead and compiler engineer on the <a href="https://llvm.org">LLVM</a> team: significantly improved the security of iOS and macOS through compiler technologies which I designed, implemented, and led a team to deploy strategically to high-value attack targets. Founder of the <a href="https://www.llvm.org/docs/Security.html">LLVM Security Group</a>.</li>
+                <li>Compiler engineer on <a href="https://webkit.org">WebKit</a>’s JavaScriptCore: implemented <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, performance tune WebAssembly and JavaScript, <a href="https://meltdownattack.com">Spectre</a> mitigations.</li>
               </ul>
             </div>
           </div>
           <div class=entry>
             <div class=where><h3>Google</h3>
-              <p>Compiler engineer</p>
+              <p>Compiler Engineer</p>
               <p>2012-08/2016-08</p>
             </div>
             <div class=what>
-              <p>Bring portable, fast and secure native code to the Web.</p>
+              <p>Bring portable, fast and securely sandboxed native code to the Web.</p>
               <ul>
                 <li>Instigator, co-designer, compiler engineer on <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, awarded the <a href="https://www.sigplan.org/Awards/Software/">2021 ACM SIGPLAN Programming Languages Software Award</a>.</li>
-                <li>Techical lead of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Portable Native Client</a>, shipping LLVM to over a billion users.</li>
-                <li>Implementor of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Native Client</a>'s ARM sandbox.</li>
+                <li>Technical lead of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Portable Native Client</a>, shipping LLVM to over a billion users.</li>
+                <li>Implementor of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Native Client</a>’s ARM sandbox.</li>
               </ul>
             </div>
           </div>
           <div class=entry>
             <div class=where><h3>NVIDIA</h3>
-              <p>Compiler engineer</p>
+              <p>Compiler Engineer</p>
               <p>2009-08/2012-08</p>
             </div>
             <div class=what>
-              <p>Dynamic binary translation from ARMv8 to VLIW on the <a href="https://en.wikipedia.org/wiki/Project_Denver">Denver</a> CPU.</p>
+              <p>Dynamic binary translation from ARMv8 to VLIW on the <a href="https://en.wikipedia.org/wiki/Project_Denver">Denver</a> custom CPU.</p>
               <ul>
                 <li>A32, T32, and A64 decode and optimization.</li>
                 <li>Supervisor runtime.</li>
-                <li>High performance in-memory column-oriented database / programming language, used to instrument and analyze hardware and software simulations.</li>
+                <li>In-memory column-oriented database and custom programming language, used to instrument and analyze hardware and software simulations.</li>
               </ul>
             </div>
           </div>
           <div class=entry>
             <div class=where><h3>CAE</h3>
-              <p>Systems engineer</p>
+              <p>Systems Engineer</p>
               <p>2006-05/2009-08</p>
             </div>
             <div class=what>
-              <p>Reduce <a href="https://en.wikipedia.org/wiki/CAE_Inc.">aircraft simulation</a> development effort an order of magnitude.</p>
+              <p>Reduced <a href="https://en.wikipedia.org/wiki/CAE_Inc.">aircraft simulation</a> development effort by an order of magnitude.</p>
               <ul>
-                <li>Design and implement a “modern” C++03 runtime.</li>
+                <li>Designed and implemented a modern C++03 runtime.</li>
                 <li>C++ reflection framework.</li>
                 <li>Binary / source compatibility validator.</li>
                 <li>Avionics systems engineering using the above-mentioned runtime.</li>
@@ -123,7 +143,7 @@
           </div>
           <div class=entry>
             <div class=where><h3>Bombardier</h3>
-              <p>Engineer intern</p>
+              <p>Engineer Intern</p>
               <p>2004/2005</p>
             </div>
             <div class=what>
@@ -142,8 +162,7 @@
               <p>2010/2015</p>
             </div>
             <div class=what>
-              <p>Part-time graduate studies in computer sciences, focusing on compilers, systems and hardware.</p>
-              <p>I completed ⅔ of a degree, which rounds toward −∞.</p>
+              <p>Completed majority of coursework toward Master’s degree while working full-time; focused on compilers, systems, and hardware.</p>
             </div>
           </div>
           <div class=entry>
@@ -154,7 +173,7 @@
             </div>
             <div class=what>
               <ul>
-                <li>Lead teaching assistant, 7 semesters, for Computers in Engineering—Fortran, C, and Algorithms.</li>
+                <li>Lead TA, 7 semesters, for Computers in Engineering—Fortran, C, and Algorithms.</li>
                 <li>Thesis: <em>Rapid Decompression Simulation in an Aircraft and Related Hardware Optimization</em>, used to automatically optimize aircraft design while meeting FAA/JAA regulations; Bombardier Aerospace.</li>
                 <li>Final project: <em>Aircraft Assembly Optimization</em>; Bombardier Aerospace.</li>
               </ul>
@@ -199,18 +218,18 @@
                 <li><a href="https://wg21.link/P3477">P3477</a> There are exactly 8 bits in a byte</li>
                 <li><a href="https://wg21.link/p2809">p2809</a> Trivial infinite loops are not Undefined Behavior</li>
                 <li><a href="https://wg21.link/p1152">p1152</a> Deprecating <code>volatile</code></li>
-                <li><a href="https://wg21.link/p0907">p0907</a> Signed Integers are Two's Complement</li>
-                <li><a href="https://wg21.link/p1860">p1860</a> C++ Networking Must Be Secure By Default</li>
-                <li><a href="https://wg21.link/n4455">n4455</a> No Sane Compiler Would Optimize Atomics</li>
+                <li><a href="https://wg21.link/p0907">p0907</a> Signed integers are two’s complement</li>
+                <li><a href="https://wg21.link/p1860">p1860</a> C++ networking must be secure by default</li>
+                <li><a href="https://wg21.link/n4455">n4455</a> No sane compiler would optimize atomics</li>
                 <li><a href="https://wg21.link/p0323">p0323</a> <code>std::expected</code></li>
                 <li><a href="https://wg21.link/p2723">p2723</a> Zero-initialize objects of automatic storage duration</li>
-                <li><a href="https://wg21.link/p1225">p1225</a> Feedback on 2D Graphics</li>
+                <li><a href="https://wg21.link/p1225">p1225</a> Feedback on 2D graphics</li>
                 <li><a href="https://wg21.link/p1482">p1482</a> Modules feedback</li>
                 <li><a href="https://wg21.link/p1746">p1746</a> Feedback on <code>std::audio</code></li>
                 <li><a href="https://wg21.link/p0476">p0476</a> Bit-casting object representations</li>
                 <li><a href="https://wg21.link/p1382">p1382</a> <code>volatile</code> load and <code>volatile</code> store</li>
                 <li><a href="https://wg21.link/p0750">p0750</a> Consume</li>
-                <li><a href="https://wg21.link/p0690">p0690</a> Tearable Atomics</li>
+                <li><a href="https://wg21.link/p0690">p0690</a> Tearable atomics</li>
                 <li><a href="https://wg21.link/p0995">p0995</a> Improving <code>atomic_flag</code></li>
                 <li><a href="https://wg21.link/p1135">p1135</a> The C++20 synchronization library</li>
                 <li><a href="https://wg21.link/n4509">n4509</a> <code>constexpr atomic::is_always_lock_free</code></li>
@@ -219,11 +238,11 @@
                 <li><a href="https://wg21.link/p1119">p1119</a> ABI for interference size</li>
                 <li><a href="https://wg21.link/p0528">p0528</a> Padding bits, atomic compare-and-exchange</li>
                 <li><a href="https://wg21.link/p1205">p1205</a> Teleportation via <code>co_await</code></li>
-                <li><a href="https://wg21.link/p0193">p0193</a> Where is Vectorization in C++‽</li>
+                <li><a href="https://wg21.link/p0193">p0193</a> Where is vectorization in C++‽</li>
                 <li><a href="https://wg21.link/p0394r4">p0394</a> Hotel Parallelifornia</li>
-                <li><a href="https://wg21.link/p0020">p0020</a> Floating Point Atomic</li>
+                <li><a href="https://wg21.link/p0020">p0020</a> Floating point atomic</li>
                 <li><a href="https://wg21.link/p0153">p0153</a> Atomic object fence</li>
-                <li><a href="https://wg21.link/p0097">p0097</a> Use Cases for Thread-Local Storage</li>
+                <li><a href="https://wg21.link/p0097">p0097</a> Use cases for thread-local storage</li>
                 <li><a href="https://wg21.link/p0566">p0566</a> Hazard pointer, RCU</li>
                 <li><a href="https://wg21.link/p0418">p0418</a> Fail or succeed: there is no atomic lattice</li>
                 <li><a href="https://wg21.link/p1102">p1102</a> Down with <code>()!</code></li>
@@ -232,7 +251,7 @@
                 <li><a href="https://wg21.link/p1245">p1245</a> export module containing <code>[[attribute]];</code></li>
                 <li><a href="https://wg21.link/p1246">p1246</a> The <code>no_float</code> function attribute</li>
                 <li><a href="https://wg21.link/p1247">p1247</a> Disabling <code>static</code> destructors</li>
-                <li><a href="https://wg21.link/p2186">p2186</a> Removing Garbage Collection Support</li>
+                <li><a href="https://wg21.link/p2186">p2186</a> Removing garbage collection support</li>
               </ul>
             </div>
           </div>
@@ -301,7 +320,7 @@
               <p>2018</p>
             </div>
             <div class=what>
-              <p>Migrating to C++14, and beyond!.</p>
+              <p>Migrating to C++14, and beyond!</p>
             </div>
           </div>
           <div class="short entry">
@@ -318,7 +337,7 @@
               <p>2015</p>
             </div>
             <div class=what>
-              <p><a href="https://www.youtube.com/watch?v=H-R-yW1-fbQ">C++ on the web: ponies for developers without pwn'ing users</a>.</p>
+              <p><a href="https://www.youtube.com/watch?v=H-R-yW1-fbQ">C++ on the web: ponies for developers without pwn’ing users</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -439,7 +458,8 @@
         </div>
       </article>
     </main>
-    <footer>
+    <footer role="contentinfo">
+      <p>JF Bastien · build &amp; scale platforms · <a href="mailto:me@jfbastien.com" rel="me">me@jfbastien.com</a></p>
     </footer>
   </body>
 </html>
