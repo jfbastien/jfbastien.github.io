@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "og": "bun run social/generate.ts"
+  },
+  "devDependencies": {
+    "satori": "^0.12.0",
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}
