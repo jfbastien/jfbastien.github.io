@@ -3,15 +3,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <meta name="description" content="JF Bastien — build &amp; scale platforms.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jfbastien.com/">
+    <meta property="og:title" content="JF Bastien">
+    <meta property="og:description" content="Systems and compiler engineer building and scaling platforms.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@jfbastien">
+    <link rel="canonical" href="https://jfbastien.com/">
     <title>JF Bastien</title>
     <style>
-      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 100; src: local('Alegreya Sans Thin'), local('AlegreyaSans-Thin'), url('./fonts/AlegreyaSans-Thin.woff2') format('woff2'), url('./fonts/AlegreyaSans-Thin.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 300; src: local('Alegreya Sans Light'), local('AlegreyaSans-Light'), url('./fonts/AlegreyaSans-Light.woff2') format('woff2'), url('./fonts/AlegreyaSans-Light.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans'; font-style: italic; font-weight: 300; src: local('Alegreya Sans Light Italic'), local('AlegreyaSans-LightItalic'), url('./fonts/AlegreyaSans-LightItalic.woff2') format('woff2'), url('./fonts/AlegreyaSans-LightItalic.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 400; src: local('Alegreya Sans Regular'), local('AlegreyaSans-Regular'), url('./fonts/AlegreyaSans-Regular.woff2') format('woff2'), url('./fonts/AlegreyaSans-Regular.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 300; src: local('Alegreya Sans SC Light'), local('AlegreyaSansSC-Light'), url('./fonts/AlegreyaSansSC-Light.woff2') format('woff2'), url('./fonts/AlegreyaSansSC-Light.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 400; src: local('Alegreya Sans SC Regular'), local('AlegreyaSansSC-Regular'), url('./fonts/AlegreyaSansSC-Regular.woff2') format('woff2'), url('./fonts/AlegreyaSansSC-Regular.woff') format('woff'); font-display: fallback; }
-      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 800; src: local('Alegreya Sans SC ExtraBold'), local('AlegreyaSansSC-ExtraBold'), url('./fonts/AlegreyaSansSC-ExtraBold.woff2') format('woff2'), url('./fonts/AlegreyaSansSC-ExtraBold.woff') format('woff'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 100; src: local('Alegreya Sans Thin'), local('AlegreyaSans-Thin'), url('./fonts/AlegreyaSans-Thin.woff2') format('woff2'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 300; src: local('Alegreya Sans Light'), local('AlegreyaSans-Light'), url('./fonts/AlegreyaSans-Light.woff2') format('woff2'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans'; font-style: italic; font-weight: 300; src: local('Alegreya Sans Light Italic'), local('AlegreyaSans-LightItalic'), url('./fonts/AlegreyaSans-LightItalic.woff2') format('woff2'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans'; font-style: normal; font-weight: 400; src: local('Alegreya Sans Regular'), local('AlegreyaSans-Regular'), url('./fonts/AlegreyaSans-Regular.woff2') format('woff2'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 300; src: local('Alegreya Sans SC Light'), local('AlegreyaSansSC-Light'), url('./fonts/AlegreyaSansSC-Light.woff2') format('woff2'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 400; src: local('Alegreya Sans SC Regular'), local('AlegreyaSansSC-Regular'), url('./fonts/AlegreyaSansSC-Regular.woff2') format('woff2'); font-display: fallback; }
+      @font-face { font-family: 'Alegreya Sans SC'; font-style: normal; font-weight: 800; src: local('Alegreya Sans SC ExtraBold'), local('AlegreyaSansSC-ExtraBold'), url('./fonts/AlegreyaSansSC-ExtraBold.woff2') format('woff2'); font-display: fallback; }
 
       body { font-family: "Alegreya Sans", Arial, Helvetica, sans-serif; font-weight: 300; }
       header { max-width: 50em; margin: 0 auto; padding: 0 1em; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
@@ -37,6 +45,7 @@
       .grid .entry.patent .what p { margin: 0; }
       .grid .entry.patent .patent-filings { font-size: 0.95em; line-height: 1.25; margin-top: 0.15em; padding-left: 1.1em; text-indent: -1.1em; }
       footer { font-family: "Alegreya Sans SC", Arial, Helvetica, sans-serif; font-weight: 300; text-align: center; margin-top: 2em; }
+      footer::before { content: "❧"; display: block; margin-bottom: 0.5em; }
     </style>
     <style media="print">
       html, body { width: 100%; height: 100%; font-size: 10.5pt; color: #000; background: none; margin: 0; padding: 0; }
@@ -46,8 +55,10 @@
       h1, h2, h3 { break-after: avoid; }
       p, li { orphans: 3; widows: 3; }
       .grid .entry, .grid .short.entry { break-inside: avoid; }
+      header div p:nth-child(n+3) { display: none; }
     </style>
-    <link rel="icon" type="image/png" href="./favicon-256.png" sizes="32x32 64x64 256x256">
+    <link rel="icon" href="./favicon.ico" sizes="32x32">
+    <link rel="icon" href="./favicon-256.png" type="image/png" sizes="256x256">
   </head>
   <body>
     <header>
@@ -55,15 +66,16 @@
       <div>
         <p>build &amp; scale platforms</p>
         <p> 📧 <a href="mailto:me@jfbastien.com" rel="me">me@jfbastien.com</a></p>
-        <p> 🐦 <a href="https://twitter.com/jfbastien">@jfbastien</a></p>
+        <p> 𝕏 <a href="https://x.com/jfbastien">@jfbastien</a></p>
         <p> 🐘 <a rel="me" href="https://mastodon.social/@jfbastien">@jfbastien@mastodon.social</a></p>
         <p> 🦋 <a href="https://bsky.app/profile/jfbastien.com">@jfbastien.com</a></p>
+        <p> 🐙 <a href="https://github.com/jfbastien">jfbastien</a></p>
       </div>
     </header>
     <main>
       <article>
         <h2>About Me</h2>
-        <p>Systems and compiler engineer building and scaling platforms. Deliver high-impact foundational platforms through hands-on technical leadership, security engineering, and standardization. Passionate about open-source, team-building, and advancing the field through cross-company collaboration. Chair the <a href="https://isocpp.org/std/the-committee">C++ Language Evolution Working Group</a>, and previously chaired the <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a> community group. I thrive at the intersection of hardware and software, from low-level silicon-aware optimization to building user-facing platforms.</p>
+        <p>Systems and compiler engineer building and scaling platforms: security engineering, standardization, open source. Chair of the <a href="https://isocpp.org/std/the-committee">C++ Language Evolution Working Group</a>; former chair of the <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a> community group. At the hardware/software boundary, from silicon-aware optimization to user-facing platforms.</p>
       </article>
       <article>
         <h2>Work Experience</h2>
@@ -83,16 +95,16 @@
               <p>2020-08/2025-06</p>
             </div>
             <div class=what>
-              <p>As the most senior engineer in the company, serve as technical lead for a safety-critical software platform driving Toyota’s transformation to a software-first mobility company. Build novel technical foundations while navigating the human and business challenges of scaling software at the world’s largest automaker.</p>
+              <p>Safety-critical software platform driving Toyota’s transformation to a software-first mobility company.</p>
               <ul>
-                <li>Design, hire for, and scale foundational safety software infrastructure for vehicle development.</li>
-                <li>Lead hardware / software co-design strategy across the electrical and electronic supply chain.</li>
-                <li>Architect safety qualification of software toolchains, enabling OEM-controlled development environments across C, C++, and Rust.</li>
-                <li>Drive Toyota’s adoption of Rust for safety-critical systems, founding the <a href="https://rustfoundation.org/media/announcing-the-safety-critical-rust-consortium/">Safety-Critical Rust Consortium</a> and lead rollout.</li>
-                <li>Champion platform security initiatives to meet emerging automotive cybersecurity regulations.</li>
-                <li>Chair C++ language evolution, delivering contracts and reflection; build a team advancing safety and security in C and <a href="https://misra.org.uk/">MISRA</a>.</li>
-                <li>Define Toyota’s open source strategy in collaboration with the new Open Source Program Office.</li>
-                <li>As a vice president and executive, shape the organization to scale from startup to production-oriented change agent for Toyota Group.</li>
+                <li>Foundational safety software infrastructure for vehicle development: design, team building, scaling.
+                <li>Hardware/software co-design strategy across the electrical and electronic supply chain.
+                <li>Safety qualification of software toolchains; OEM-controlled development environments across C/C++/Rust.
+                <li>Toyota’s Rust adoption for safety-critical systems; founding of the <a href="https://rustfoundation.org/media/announcing-the-safety-critical-rust-consortium/">Safety-Critical Rust Consortium</a>.
+                <li>Platform security program for emerging automotive cybersecurity regulations.
+                <li>Chair of C++ language evolution: contracts, reflection; safety &amp; security team for C and <a href="https://misra.org.uk/">MISRA</a>.
+                <li>Toyota’s open-source strategy, with the Open Source Program Office.
+                <li>VP and executive: organizational scaling, startup → production-oriented change agent for Toyota Group.
               </ul>
             </div>
           </div>
@@ -104,8 +116,8 @@
             <div class=what>
               <p>Security through compiler technology.</p>
               <ul>
-                <li>C++ lead and compiler engineer on the <a href="https://llvm.org">LLVM</a> team: significantly improved the security of iOS and macOS through compiler technologies which I designed, implemented, and led a team to deploy strategically to high-value attack targets. Founder of the <a href="https://www.llvm.org/docs/Security.html">LLVM Security Group</a>.</li>
-                <li>Compiler engineer on <a href="https://webkit.org">WebKit</a>’s JavaScriptCore: implemented <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, performance tune WebAssembly and JavaScript, <a href="https://meltdownattack.com">Spectre</a> mitigations.</li>
+                <li>C++ lead and compiler engineer on the <a href="https://llvm.org">LLVM</a> team: iOS/macOS security hardening through compiler technology, targeting high-value attack surfaces. Founder of the <a href="https://www.llvm.org/docs/Security.html">LLVM Security Group</a>.
+                <li>Compiler engineer on <a href="https://webkit.org">WebKit</a>’s JavaScriptCore: <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a> implementation, WebAssembly and JavaScript performance tuning, <a href="https://meltdownattack.com">Spectre</a> mitigations.
               </ul>
             </div>
           </div>
@@ -115,11 +127,11 @@
               <p>2012-08/2016-08</p>
             </div>
             <div class=what>
-              <p>Bring portable, fast and securely sandboxed native code to the Web.</p>
+              <p>Portable, fast, and securely sandboxed native code for the Web.</p>
               <ul>
-                <li>Instigator, co-designer, compiler engineer on <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>, awarded the <a href="https://www.sigplan.org/Awards/Software/">2021 ACM SIGPLAN Programming Languages Software Award</a>.</li>
-                <li>Technical lead of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Portable Native Client</a>, shipping LLVM to over a billion users.</li>
-                <li>Implementor of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Native Client</a>’s ARM sandbox.</li>
+                <li>Instigator, co-designer, compiler engineer on <a href="https://en.wikipedia.org/wiki/WebAssembly">WebAssembly</a>; <a href="https://www.sigplan.org/Awards/Software/">2021 ACM SIGPLAN Programming Languages Software Award</a>.
+                <li>Technical leadership of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Portable Native Client</a>, shipping LLVM to over a billion users.
+                <li>Implementor of <a href="https://en.wikipedia.org/wiki/Google_Native_Client">Native Client</a>’s ARM sandbox.
               </ul>
             </div>
           </div>
@@ -131,9 +143,9 @@
             <div class=what>
               <p>Dynamic binary translation from ARMv8 to VLIW on the <a href="https://en.wikipedia.org/wiki/Project_Denver">Denver</a> custom CPU.</p>
               <ul>
-                <li>A32, T32, and A64 decode and optimization.</li>
-                <li>Supervisor runtime.</li>
-                <li>In-memory column-oriented database and custom programming language, used to instrument and analyze hardware and software simulations.</li>
+                <li>A32, T32, and A64 decode and optimization.
+                <li>Supervisor runtime.
+                <li>In-memory column-oriented database and custom programming language, used to instrument and analyze hardware and software simulations.
               </ul>
             </div>
           </div>
@@ -145,11 +157,11 @@
             <div class=what>
               <p>Reduced <a href="https://en.wikipedia.org/wiki/CAE_Inc.">aircraft simulation</a> development effort by an order of magnitude.</p>
               <ul>
-                <li>Designed and implemented a modern C++03 runtime.</li>
-                <li>C++ reflection framework.</li>
-                <li>Binary / source compatibility validator.</li>
-                <li>Avionics systems engineering using the above-mentioned runtime.</li>
-                <li>Maintain older Fortran / C code.</li>
+                <li>Modern C++03 runtime.
+                <li>C++ reflection framework.
+                <li>Binary/source compatibility validator.
+                <li>Avionics systems engineering using the above-mentioned runtime.
+                <li>Legacy Fortran/C maintenance.
               </ul>
             </div>
           </div>
@@ -174,7 +186,7 @@
               <p>2010/2015</p>
             </div>
             <div class=what>
-              <p>Completed majority of coursework toward Master’s degree while working full-time; focused on compilers, systems, and hardware.</p>
+              <p>Majority of coursework toward Master’s degree while working full-time; compilers, systems, hardware.</p>
             </div>
           </div>
           <div class=entry>
@@ -185,9 +197,9 @@
             </div>
             <div class=what>
               <ul>
-                <li>Lead TA, 7 semesters, for Computers in Engineering—Fortran, C, and Algorithms.</li>
-                <li>Thesis: <em>Rapid Decompression Simulation in an Aircraft and Related Hardware Optimization</em>, used to automatically optimize aircraft design while meeting FAA/JAA regulations; Bombardier Aerospace.</li>
-                <li>Final project: <em>Aircraft Assembly Optimization</em>; Bombardier Aerospace.</li>
+                <li>Lead TA, 7 semesters, for Computers in Engineering—Fortran, C, and Algorithms.
+                <li>Thesis: <em>Rapid Decompression Simulation in an Aircraft and Related Hardware Optimization</em>, used to automatically optimize aircraft design while meeting FAA/JAA regulations; Bombardier Aerospace.
+                <li>Final project: <em>Aircraft Assembly Optimization</em>; Bombardier Aerospace.
               </ul>
             </div>
           </div>
@@ -203,7 +215,7 @@
             <div class=what>
               <p><a href="https://github.com/WebAssembly/spec/blob/main/papers/pldi2017.pdf">Bringing the Web up to Speed with WebAssembly</a>.</p>
               <p><em>Best paper award.</em></p>
-              <p><em>Re-published as a <a href="https://cacm.acm.org/magazines/2018/12/232881-bringing-the-web-up-to-speed-with-webassembly/fulltext">Communications of the ACM Research Highlight</a>.</em></p>
+              <p><em>Re-published as a <a href="https://cacm.acm.org/research/bringing-the-web-up-to-speed-with-webassembly/">Communications of the ACM Research Highlight</a>.</em></p>
             </div>
           </div>
           <div class="short entry">
@@ -219,7 +231,7 @@
               <p>2018</p>
             </div>
             <div class=what>
-              <p><a href="https://arxiv.org/pdf/1801.10140.pdf">EMME: a formal tool for the ECMAScript Memory Model Evaluation</a>.</p>
+              <p><a href="https://arxiv.org/pdf/1801.10140">EMME: a formal tool for the ECMAScript Memory Model Evaluation</a>.</p>
             </div>
           </div>
           <div class=entry>
@@ -227,43 +239,43 @@
             </div>
             <div class=what>
               <ul>
-                <li><a href="https://wg21.link/P3477">P3477</a> There are exactly 8 bits in a byte</li>
-                <li><a href="https://wg21.link/p2809">p2809</a> Trivial infinite loops are not Undefined Behavior</li>
-                <li><a href="https://wg21.link/p1152">p1152</a> Deprecating <code>volatile</code></li>
-                <li><a href="https://wg21.link/p0907">p0907</a> Signed integers are two’s complement</li>
-                <li><a href="https://wg21.link/p1860">p1860</a> C++ networking must be secure by default</li>
-                <li><a href="https://wg21.link/n4455">n4455</a> No sane compiler would optimize atomics</li>
-                <li><a href="https://wg21.link/p0323">p0323</a> <code>std::expected</code></li>
-                <li><a href="https://wg21.link/p2723">p2723</a> Zero-initialize objects of automatic storage duration</li>
-                <li><a href="https://wg21.link/p1225">p1225</a> Feedback on 2D graphics</li>
-                <li><a href="https://wg21.link/p1482">p1482</a> Modules feedback</li>
-                <li><a href="https://wg21.link/p1746">p1746</a> Feedback on <code>std::audio</code></li>
-                <li><a href="https://wg21.link/p0476">p0476</a> Bit-casting object representations</li>
-                <li><a href="https://wg21.link/p1382">p1382</a> <code>volatile</code> load and <code>volatile</code> store</li>
-                <li><a href="https://wg21.link/p0750">p0750</a> Consume</li>
-                <li><a href="https://wg21.link/p0690">p0690</a> Tearable atomics</li>
-                <li><a href="https://wg21.link/p0995">p0995</a> Improving <code>atomic_flag</code></li>
-                <li><a href="https://wg21.link/p1135">p1135</a> The C++20 synchronization library</li>
-                <li><a href="https://wg21.link/n4509">n4509</a> <code>constexpr atomic::is_always_lock_free</code></li>
-                <li><a href="https://wg21.link/p0502">p0502</a> Throwing out of a parallel algorithm terminates</li>
-                <li><a href="https://wg21.link/p0154">p0154</a> Hardware constructive/destructive interference size</li>
-                <li><a href="https://wg21.link/p1119">p1119</a> ABI for interference size</li>
-                <li><a href="https://wg21.link/p0528">p0528</a> Padding bits, atomic compare-and-exchange</li>
-                <li><a href="https://wg21.link/p1205">p1205</a> Teleportation via <code>co_await</code></li>
-                <li><a href="https://wg21.link/p0193">p0193</a> Where is vectorization in C++‽</li>
-                <li><a href="https://wg21.link/p0394r4">p0394</a> Hotel Parallelifornia</li>
-                <li><a href="https://wg21.link/p0020">p0020</a> Floating point atomic</li>
-                <li><a href="https://wg21.link/p0153">p0153</a> Atomic object fence</li>
-                <li><a href="https://wg21.link/p0097">p0097</a> Use cases for thread-local storage</li>
-                <li><a href="https://wg21.link/p0566">p0566</a> Hazard pointer, RCU</li>
-                <li><a href="https://wg21.link/p0418">p0418</a> Fail or succeed: there is no atomic lattice</li>
-                <li><a href="https://wg21.link/p1102">p1102</a> Down with <code>()!</code></li>
-                <li><a href="https://wg21.link/p1110">p1110</a> A placeholder with no name</li>
-                <li><a href="https://wg21.link/p1153">p1153</a> Copying volatile subobjects is not trivial</li>
-                <li><a href="https://wg21.link/p1245">p1245</a> export module containing <code>[[attribute]];</code></li>
-                <li><a href="https://wg21.link/p1246">p1246</a> The <code>no_float</code> function attribute</li>
-                <li><a href="https://wg21.link/p1247">p1247</a> Disabling <code>static</code> destructors</li>
-                <li><a href="https://wg21.link/p2186">p2186</a> Removing garbage collection support</li>
+                <li><a href="https://wg21.link/P3477">P3477</a> There are exactly 8 bits in a byte
+                <li><a href="https://wg21.link/P2809">P2809</a> Trivial infinite loops are not Undefined Behavior
+                <li><a href="https://wg21.link/P1152">P1152</a> Deprecating <code>volatile</code>
+                <li><a href="https://wg21.link/P0907">P0907</a> Signed integers are two’s complement
+                <li><a href="https://wg21.link/P1860">P1860</a> C++ networking must be secure by default
+                <li><a href="https://wg21.link/N4455">N4455</a> No sane compiler would optimize atomics
+                <li><a href="https://wg21.link/P0323">P0323</a> <code>std::expected</code>
+                <li><a href="https://wg21.link/P2723">P2723</a> Zero-initialize objects of automatic storage duration
+                <li><a href="https://wg21.link/P1225">P1225</a> Feedback on 2D graphics
+                <li><a href="https://wg21.link/P1482">P1482</a> Modules feedback
+                <li><a href="https://wg21.link/P1746">P1746</a> Feedback on <code>std::audio</code>
+                <li><a href="https://wg21.link/P0476">P0476</a> Bit-casting object representations
+                <li><a href="https://wg21.link/P1382">P1382</a> <code>volatile</code> load and <code>volatile</code> store
+                <li><a href="https://wg21.link/P0750">P0750</a> Consume
+                <li><a href="https://wg21.link/P0690">P0690</a> Tearable atomics
+                <li><a href="https://wg21.link/P0995">P0995</a> Improving <code>atomic_flag</code>
+                <li><a href="https://wg21.link/P1135">P1135</a> The C++20 synchronization library
+                <li><a href="https://wg21.link/N4509">N4509</a> <code>constexpr atomic::is_always_lock_free</code>
+                <li><a href="https://wg21.link/P0502">P0502</a> Throwing out of a parallel algorithm terminates
+                <li><a href="https://wg21.link/P0154">P0154</a> Hardware constructive/destructive interference size
+                <li><a href="https://wg21.link/P1119">P1119</a> ABI for interference size
+                <li><a href="https://wg21.link/P0528">P0528</a> Padding bits, atomic compare-and-exchange
+                <li><a href="https://wg21.link/P1205">P1205</a> Teleportation via <code>co_await</code>
+                <li><a href="https://wg21.link/P0193">P0193</a> Where is vectorization in C++‽
+                <li><a href="https://wg21.link/P0394r4">P0394</a> Hotel Parallelifornia
+                <li><a href="https://wg21.link/P0020">P0020</a> Floating point atomic
+                <li><a href="https://wg21.link/P0153">P0153</a> Atomic object fence
+                <li><a href="https://wg21.link/P0097">P0097</a> Use cases for thread-local storage
+                <li><a href="https://wg21.link/P0566">P0566</a> Hazard pointer, RCU
+                <li><a href="https://wg21.link/P0418">P0418</a> Fail or succeed: there is no atomic lattice
+                <li><a href="https://wg21.link/P1102">P1102</a> Down with <code>()!</code>
+                <li><a href="https://wg21.link/P1110">P1110</a> A placeholder with no name
+                <li><a href="https://wg21.link/P1153">P1153</a> Copying volatile subobjects is not trivial
+                <li><a href="https://wg21.link/P1245">P1245</a> export module containing <code>[[attribute]];</code>
+                <li><a href="https://wg21.link/P1246">P1246</a> The <code>no_float</code> function attribute
+                <li><a href="https://wg21.link/P1247">P1247</a> Disabling <code>static</code> destructors
+                <li><a href="https://wg21.link/P2186">P2186</a> Removing garbage collection support
               </ul>
             </div>
           </div>
@@ -272,7 +284,7 @@
               <p>2025</p>
             </div>
             <div class=what>
-              <p><a href="https://www.youtube.com/watch?v=lgl0WEh5saw&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Much ado about noping (what does a computer do when it has nothing to do?)</a>.</p>
+              <p><a href="https://youtu.be/lgl0WEh5saw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Much ado about noping (what does a computer do when it has nothing to do?)</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -280,8 +292,8 @@
               <p>2023</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=dFIqNZ8VbRY&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC"><code>*(char*)0 = 0;</code></a>.</p>
-              <p><em>324k views! 3<sup>rd</sup> most viewed C++ conference talk ever!</em></p>
+              <p><a href="https://youtu.be/dFIqNZ8VbRY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC"><code>*(char*)0 = 0;</code></a>.</p>
+              <p><em>326k views! 3<sup>rd</sup> most viewed C++ conference talk ever!</em></p>
             </div>
           </div>
           <div class="short entry">
@@ -289,7 +301,7 @@
               <p>2024</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=n7Tl1qJxTew&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">The bytes before the types: unveiling uninitialized uses</a>.</p>
+              <p><a href="https://youtu.be/n7Tl1qJxTew?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">The bytes before the types: unveiling uninitialized uses</a>.</p>
               <p><em>Conference keynote.</em></p>
             </div>
           </div>
@@ -298,7 +310,7 @@
               <p>2024</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=N8ZiUyQ3phw&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">From software craft to engineering</a>.</p>
+              <p><a href="https://youtu.be/N8ZiUyQ3phw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">From software craft to engineering</a>.</p>
               <p><em>Conference keynote.</em></p>
             </div>
           </div>
@@ -307,7 +319,7 @@
               <p>2023</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=Gh79wcGJdTg&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Safety と Security: The Future of C++</a>.</p>
+              <p><a href="https://youtu.be/Gh79wcGJdTg?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Safety と Security: The Future of C++</a>.</p>
               <p><em>Conference keynote.</em></p>
             </div>
           </div>
@@ -324,7 +336,7 @@
               <p>2019</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=I-XUHPimq3o&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Making undefined behavior hurt less</a>.</p>
+              <p><a href="https://youtu.be/I-XUHPimq3o?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Making undefined behavior hurt less</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -332,7 +344,7 @@
               <p>2018</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=LJ4au7WEIBg&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Hardware interference size: new in C++17, add it to libc++</a>.</p>
+              <p><a href="https://youtu.be/LJ4au7WEIBg?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Hardware interference size: new in C++17, add it to libc++</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -348,7 +360,7 @@
               <p>2015</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=5W7NkofUtAw&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">WebAssembly: Here Be Dragons</a>.</p>
+              <p><a href="https://youtu.be/5W7NkofUtAw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">WebAssembly: Here Be Dragons</a>.</p>
               <p><em>Conference keynote.</em></p>
             </div>
           </div>
@@ -357,7 +369,7 @@
               <p>2015</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=H-R-yW1-fbQ&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">C++ on the web: ponies for developers without pwn’ing users</a>.</p>
+              <p><a href="https://youtu.be/H-R-yW1-fbQ?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">C++ on the web: ponies for developers without pwn’ing users</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -365,7 +377,7 @@
               <p>2014</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=iYBSgdvv0BY&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Portable Native Client. Fast, Secure, Simple: Pick Three</a>.</p>
+              <p><a href="https://youtu.be/iYBSgdvv0BY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Portable Native Client. Fast, Secure, Simple: Pick Three</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -373,7 +385,7 @@
               <p>2023</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=e-Gl_x1XDiY&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Your Favorite Undefined Behavior in C++</a>.</p>
+              <p><a href="https://youtu.be/e-Gl_x1XDiY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Your Favorite Undefined Behavior in C++</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -381,7 +393,7 @@
               <p>2020</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=tWvaSkgVPpA&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Just-in-Time compilation</a>.</p>
+              <p><a href="https://youtu.be/tWvaSkgVPpA?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Just-in-Time compilation</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -389,7 +401,7 @@
               <p>2019</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=KJW_DLaVXIY&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Deprecating volatile</a>.</p>
+              <p><a href="https://youtu.be/KJW_DLaVXIY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Deprecating volatile</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -397,7 +409,7 @@
               <p>2018</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=JhUxIVf1qok&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Signed Integers are Two’s Complement</a>.</p>
+              <p><a href="https://youtu.be/JhUxIVf1qok?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Signed Integers are Two’s Complement</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -405,7 +417,7 @@
               <p>2016</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=IB57wIf9W1k&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">No sane compiler would optimize atomics</a>.</p>
+              <p><a href="https://youtu.be/IB57wIf9W1k?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">No sane compiler would optimize atomics</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -429,7 +441,7 @@
               <p>2023</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=Us_GcPkxFr8&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Future Mobility: The Relation Between Humans and Services</a>.</p>
+              <p><a href="https://youtu.be/Us_GcPkxFr8?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Future Mobility: The Relation Between Humans and Services</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -437,7 +449,7 @@
               <p>2021</p>
             </div>
             <div class=what>
-              <p><a href="https://www.sae.org/servlets/techSession?EVT_NAME=LS600&GROUP_CD=PANEL&SCHED_NUM=322889&tab=sessionDetails&REQUEST_TYPE=SESSION_DETAILS">Leadership Summit: Evolution of the Vehicle Architecture</a>.</p>
+              <p><a href="https://www.sae.org/blog/wcx-vehicle-architecture">Leadership Summit: Evolution of the Vehicle Architecture</a>.</p>
             </div>
           </div>
           <div class="short entry">
@@ -445,7 +457,7 @@
               <p>2024</p>
             </div>
             <div class=what>
-              <p><a href="https://youtu.be/watch?v=FGEQe7DNXMI&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Hardware and software: separation, or deeper integration?</a>.</p>
+              <p><a href="https://youtu.be/FGEQe7DNXMI?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Hardware and software: separation, or deeper integration?</a>.</p>
             </div>
           </div>
           <div class=entry>
@@ -453,10 +465,10 @@
             </div>
             <div class=what>
               <ol start="0">
-                <li><a href="https://youtu.be/FU5Tl_Zdtmw&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">First meetup</a>
-                <li><a href="https://youtu.be/mrQKfl893e8&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">C++ and security</a>
-                <li><a href="https://youtu.be/rkDTgkN7FIY&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Integrating security into your build pipeline</a>
-                <li><a href="https://youtu.be/watch?v=vRda0mGYg_A&list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Reflection in C++26: the renaissance of C++</a>
+                <li><a href="https://youtu.be/FU5Tl_Zdtmw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">First meetup</a>
+                <li><a href="https://youtu.be/mrQKfl893e8?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">C++ and security</a>
+                <li><a href="https://youtu.be/rkDTgkN7FIY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Integrating security into your build pipeline</a>
+                <li><a href="https://youtu.be/vRda0mGYg_A?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC">Reflection in C++26: the renaissance of C++</a>
               </ol>
             </div>
           </div>
@@ -604,7 +616,7 @@
         </div>
       </article>
     </main>
-    <footer role="contentinfo">
+    <footer>
       <p>JF Bastien · build &amp; scale platforms · <a href="mailto:me@jfbastien.com" rel="me">me@jfbastien.com</a></p>
     </footer>
   </body>
