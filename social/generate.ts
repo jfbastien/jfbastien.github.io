@@ -11,8 +11,7 @@ const root = join(import.meta.dir, "..");
 const { meta } = parseFrontMatter(readFileSync(join(root, "content.md"), "utf-8"));
 
 // Satori accepts ReactNode. We build compatible objects without depending on React types.
-// The `as never` at the call boundary is the narrowest unsafe cast — it tells TS
-// "trust me, this shape is compatible" without widening to `any`.
+type SatoriInput = Parameters<typeof satori>[0];
 interface StyleProps { readonly [k: string]: string | number | undefined }
 interface VNode { readonly type: string; readonly props: Record<string, unknown> }
 
@@ -37,7 +36,7 @@ const element = h("div", { display: "flex", width: 1200, height: 630, background
   ),
 );
 
-const svg = await satori(element as never, {
+const svg = await satori(element as unknown as SatoriInput, {
   width: 1200, height: 630,
   fonts: [
     font("AlegreyaSansSC-ExtraBold.ttf", "Alegreya Sans SC", 800),

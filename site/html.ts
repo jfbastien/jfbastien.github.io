@@ -131,31 +131,30 @@ ${entries.map(renderEntry).join("\n")}
       </article>`;
 }
 
-function renderPublications(section: Section): string {
-  const entries = parseEntries(section.raw);
-  return gridSection(section.title, entries, (entry) => {
-    if (hasOrderedList(entry)) return renderNumberedEntry(entry);
-    if (hasUnorderedList(entry) && !hasBlockquote(entry)) return renderListEntry(entry);
-    return renderShortEntry(entry);
-  });
-}
-
 // --- Section dispatch (known titles only — unknown throws) ---
 
-const sectionRenderers: Record<string, (section: Section) => string> = {
-  "Work Experience": (s) => gridSection(s.title, parseEntries(s.raw), renderFullEntry),
-  "Education": (s) => gridSection(s.title, parseEntries(s.raw), renderFullEntry),
-  "Selected Publications & Public Speaking": renderPublications,
-  "Patents": (s) => gridSection(s.title, parseEntries(s.raw), renderPatentEntry),
+type EntryRenderer = (entries: readonly Entry[], section: Section) => string;
+
+const sectionRenderers: Record<string, EntryRenderer> = {
+  "Work Experience": (entries, s) => gridSection(s.title, entries, renderFullEntry),
+  "Education": (entries, s) => gridSection(s.title, entries, renderFullEntry),
+  "Selected Publications & Public Speaking": (entries, s) => {
+    return gridSection(s.title, entries, (entry) => {
+      if (hasOrderedList(entry)) return renderNumberedEntry(entry);
+      if (hasUnorderedList(entry) && !hasBlockquote(entry)) return renderListEntry(entry);
+      return renderShortEntry(entry);
+    });
+  },
+  "Patents": (entries, s) => gridSection(s.title, entries, renderPatentEntry),
 };
 
 export function renderSection(section: Section): string {
-  const hasH3 = parseEntries(section.raw).length > 0;
-  if (!hasH3) return renderProse(section);
+  const entries = parseEntries(section.raw);
+  if (entries.length === 0) return renderProse(section);
 
   const renderer = sectionRenderers[section.title];
   if (!renderer) throw new Error(`Unknown section with entries: "${section.title}"`);
-  return renderer(section);
+  return renderer(entries, section);
 }
 
 // --- Header + Footer ---

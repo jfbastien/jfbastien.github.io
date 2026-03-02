@@ -71,7 +71,7 @@ function parseSocialLinks(raw: readonly unknown[]): readonly SocialLink[] {
       icon: requireString(o, "icon"),
       label: requireString(o, "label"),
       url: requireString(o, "url"),
-      ...(typeof o.rel === "string" ? { rel: o.rel } : {}),
+      ...("rel" in o ? { rel: requireString(o, "rel") } : {}),
     };
   });
 }
