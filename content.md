@@ -299,7 +299,7 @@ Migrating to C++14, and beyond!
 ### TLB hit 💥
 0. [`mov fp, sp`](https://tlbh.it/000_mov_fp_sp.html)
 0. [`*(char*)0 = 0`](https://tlbh.it/001_deref_char_star_0_eq_0.html)
-0. [`https://tlb.it^M`](https://tlbh.it/002_https_tlbh_dot_it_CR.html)
+0. [`https://tlbh.it^M`](https://tlbh.it/002_https_tlbh_dot_it_CR.html)
 0. [`__builtin_expect(!!(x), 0)`](https://tlbh.it/003_builtin_expect_bang_bang_x_0.html)
 0. [`t-r-a-c-/e̅‾\-o-m-p-i-l-e`](https://tlbh.it/004_trace_compilers.html)
 0. [`Parsers`](https://tlbh.it/005_parsers.html)
