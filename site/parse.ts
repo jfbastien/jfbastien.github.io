@@ -1,5 +1,3 @@
-// Front matter + structural parsing for content.md.
-
 export interface SocialLink {
   readonly icon: string;
   readonly label: string;

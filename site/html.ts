@@ -1,15 +1,8 @@
-// Section-specific HTML renderers.
-// Pure functions producing HTML that matches the hand-authored index.html.
-
 import { type Entry, type Section, type SiteMeta, inline, parseEntries } from "./parse.ts";
-
-// --- Entry type discrimination ---
 
 const hasBlockquote = (e: Entry): boolean => e.blockquoteLines.length > 0;
 const hasUnorderedList = (e: Entry): boolean => e.body.startsWith("- ") || e.body.includes("\n- ");
 const hasOrderedList = (e: Entry): boolean => e.body.startsWith("0. ") || e.body.includes("\n0. ");
-
-// --- Body rendering: each non-blank line → <p>, list items → <ul> ---
 
 function renderBodyParagraphs(body: string): string {
   if (body === "") return "";
@@ -40,8 +33,6 @@ function renderBodyParagraphs(body: string): string {
 
   return parts.join("\n              ");
 }
-
-// --- Entry renderers ---
 
 function renderFullEntry(entry: Entry): string {
   const whereParts = [
@@ -113,8 +104,6 @@ function renderPatentEntry(entry: Entry): string {
           </div>`;
 }
 
-// --- Section renderers ---
-
 function renderProse(section: Section): string {
   return `      <article>
         <h2>${Bun.escapeHTML(section.title)}</h2>
@@ -130,8 +119,6 @@ ${entries.map(renderEntry).join("\n")}
         </div>
       </article>`;
 }
-
-// --- Section dispatch (known titles only — unknown throws) ---
 
 type EntryRenderer = (entries: readonly Entry[], section: Section) => string;
 
@@ -156,8 +143,6 @@ export function renderSection(section: Section): string {
   if (!renderer) throw new Error(`Unknown section with entries: "${section.title}"`);
   return renderer(entries, section);
 }
-
-// --- Header + Footer ---
 
 export function renderHeader(meta: SiteMeta): string {
   const socialLines = meta.social.map((s) => {

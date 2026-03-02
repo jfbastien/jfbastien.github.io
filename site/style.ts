@@ -1,5 +1,3 @@
-// CSS for screen and print — extracted verbatim from the hand-authored index.html.
-
 import { fontFaceCSS } from "./fonts.ts";
 
 export function screenCSS(): string {

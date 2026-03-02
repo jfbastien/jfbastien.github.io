@@ -1,5 +1,3 @@
-// <head> generation: meta tags, OG, Twitter card, JSON-LD Person schema, icons, alternate link.
-
 import { type SiteMeta } from "./parse.ts";
 import { preloadLinks } from "./fonts.ts";
 import { screenCSS, printCSS } from "./style.ts";

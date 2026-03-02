@@ -1,12 +1,11 @@
-// Copy serving files into _site/ for deployment.
-
-import { cp, mkdir } from "fs/promises";
+import { cp, mkdir, rm } from "fs/promises";
 import { join } from "path";
 
 const root = join(import.meta.dir, "..");
 const out = join(root, "_site");
 
-await mkdir(out, { recursive: true });
+await rm(out, { recursive: true, force: true });
+await mkdir(out);
 
 const files = [
   "index.html", "index.md", "llms.txt", "og.png", "CNAME",

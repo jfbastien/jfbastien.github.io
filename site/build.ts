@@ -1,5 +1,4 @@
-// Orchestrator: reads content.md, generates index.html + index.md + llms.txt.
-
+import { chmod } from "fs/promises";
 import { join } from "path";
 import { parseFrontMatter, splitSections, type SiteMeta, type Section } from "./parse.ts";
 import { renderHead } from "./head.ts";
@@ -48,22 +47,20 @@ ${socialLinks}
 `;
 }
 
-// --- Main ---
-
 const raw = await Bun.file(join(root, "content.md")).text();
 const { meta, body } = parseFrontMatter(raw);
 const sections = splitSections(body);
 
-const html = renderPage(meta, sections);
-const md = renderMarkdown(meta, body);
-const llms = renderLlmsTxt(meta);
+const outputs: readonly [string, string][] = [
+  ["index.html", renderPage(meta, sections)],
+  ["index.md", renderMarkdown(meta, body)],
+  ["llms.txt", renderLlmsTxt(meta)],
+];
 
-await Promise.all([
-  Bun.write(join(root, "index.html"), html),
-  Bun.write(join(root, "index.md"), md),
-  Bun.write(join(root, "llms.txt"), llms),
-]);
-
-console.log(`\u2713 index.html (${html.length} bytes)`);
-console.log(`\u2713 index.md (${md.length} bytes)`);
-console.log(`\u2713 llms.txt (${llms.length} bytes)`);
+for (const [name, content] of outputs) {
+  const path = join(root, name);
+  if (await Bun.file(path).exists()) await chmod(path, 0o644);
+  await Bun.write(path, content);
+  await chmod(path, 0o444);
+  console.log(`\u2713 ${name} (${content.length} bytes)`);
+}
