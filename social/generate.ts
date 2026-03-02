@@ -1,6 +1,4 @@
-// Social preview card generator for jfbastien.com
-// 1200×630 · OG/Twitter safe dimensions
-// Run: bun run social/generate.ts
+// OG card generator — 1200x630, reads content.md for name/tagline.
 
 import satori, { type Font, type FontWeight } from "satori";
 import { Resvg } from "@resvg/resvg-js";
@@ -10,37 +8,23 @@ import { join } from "path";
 import { parseFrontMatter } from "../site/parse.ts";
 
 const root = join(import.meta.dir, "..");
+const { meta } = parseFrontMatter(readFileSync(join(root, "content.md"), "utf-8"));
 
-// Read name and tagline from content.md front matter
-const raw = readFileSync(join(root, "content.md"), "utf-8");
-const { meta } = parseFrontMatter(raw);
-
-// --- hyperscript ---
-// Satori accepts ReactNode-shaped objects. We use a minimal compatible shape
-// and pass through as `any` at the satori() call boundary since we don't
-// depend on React types.
-interface StyleProps {
-  readonly [key: string]: string | number | undefined;
-}
-
-interface VNode {
-  readonly type: string;
-  readonly props: Record<string, unknown>;
-}
+// Satori accepts ReactNode. We build compatible objects without depending on React types.
+// The `as never` at the call boundary is the narrowest unsafe cast — it tells TS
+// "trust me, this shape is compatible" without widening to `any`.
+interface StyleProps { readonly [k: string]: string | number | undefined }
+interface VNode { readonly type: string; readonly props: Record<string, unknown> }
 
 const h = (tag: string, style: StyleProps, ...kids: readonly (string | VNode)[]): VNode =>
   ({ type: tag, props: { style, children: kids.length === 1 ? kids[0] : kids } });
-
 const img = (src: string, style: StyleProps): VNode =>
   ({ type: "img", props: { src, style } });
 
-// --- assets ---
 const portrait = `data:image/png;base64,${readFileSync(join(root, "social/portrait.png"), "base64")}`;
-
 const font = (file: string, name: string, weight: FontWeight): Font =>
   ({ name, weight, style: "normal" as const, data: readFileSync(join(root, "fonts", file)) });
 
-// --- card ---
 const element = h("div", { display: "flex", width: 1200, height: 630, background: "#fff" },
   h("div", { display: "flex", width: 630, height: 630, overflow: "hidden", flexShrink: 0 },
     img(portrait, { width: 630, height: 630, objectFit: "cover" }),
@@ -53,8 +37,7 @@ const element = h("div", { display: "flex", width: 1200, height: 630, background
   ),
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- satori expects ReactNode, our VNode is compatible at runtime
-const svg = await satori(element as any, {
+const svg = await satori(element as never, {
   width: 1200, height: 630,
   fonts: [
     font("AlegreyaSansSC-ExtraBold.ttf", "Alegreya Sans SC", 800),
@@ -63,10 +46,7 @@ const svg = await satori(element as any, {
   ],
 });
 
-// --- render + optimize ---
 const out = join(root, "og.png");
 writeFileSync(out, new Resvg(svg).render().asPng());
-
 execSync(`pngquant --quality=70-90 --force --output "${out}" "${out}"`, { stdio: "pipe" });
-
-console.log(`✓ ${out} (${(readFileSync(out).length / 1024).toFixed(0)} KB)`);
+console.log(`\u2713 ${out} (${(readFileSync(out).length / 1024).toFixed(0)} KB)`);

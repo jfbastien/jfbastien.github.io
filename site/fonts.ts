@@ -1,12 +1,14 @@
-// Font manifest — single source of truth for @font-face declarations and preload hints.
+// Font manifest — single source of truth for @font-face and preload hints.
 
+type FontWeight = 100 | 300 | 400 | 800;
 type FontStyle = "normal" | "italic";
+type FontFamily = "Alegreya Sans" | "Alegreya Sans SC";
 
 interface Font {
   readonly file: string;
-  readonly family: string;
+  readonly family: FontFamily;
   readonly style: FontStyle;
-  readonly weight: number;
+  readonly weight: FontWeight;
   readonly local: readonly [string, string];
 }
 

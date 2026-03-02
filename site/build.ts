@@ -8,20 +8,15 @@ import { renderHeader, renderFooter, renderSection } from "./html.ts";
 const root = join(import.meta.dir, "..");
 
 function renderPage(meta: SiteMeta, sections: readonly Section[]): string {
-  const head = renderHead(meta);
-  const header = renderHeader(meta);
-  const main = sections.map(renderSection).join("\n");
-  const footer = renderFooter(meta);
-
   return `<!DOCTYPE html>
 <html lang="en">
-${head}
+${renderHead(meta)}
   <body>
-${header}
+${renderHeader(meta)}
     <main>
-${main}
+${sections.map(renderSection).join("\n")}
     </main>
-${footer}
+${renderFooter(meta)}
   </body>
 </html>
 `;
@@ -36,17 +31,20 @@ ${body}`;
 }
 
 function renderLlmsTxt(meta: SiteMeta): string {
+  const socialLinks = meta.social
+    .filter((s) => s.url.startsWith("http"))
+    .map((s) => `- ${s.label}: ${s.url}`)
+    .join("\n");
   return `# ${meta.name}
 
 > ${meta.description}
 
-${meta.name} — ${meta.description}
-
 ## Links
 
 - Website: ${meta.url}
+- Full content: ${meta.url}/index.md
 - Email: ${meta.email}
-${meta.social.filter((s) => s.url.startsWith("http")).map((s) => `- ${s.label}: ${s.url}`).join("\n")}
+${socialLinks}
 `;
 }
 
@@ -66,6 +64,6 @@ await Promise.all([
   Bun.write(join(root, "llms.txt"), llms),
 ]);
 
-console.log(`✓ index.html (${html.length} bytes)`);
-console.log(`✓ index.md (${md.length} bytes)`);
-console.log(`✓ llms.txt (${llms.length} bytes)`);
+console.log(`\u2713 index.html (${html.length} bytes)`);
+console.log(`\u2713 index.md (${md.length} bytes)`);
+console.log(`\u2713 llms.txt (${llms.length} bytes)`);
