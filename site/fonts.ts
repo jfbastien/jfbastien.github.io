@@ -2,7 +2,7 @@ type FontWeight = 100 | 300 | 400 | 800;
 type FontStyle = "normal" | "italic";
 type FontFamily = "Alegreya Sans" | "Alegreya Sans SC";
 
-interface Font {
+export interface Font {
   readonly file: string;
   readonly family: FontFamily;
   readonly style: FontStyle;
@@ -10,7 +10,7 @@ interface Font {
   readonly local: readonly [string, string];
 }
 
-const fonts = [
+export const fonts = [
   { file: "AlegreyaSans-Thin.woff2", family: "Alegreya Sans", style: "normal", weight: 100,
     local: ["Alegreya Sans Thin", "AlegreyaSans-Thin"] },
   { file: "AlegreyaSans-Light.woff2", family: "Alegreya Sans", style: "normal", weight: 300,
@@ -26,6 +26,40 @@ const fonts = [
   { file: "AlegreyaSansSC-ExtraBold.woff2", family: "Alegreya Sans SC", style: "normal", weight: 800,
     local: ["Alegreya Sans SC ExtraBold", "AlegreyaSansSC-ExtraBold"] },
 ] as const satisfies readonly Font[];
+
+// Single source of truth: which CSS selectors use which font.
+// subset.ts consumes this to extract per-font characters from generated HTML.
+// style.ts encodes the same mapping as CSS rules — if a selector or weight
+// changes in one place but not the other, the minMatches assertion catches it.
+export interface FontRule {
+  readonly selector: string;
+  readonly family: FontFamily;
+  readonly weight: FontWeight;
+  readonly style: FontStyle;
+  readonly pseudoContent?: string;
+  readonly minMatches?: number;
+}
+
+export const fontRules: readonly FontRule[] = [
+  { selector: "h1", family: "Alegreya Sans SC", weight: 800, style: "normal", minMatches: 1 },
+  { selector: ".tagline", family: "Alegreya Sans SC", weight: 300, style: "normal", minMatches: 1 },
+  { selector: "h2", family: "Alegreya Sans SC", weight: 400, style: "normal", minMatches: 1 },
+  { selector: "footer", family: "Alegreya Sans SC", weight: 300, style: "normal", pseudoContent: "❧", minMatches: 1 },
+  // CSS is `.grid .where p` but ultrahtml can't match 3-level descendant
+  // selectors. `.where p` is equivalent: all .where divs are inside .grid.
+  { selector: ".where p", family: "Alegreya Sans", weight: 100, style: "normal", minMatches: 1 },
+  { selector: "h3", family: "Alegreya Sans", weight: 400, style: "normal", minMatches: 1 },
+  { selector: "em", family: "Alegreya Sans", weight: 300, style: "italic" },
+  { selector: "i", family: "Alegreya Sans", weight: 300, style: "italic" },
+];
+
+export function resolveFont(family: FontFamily, weight: FontWeight, style: FontStyle): Font {
+  const match = fonts.find((f) => f.family === family && f.weight === weight && f.style === style);
+  if (!match) throw new Error(`No font for ${family} ${weight} ${style}`);
+  return match;
+}
+
+export const bodyFont: Font = resolveFont("Alegreya Sans", 300, "normal");
 
 export function fontFaceCSS(): string {
   return fonts.map((f) =>

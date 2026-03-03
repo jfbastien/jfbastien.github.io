@@ -8,7 +8,7 @@ export function screenCSS(): string {
       header h1 { font-family: "Alegreya Sans SC", Arial, Helvetica, sans-serif; font-weight: 800; margin-bottom: 0; display: flex; flex-direction: column; }
       header div { display: flex; flex-direction: column; margin: 1em 0 0 0; }
       header p { margin: 0; text-align: right; }
-      header p:first-child { font-family: "Alegreya Sans SC", Arial, Helvetica, sans-serif; font-weight: 300; }
+      .tagline { font-family: "Alegreya Sans SC", Arial, Helvetica, sans-serif; font-weight: 300; }
       h2 { font-family: "Alegreya Sans SC", Arial, Helvetica, sans-serif; font-weight: 400; }
       main { max-width: 50em; margin: 0 auto; padding: 0 1em; }
       article { padding: 1em 0; }
