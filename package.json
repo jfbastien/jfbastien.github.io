@@ -15,7 +15,6 @@
     "puppeteer-core": "^24.37.5",
     "satori": "^0.12.0",
     "subset-font": "^2.4.0",
-    "typescript": "^5.7.0",
-    "ultrahtml": "^1.6.0"
+    "typescript": "^5.7.0"
   }
 }

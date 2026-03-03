@@ -27,39 +27,51 @@ export const fonts = [
     local: ["Alegreya Sans SC ExtraBold", "AlegreyaSansSC-ExtraBold"] },
 ] as const satisfies readonly Font[];
 
-// Single source of truth: which CSS selectors use which font.
-// subset.ts consumes this to extract per-font characters from generated HTML.
-// style.ts encodes the same mapping as CSS rules — if a selector or weight
-// changes in one place but not the other, the minMatches assertion catches it.
-export interface FontRule {
+// Which CSS selectors override the body font. fontRulesCSS() generates
+// CSS from this table; Chrome-based subsetting discovers actual usage
+// independently via getComputedStyle at render time.
+interface FontRule {
   readonly selector: string;
   readonly family: FontFamily;
   readonly weight: FontWeight;
-  readonly style: FontStyle;
   readonly pseudoContent?: string;
-  readonly minMatches?: number;
 }
 
-export const fontRules: readonly FontRule[] = [
-  { selector: "h1", family: "Alegreya Sans SC", weight: 800, style: "normal", minMatches: 1 },
-  { selector: ".tagline", family: "Alegreya Sans SC", weight: 300, style: "normal", minMatches: 1 },
-  { selector: "h2", family: "Alegreya Sans SC", weight: 400, style: "normal", minMatches: 1 },
-  { selector: "footer", family: "Alegreya Sans SC", weight: 300, style: "normal", pseudoContent: "❧", minMatches: 1 },
-  // CSS is `.grid .where p` but ultrahtml can't match 3-level descendant
-  // selectors. `.where p` is equivalent: all .where divs are inside .grid.
-  { selector: ".where p", family: "Alegreya Sans", weight: 100, style: "normal", minMatches: 1 },
-  { selector: "h3", family: "Alegreya Sans", weight: 400, style: "normal", minMatches: 1 },
-  { selector: "em", family: "Alegreya Sans", weight: 300, style: "italic" },
-  { selector: "i", family: "Alegreya Sans", weight: 300, style: "italic" },
+const fontRules: readonly FontRule[] = [
+  { selector: "h1", family: "Alegreya Sans SC", weight: 800 },
+  { selector: ".tagline", family: "Alegreya Sans SC", weight: 300 },
+  { selector: "h2", family: "Alegreya Sans SC", weight: 400 },
+  { selector: "footer", family: "Alegreya Sans SC", weight: 300, pseudoContent: "❧" },
+  { selector: ".where p", family: "Alegreya Sans", weight: 100 },
+  { selector: "h3", family: "Alegreya Sans", weight: 400 },
 ];
 
-export function resolveFont(family: FontFamily, weight: FontWeight, style: FontStyle): Font {
-  const match = fonts.find((f) => f.family === family && f.weight === weight && f.style === style);
-  if (!match) throw new Error(`No font for ${family} ${weight} ${style}`);
-  return match;
-}
+const bodyFont: Font = (() => {
+  const f = fonts.find((f) => f.family === "Alegreya Sans" && f.weight === 300 && f.style === "normal");
+  if (!f) throw new Error("Body font Alegreya Sans 300 normal missing from fonts[]");
+  return f;
+})();
 
-export const bodyFont: Font = resolveFont("Alegreya Sans", 300, "normal");
+export function fontRulesCSS(): string {
+  const rules: string[] = [];
+  rules.push(`body { font-family: "${bodyFont.family}"; font-weight: ${bodyFont.weight}; }`);
+  for (const r of fontRules) {
+    const props: string[] = [];
+    if (r.family !== bodyFont.family) {
+      props.push(`font-family: "${r.family}"`);
+    }
+    if (r.weight !== bodyFont.weight) {
+      props.push(`font-weight: ${r.weight}`);
+    }
+    if (r.pseudoContent) {
+      rules.push(`${r.selector}::before { content: "${r.pseudoContent}"; }`);
+    }
+    if (props.length > 0) {
+      rules.push(`${r.selector} { ${props.join("; ")}; }`);
+    }
+  }
+  return rules.join("\n      ");
+}
 
 export function fontFaceCSS(): string {
   return fonts.map((f) =>

@@ -1,75 +1,93 @@
-import { parse, type Node } from "ultrahtml";
-import { querySelectorAll } from "ultrahtml/selector";
 import subsetFont from "subset-font";
 import { mkdir, cp } from "fs/promises";
 import { join } from "path";
-import { type Font, fonts, fontRules, bodyFont, resolveFont } from "./fonts.ts";
+import { type Font, fonts } from "./fonts.ts";
+import { launchChrome, openPage } from "./chrome.ts";
 
-const TEXT_NODE = 2; // ultrahtml Node.type: 1=element, 2=text, 3=comment
+// Launch Chrome, render the page with full fonts, and use getComputedStyle
+// to determine which characters each declared font covers. Handles the full
+// CSS cascade including user-agent styles (e.g. <code> → monospace).
+export async function extractPerFontChars(htmlPath: string): Promise<ReadonlyMap<Font, ReadonlySet<number>>> {
+  const browser = await launchChrome();
 
-function textContent(node: Node): string {
-  if (node.type === TEXT_NODE) return (node as unknown as { value: string }).value;
-  if ("children" in node) return ((node as unknown as { children: Node[] }).children).map(textContent).join("");
-  return "";
-}
+  try {
+    const page = await openPage(browser, htmlPath);
 
-export function extractPerFontChars(html: string): ReadonlyMap<Font, ReadonlySet<number>> {
-  const ast = parse(html);
-  const charSets = new Map<string, Set<number>>();
+    const rawChars: Record<string, string> = await page.evaluate(() => {
+      const result: Record<string, string> = {};
 
-  for (const font of fonts) {
-    charSets.set(font.file, new Set());
-  }
+      // Build a "family|weight|style" key from computed style. The pipe
+      // delimiter is safe: CSS font-family names cannot contain "|".
+      function fontKey(style: CSSStyleDeclaration): string {
+        const family = style.fontFamily.split(",")[0].replace(/['"]/g, "").trim();
+        return `${family}|${style.fontWeight}|${style.fontStyle}`;
+      }
 
-  for (const rule of fontRules) {
-    const font = resolveFont(rule.family, rule.weight, rule.style);
-    const matched = querySelectorAll(ast, rule.selector);
+      function accum(key: string, text: string): void {
+        if (!result[key]) result[key] = "";
+        result[key] += text;
+      }
 
-    if (rule.minMatches !== undefined && matched.length < rule.minMatches) {
-      throw new Error(
-        `"${rule.selector}" matched ${matched.length} elements (expected ≥${rule.minMatches}). ` +
-        `CSS/HTML drift between style.ts and fonts.ts fontRules?`,
-      );
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const text = walker.currentNode.textContent;
+        if (!text || !text.trim()) continue;
+        const el = walker.currentNode.parentElement;
+        if (!el) continue;
+        accum(fontKey(getComputedStyle(el)), text);
+      }
+
+      for (const el of document.body.querySelectorAll("*")) {
+        for (const pseudo of ["::before", "::after"] as const) {
+          const style = getComputedStyle(el, pseudo);
+          const content = style.content;
+          if (content && content !== "none" && content !== "normal") {
+            accum(fontKey(style), content.replace(/^["']|["']$/g, ""));
+          }
+        }
+      }
+
+      return result;
+    });
+
+    const charSets = new Map<string, Set<number>>();
+    for (const font of fonts) {
+      charSets.set(font.file, new Set());
     }
 
-    const set = charSets.get(font.file)!;
-    for (const node of matched) {
-      for (const ch of textContent(node)) {
+    for (const [key, text] of Object.entries(rawChars)) {
+      const [family, weight, style] = key.split("|");
+      const w = parseInt(weight, 10);
+      const font = fonts.find((f) => f.family === family && f.weight === w && f.style === style);
+      if (!font) {
+        // Our font family at an unexpected weight/style = bug (synthetic bold, missing @font-face, etc.)
+        if (fonts.some((f) => f.family === family)) {
+          throw new Error(`No font file for "${family}" weight ${weight} style ${style}. Unexpected CSS cascade?`);
+        }
+        const unique = [...new Set(text)].sort().join("");
+        console.log(`  skip "${family}" ${weight} ${style}: ${unique}`);
+        continue;
+      }
+      const set = charSets.get(font.file)!;
+      for (const ch of text) {
         set.add(ch.codePointAt(0)!);
       }
     }
 
-    if (rule.pseudoContent) {
-      for (const ch of rule.pseudoContent) {
-        set.add(ch.codePointAt(0)!);
+    for (const font of fonts) {
+      if (charSets.get(font.file)!.size === 0) {
+        throw new Error(`${font.file}: 0 characters rendered. CSS rule missing or content removed?`);
       }
     }
-  }
 
-  // Body font (Light 300) gets every rendered character — scope to <body> to
-  // exclude <head> content (CSS text, JSON-LD, meta attributes).
-  const bodyEls = querySelectorAll(ast, "body");
-  const bodyText = bodyEls.length > 0 ? textContent(bodyEls[0]) : textContent(ast);
-  const bodySet = charSets.get(bodyFont.file)!;
-  for (const ch of bodyText) {
-    bodySet.add(ch.codePointAt(0)!);
-  }
-
-  // Fail-fast: every font must have characters. A font with 0 chars means a
-  // selector stopped matching or italic text was removed — either way, the
-  // font shouldn't be shipped (and preloaded) empty.
-  for (const font of fonts) {
-    const set = charSets.get(font.file)!;
-    if (set.size === 0) {
-      throw new Error(`${font.file}: 0 characters extracted. Broken selector or unused font?`);
+    const result = new Map<Font, ReadonlySet<number>>();
+    for (const font of fonts) {
+      result.set(font, charSets.get(font.file)!);
     }
+    return result;
+  } finally {
+    await browser.close();
   }
-
-  const result = new Map<Font, ReadonlySet<number>>();
-  for (const font of fonts) {
-    result.set(font, charSets.get(font.file)!);
-  }
-  return result;
 }
 
 export interface SubsetResult {

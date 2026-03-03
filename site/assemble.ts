@@ -15,8 +15,7 @@ const files = [
   "favicon-64.png", "favicon-128.png", "favicon-256.png",
 ] as const;
 
-const html = await Bun.file(join(root, "index.html")).text();
-const charMap = extractPerFontChars(html);
+const charMap = await extractPerFontChars(join(root, "index.html"));
 
 const [, results] = await Promise.all([
   Promise.all(files.map((f) => cp(join(root, f), join(tmp, f)))),
