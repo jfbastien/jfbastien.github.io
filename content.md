@@ -9,6 +9,10 @@ social:
     label: me@jfbastien.com
     url: mailto:me@jfbastien.com
     rel: me
+  - icon: "\U0001F310"
+    label: jfbastien.com
+    url: https://jfbastien.com
+    printOnly: true
   - icon: "\U0001D54F"
     label: "@jfbastien"
     url: https://x.com/jfbastien
