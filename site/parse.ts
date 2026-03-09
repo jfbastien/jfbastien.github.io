@@ -3,6 +3,7 @@ export interface SocialLink {
   readonly label: string;
   readonly url: string;
   readonly rel?: string;
+  readonly printOnly?: boolean;
 }
 
 export interface OgMeta {
@@ -70,6 +71,7 @@ function parseSocialLinks(raw: readonly unknown[]): readonly SocialLink[] {
       label: requireString(o, "label"),
       url: requireString(o, "url"),
       ...("rel" in o ? { rel: requireString(o, "rel") } : {}),
+      ...("printOnly" in o && o.printOnly === true ? { printOnly: true } : {}),
     };
   });
 }

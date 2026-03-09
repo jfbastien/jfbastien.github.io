@@ -147,7 +147,8 @@ export function renderSection(section: Section): string {
 export function renderHeader(meta: SiteMeta): string {
   const socialLines = meta.social.map((s) => {
     const rel = s.rel ? ` rel="${s.rel}"` : "";
-    return `        <p> ${s.icon} <a href="${s.url}"${rel}>${Bun.escapeHTML(s.label)}</a></p>`;
+    const cls = s.printOnly ? ` class="print-only"` : "";
+    return `        <p${cls}> ${s.icon} <a href="${s.url}"${rel}>${Bun.escapeHTML(s.label)}</a></p>`;
   });
   return `    <header>
       <h1>${Bun.escapeHTML(meta.name)}</h1>

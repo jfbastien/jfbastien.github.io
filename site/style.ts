@@ -24,7 +24,8 @@ export function screenCSS(): string {
       .grid .entry.patent .what p { margin: 0; }
       .grid .entry.patent .patent-filings { font-size: 0.95em; line-height: 1.25; margin-top: 0.15em; padding-left: 1.1em; text-indent: -1.1em; }
       footer { text-align: center; margin-top: 2em; }
-      footer::before { display: block; margin-bottom: 0.5em; }`;
+      footer::before { display: block; margin-bottom: 0.5em; }
+      .print-only { display: none; }`;
 }
 
 export function printCSS(): string {
@@ -35,5 +36,6 @@ export function printCSS(): string {
       h1, h2, h3 { break-after: avoid; }
       p, li { orphans: 3; widows: 3; }
       .grid .entry, .grid .short.entry { break-inside: avoid; }
-      header div p:nth-child(n+3) { display: none; }`;
+      header div p:nth-child(n+3):not(.print-only) { display: none; }
+      .print-only { display: initial; }`;
 }
