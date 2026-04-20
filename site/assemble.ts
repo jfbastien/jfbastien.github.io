@@ -10,7 +10,7 @@ await rm(tmp, { recursive: true, force: true });
 await mkdir(tmp);
 
 const files = [
-  "index.html", "index.md", "llms.txt", "og.png", "CNAME",
+  "index.html", "index.md", "llms.txt", "robots.txt", "sitemap.xml", "og.png", "CNAME",
   "favicon.ico", "favicon-16.png", "favicon-32.png",
   "favicon-64.png", "favicon-128.png", "favicon-256.png",
 ] as const;
