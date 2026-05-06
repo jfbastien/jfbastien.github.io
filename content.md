@@ -123,6 +123,11 @@ Majority of coursework toward Master’s degree while working full-time; compile
 
 ## Selected Publications & Public Speaking
 
+### arXiv
+> 2026
+
+[VLMaxxing through FrameMogging](https://arxiv.org/abs/2605.03351): Training-Free Anti-Recomputation for Video Vision-Language Models ([VLMaxxi.ng](https://vlmaxxi.ng)).
+
 ### PLDI
 > 2017
 
