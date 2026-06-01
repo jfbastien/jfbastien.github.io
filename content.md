@@ -316,6 +316,9 @@ Migrating to C++14, and beyond!
 
 ## Patents
 
+### [US20260133957A1](https://patents.google.com/patent/US20260133957A1/en)
+> Atomicity in OTA updates for vehicle systems
+
 ### [US20260010358A1](https://patents.google.com/patent/US20260010358A1/en)
 > System, method, and computer program for managing vehicle software updates
 > [JP2026008698A](https://patents.google.com/patent/JP2026008698A/en), [CN121277530A](https://patents.google.com/patent/CN121277530A/en)
