@@ -193,7 +193,7 @@ Majority of coursework toward Master’s degree while working full-time; compile
 > 2023
 
 [`*(char*)0 = 0;`](https://youtu.be/dFIqNZ8VbRY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-*326k views! 3<sup>rd</sup> most viewed C++ conference talk ever!*
+*328k views! 3<sup>rd</sup> most viewed C++ conference talk ever!*
 
 ### C++Online
 > 2024
