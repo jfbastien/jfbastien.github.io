@@ -1,8 +1,12 @@
 import subsetFont from "subset-font";
 import { mkdir, cp } from "fs/promises";
 import { join } from "path";
-import { type Font, fonts } from "./fonts.ts";
+import { type Font, fontForStyle, fonts } from "./fonts.ts";
 import { launchChrome, openPage } from "./chrome.ts";
+
+type SubsetOptions = NonNullable<Parameters<typeof subsetFont>[2]> & {
+  readonly variationAxes?: Font["variationAxes"];
+};
 
 // Launch Chrome, render the page with full fonts, and use getComputedStyle
 // to determine which characters each declared font covers. Handles the full
@@ -58,7 +62,7 @@ export async function extractPerFontChars(htmlPath: string): Promise<ReadonlyMap
     for (const [key, text] of Object.entries(rawChars)) {
       const [family, weight, style] = key.split("|");
       const w = parseInt(weight, 10);
-      const font = fonts.find((f) => f.family === family && f.weight === w && f.style === style);
+      const font = fontForStyle(family, w, style);
       if (!font) {
         // Our font family at an unexpected weight/style = bug (synthetic bold, missing @font-face, etc.)
         if (fonts.some((f) => f.family === family)) {
@@ -106,11 +110,15 @@ export async function subsetFonts(
 
   const results: SubsetResult[] = [];
   for (const [font, codepoints] of charMap) {
-    const srcBuf = await Bun.file(join(fontsDir, font.file)).arrayBuffer();
+    const srcBuf = await Bun.file(join(fontsDir, font.sourceFile)).arrayBuffer();
     const text = [...codepoints].map((cp) => String.fromCodePoint(cp)).join("");
-    const subset = await subsetFont(Buffer.from(srcBuf), text, {
+    const options: SubsetOptions = {
       targetFormat: "woff2",
-    });
+      variationAxes: font.variationAxes,
+    };
+    // subset-font documents and implements variationAxes, but its published
+    // type surface lags that runtime option.
+    const subset = await subsetFont(Buffer.from(srcBuf), text, options);
 
     if (subset.length === 0) {
       throw new Error(`${font.file}: subset produced empty output`);
