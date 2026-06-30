@@ -1,3 +1,5 @@
+import { attrs } from "./attrs.ts";
+
 type FontWeight = 100 | 300 | 400 | 800;
 type FontStyle = "normal" | "italic";
 type FontFamily = "Alegreya Sans" | "Alegreya Sans SC";
@@ -81,6 +83,6 @@ export function fontFaceCSS(): string {
 
 export function preloadLinks(): string {
   return fonts.map((f) =>
-    `<link rel="preload" as="font" type="font/woff2" href="./fonts/${f.file}" crossorigin>`
+    `<link${attrs([["rel", "preload"], ["as", "font"], ["type", "font/woff2"], ["href", `./fonts/${f.file}`], ["crossorigin", true]])}>`
   ).join("\n    ");
 }

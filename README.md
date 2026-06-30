@@ -2,4 +2,4 @@
 
 🚧 under construction 🚧
 
-[jfbastien.com](jfbastien.com) is served from here.
+[jfbastien.com](https://jfbastien.com) is served from here.

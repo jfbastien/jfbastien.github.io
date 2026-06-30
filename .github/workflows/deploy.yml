@@ -16,14 +16,50 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install
-      - run: sudo apt-get install -y pngquant
+      - id: setup-bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - name: Verify Bun toolchain
+        env:
+          EXPECTED_BUN_VERSION: 1.3.10
+          EXPECTED_BUN_URL: https://github.com/oven-sh/bun/releases/download/bun-v1.3.10/bun-linux-x64.zip
+          EXPECTED_BUN_SHA256: 3632a4fae998deaad2358e22ae74d1fd6c673b9be760a470e3a0044267cb4438
+          BUN_DOWNLOAD_URL: ${{ steps.setup-bun.outputs.bun-download-url }}
+          BUN_PATH: ${{ steps.setup-bun.outputs.bun-path }}
+        run: |
+          test "$BUN_DOWNLOAD_URL" = "$EXPECTED_BUN_URL"
+          test "$(bun --version)" = "$EXPECTED_BUN_VERSION"
+          actual="$(sha256sum "$BUN_PATH")"
+          actual="${actual%% *}"
+          test "$actual" = "$EXPECTED_BUN_SHA256"
+      - run: bun install --frozen-lockfile --ignore-scripts
+      - run: bun run typecheck
+      - run: bun test
+      - run: bun audit
+      - name: Install pinned pngquant
+        env:
+          PNGQUANT_VERSION: 2.18.0-1build2
+          PNGQUANT_DEB: pngquant_2.18.0-1build2_amd64.deb
+          PNGQUANT_DEB_SHA256: 924fe4b18c86e9314b5667ea4945916f320e8c785f14a5e99edd2d370441164c
+          PNGQUANT_BIN_SHA256: cc9b1d68e0cd5d371e58ce3ba891ddca179a02b6c4c02dee7dbf4e99a0f473c5
+        run: |
+          cd "$RUNNER_TEMP"
+          sudo apt-get update
+          apt-get download "pngquant=$PNGQUANT_VERSION"
+          actual_deb="$(sha256sum "$PNGQUANT_DEB")"
+          actual_deb="${actual_deb%% *}"
+          test "$actual_deb" = "$PNGQUANT_DEB_SHA256"
+          sudo apt-get install -y --no-install-recommends "./$PNGQUANT_DEB"
+          test "$(dpkg-query -W -f='${Version}' pngquant)" = "$PNGQUANT_VERSION"
+          actual_bin="$(sha256sum "$(command -v pngquant)")"
+          actual_bin="${actual_bin%% *}"
+          test "$actual_bin" = "$PNGQUANT_BIN_SHA256"
       - run: bun run build
       - uses: actions/upload-pages-artifact@v4
         with:
@@ -35,7 +71,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

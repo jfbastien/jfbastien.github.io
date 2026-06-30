@@ -1,6 +1,6 @@
 import satori, { type Font, type FontWeight } from "satori";
 import { Resvg } from "@resvg/resvg-js";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { chmodSync, existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { parseFrontMatter } from "../site/parse.ts";
@@ -46,6 +46,6 @@ const svg = await satori(element as unknown as SatoriInput, {
 const out = join(root, "og.png");
 if (existsSync(out)) chmodSync(out, 0o644);
 writeFileSync(out, new Resvg(svg).render().asPng());
-execSync(`pngquant --quality=70-90 --force --output "${out}" "${out}"`, { stdio: "pipe" });
+execFileSync("pngquant", ["--quality=70-90", "--force", "--output", out, out], { stdio: "pipe" });
 chmodSync(out, 0o444);
 console.log(`\u2713 ${out} (${(readFileSync(out).length / 1024).toFixed(0)} KB)`);

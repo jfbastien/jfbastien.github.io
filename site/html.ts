@@ -1,4 +1,5 @@
 import { type Entry, type Section, type SiteMeta, inline, parseEntries } from "./parse.ts";
+import { attrs } from "./attrs.ts";
 
 const hasBlockquote = (e: Entry): boolean => e.blockquoteLines.length > 0;
 const hasUnorderedList = (e: Entry): boolean => e.body.startsWith("- ") || e.body.includes("\n- ");
@@ -39,21 +40,21 @@ function renderFullEntry(entry: Entry): string {
     `<h3>${inline(entry.heading)}</h3>`,
     ...entry.blockquoteLines.map((line) => `<p>${inline(line)}</p>`),
   ];
-  return `          <div class="entry">
-            <div class="where">${whereParts.join("\n              ")}
+  return `          <div${attrs([["class", "entry"]])}>
+            <div${attrs([["class", "where"]])}>${whereParts.join("\n              ")}
             </div>
-            <div class="what">
+            <div${attrs([["class", "what"]])}>
               ${renderBodyParagraphs(entry.body)}
             </div>
           </div>`;
 }
 
 function renderShortEntry(entry: Entry): string {
-  return `          <div class="short entry">
-            <div class="where"><h3>${inline(entry.heading)}</h3>
+  return `          <div${attrs([["class", "short entry"]])}>
+            <div${attrs([["class", "where"]])}><h3>${inline(entry.heading)}</h3>
               <p>${Bun.escapeHTML(entry.blockquoteLines[0])}</p>
             </div>
-            <div class="what">
+            <div${attrs([["class", "what"]])}>
               ${renderBodyParagraphs(entry.body)}
             </div>
           </div>`;
@@ -64,10 +65,10 @@ function renderListEntry(entry: Entry): string {
     .filter((l) => l.startsWith("- "))
     .map((l) => `<li>${inline(l.slice(2))}`)
     .join("\n                ");
-  return `          <div class="entry">
-            <div class="where"><h3>${inline(entry.heading)}</h3>
+  return `          <div${attrs([["class", "entry"]])}>
+            <div${attrs([["class", "where"]])}><h3>${inline(entry.heading)}</h3>
             </div>
-            <div class="what">
+            <div${attrs([["class", "what"]])}>
               <ul>
                 ${items}
               </ul>
@@ -80,11 +81,11 @@ function renderNumberedEntry(entry: Entry): string {
     .filter((l) => l.startsWith("0. "))
     .map((l) => `<li>${inline(l.slice(3))}`)
     .join("\n                ");
-  return `          <div class="entry">
-            <div class="where"><h3>${inline(entry.heading)}</h3>
+  return `          <div${attrs([["class", "entry"]])}>
+            <div${attrs([["class", "where"]])}><h3>${inline(entry.heading)}</h3>
             </div>
-            <div class="what">
-              <ol start="0">
+            <div${attrs([["class", "what"]])}>
+              <ol${attrs([["start", 0]])}>
                 ${items}
               </ol>
             </div>
@@ -92,13 +93,13 @@ function renderNumberedEntry(entry: Entry): string {
 }
 
 function renderPatentEntry(entry: Entry): string {
-  const whatParts = [`<p class="patent-title">${inline(entry.blockquoteLines[0])}</p>`];
+  const whatParts = [`<p${attrs([["class", "patent-title"]])}>${inline(entry.blockquoteLines[0])}</p>`];
   if (entry.blockquoteLines.length > 1) {
-    whatParts.push(`<p class="patent-filings">${inline(entry.blockquoteLines[1])}</p>`);
+    whatParts.push(`<p${attrs([["class", "patent-filings"]])}>${inline(entry.blockquoteLines[1])}</p>`);
   }
-  return `          <div class="entry patent">
-            <div class="where"><h3>${inline(entry.heading)}</h3></div>
-            <div class="what">
+  return `          <div${attrs([["class", "entry patent"]])}>
+            <div${attrs([["class", "where"]])}><h3>${inline(entry.heading)}</h3></div>
+            <div${attrs([["class", "what"]])}>
               ${whatParts.join("\n              ")}
             </div>
           </div>`;
@@ -114,7 +115,7 @@ function renderProse(section: Section): string {
 function gridSection(title: string, entries: readonly Entry[], renderEntry: (e: Entry) => string): string {
   return `      <article>
         <h2>${Bun.escapeHTML(title)}</h2>
-        <div class="grid">
+        <div${attrs([["class", "grid"]])}>
 ${entries.map(renderEntry).join("\n")}
         </div>
       </article>`;
@@ -146,14 +147,14 @@ export function renderSection(section: Section): string {
 
 export function renderHeader(meta: SiteMeta): string {
   const socialLines = meta.social.map((s) => {
-    const rel = s.rel ? ` rel="${s.rel}"` : "";
-    const cls = s.printOnly ? ` class="print-only"` : "";
-    return `        <p${cls}> ${s.icon} <a href="${s.url}"${rel}>${Bun.escapeHTML(s.label)}</a></p>`;
+    const pAttrs = attrs([["class", s.printOnly ? "print-only" : undefined]]);
+    const aAttrs = attrs([["href", s.url], ["rel", s.rel]]);
+    return `        <p${pAttrs}> ${Bun.escapeHTML(s.icon)} <a${aAttrs}>${Bun.escapeHTML(s.label)}</a></p>`;
   });
   return `    <header>
       <h1>${Bun.escapeHTML(meta.name)}</h1>
       <div>
-        <p class="tagline">${Bun.escapeHTML(meta.tagline)}</p>
+        <p${attrs([["class", "tagline"]])}>${Bun.escapeHTML(meta.tagline)}</p>
 ${socialLines.join("\n")}
       </div>
     </header>`;
@@ -161,6 +162,6 @@ ${socialLines.join("\n")}
 
 export function renderFooter(meta: SiteMeta): string {
   return `    <footer>
-      <p>${Bun.escapeHTML(meta.name)} · ${Bun.escapeHTML(meta.tagline)} · <a href="mailto:${meta.email}" rel="me">${Bun.escapeHTML(meta.email)}</a></p>
+      <p>${Bun.escapeHTML(meta.name)} · ${Bun.escapeHTML(meta.tagline)} · <a${attrs([["href", `mailto:${meta.email}`], ["rel", "me"]])}>${Bun.escapeHTML(meta.email)}</a></p>
     </footer>`;
 }
