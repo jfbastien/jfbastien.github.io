@@ -1,4 +1,5 @@
 import subsetFont from "subset-font";
+import { createHash } from "crypto";
 import { mkdir, cp } from "fs/promises";
 import { join } from "path";
 import { type Font, fontForStyle, fonts } from "./fonts.ts";
@@ -96,9 +97,17 @@ export async function extractPerFontChars(htmlPath: string): Promise<ReadonlyMap
 
 export interface SubsetResult {
   readonly font: Font;
+  readonly outputFile: string;
   readonly originalSize: number;
   readonly subsetSize: number;
   readonly chars: number;
+}
+
+export function contentHashedFontFile(file: string, bytes: Uint8Array): string {
+  const ext = ".woff2";
+  if (!file.endsWith(ext)) throw new Error(`${file}: expected ${ext} font output`);
+  const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 16);
+  return `${file.slice(0, -ext.length)}.${hash}${ext}`;
 }
 
 export async function subsetFonts(
@@ -124,9 +133,11 @@ export async function subsetFonts(
       throw new Error(`${font.file}: subset produced empty output`);
     }
 
-    await Bun.write(join(outDir, font.file), subset);
+    const outputFile = contentHashedFontFile(font.file, subset);
+    await Bun.write(join(outDir, outputFile), subset);
     results.push({
       font,
+      outputFile,
       originalSize: srcBuf.byteLength,
       subsetSize: subset.length,
       chars: codepoints.size,
