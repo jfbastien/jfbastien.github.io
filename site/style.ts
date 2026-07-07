@@ -962,13 +962,23 @@ main,
   -webkit-box-decoration-break: clone;
 }
 
-/* Safari's print pipeline drops pseudo content written with the
-   "string / alt" syntax; print needs no alt text, so restate the
-   leaders and rules plainly for the pseudos that survive into print. */
+/* WebKit's print pipeline paints a clipped pseudo-element as invisible
+   glyphs when it carries its own color; inherited ink at reduced opacity
+   is the faint gray (27% black on white is exactly #bbb) and paints on
+   every engine. Alt text is also restated away for the same pipeline. */
 .record-index li::before,
 .dispatch-list li::before,
 .artifact-venue::after {
   content: var(--leader-dots);
+}
+
+.record-index li::before,
+.dispatch-list li::before,
+.artifact-venue::after,
+.artifact-group__title::after,
+.series-list > li::before {
+  color: inherit;
+  opacity: 0.27;
 }
 
 .artifact-group__title::after {
@@ -995,6 +1005,15 @@ main,
    Education straddles the page boundary and splits mid-register. */
 #education {
   break-before: page;
+}
+
+/* WebKit truncates margins at forced page starts, which would leave the
+   straddling title's upper half clipped on the previous page; a
+   transparent leading border survives fragmentation and keeps the title
+   inside its page on every engine. */
+#education,
+#patent-register {
+  border-block-start: 0.5lh solid transparent;
 }
 
 .masthead .location span::before {
@@ -1090,7 +1109,6 @@ main,
   grid-row: 1;
   overflow: hidden;
   white-space: nowrap;
-  color: var(--faint);
 }
 
 .series-title {
