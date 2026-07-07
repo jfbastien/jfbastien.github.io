@@ -938,10 +938,15 @@ a {
   text-decoration: none;
 }
 
+/* A fixed print measure, exactly A4's content width: Safari lays print
+   out at the window width and fits it to the paper, so an auto-width
+   page makes the scale follow whatever size the window happened to be.
+   A constant document width makes the fit factor constant. */
 .page {
   display: block;
-  inline-size: auto;
+  inline-size: 100ch;
   max-width: none;
+  margin-inline: auto;
   padding: 0;
 }
 
