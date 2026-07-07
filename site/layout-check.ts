@@ -97,7 +97,10 @@ try {
         return { ch, lh: Number.parseFloat(getComputedStyle(document.body).lineHeight) };
       }
 
-      function offGrid(value: number, unit: number, tolerance = 0.08): number {
+      // Linux and macOS Chromium disagree by ~0.15ch on integer CSS ch boxes
+      // after font rasterization; keep the audit on character-grid failures,
+      // not cross-platform subpixel rounding.
+      function offGrid(value: number, unit: number, tolerance = 0.2): number {
         const position = value / unit;
         return Math.abs(position - Math.round(position)) <= tolerance ? 0 : position;
       }
