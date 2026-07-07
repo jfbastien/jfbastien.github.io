@@ -31,7 +31,6 @@ export function screenCSS(): string {
     --content-cols: 84ch;
     --panel-pad-x: 2ch;
     --panel-cols: calc(var(--content-cols) + var(--panel-pad-x) + var(--panel-pad-x));
-    --gutter: clamp(1rem, 4vw, 2rem);
     --font-body: ${fontStackCSS()};
     --font-code: ${fontStackCSS()};
     --w-body: 400;
@@ -114,7 +113,6 @@ export function screenCSS(): string {
     gap: 2lh;
     grid-template-columns: minmax(0, 1fr);
     inline-size: var(--panel-cols);
-    max-inline-size: calc(100vw - var(--gutter) - var(--gutter));
     margin-inline: auto;
     padding-block: 2lh 3lh;
   }
@@ -762,8 +760,8 @@ export function screenCSS(): string {
 
   /* Viewport folds are a screen concern; print must lay out identically
      whether the print engine measures the paper or the page content box.
-     Panel content narrows below 70ch here (68ch at 761-900px, 34ch below),
-     so wide registers fold; print content stays ~100ch and never folds. */
+     Panel content narrows below 70ch here (68ch at 761-900px, viewport
+     minus 4ch below), so wide registers fold; print stays ~100ch. */
   @media screen and (max-width: 900px) {
     .record,
     .record--patent {
@@ -796,15 +794,17 @@ export function screenCSS(): string {
   @media screen and (min-width: 761px) and (max-width: 900px) {
     .page {
       inline-size: 72ch;
-      max-inline-size: calc(100vw - 2rem);
     }
   }
 
   @media screen and (max-width: 760px) {
     .page {
       gap: 2lh;
-      inline-size: 36ch;
-      max-inline-size: calc(100vw - 2rem);
+      /* One typewriter space to the screen edge, then the panel rule is
+         the pipe, then one space of panel padding to the content. Round
+         down to the ch grid; the calc line is the pre-round() fallback. */
+      inline-size: calc(100vw - 2ch);
+      inline-size: round(down, calc(100vw - 2ch), 1ch);
       padding-block: 2lh 3lh;
     }
 
