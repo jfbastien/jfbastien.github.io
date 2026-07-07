@@ -226,6 +226,50 @@ function renderDocketItem(item: string, parsed: DocketItem | undefined): string 
   return `<li><a${attrs([["href", parsed.href]])}><span${attrs([["class", "doc-code"]])}>${Bun.escapeHTML(parsed.code)}</span><span${attrs([["class", "doc-title"]])}>${inline(parsed.title)}</span></a></li>`;
 }
 
+// The print docket title measure: A4 gives the panel a 96ch content box,
+// each of the two grid columns 46ch, minus the code cell and its gap.
+// Monospace makes renderer-side line counting exact.
+const docketPrintTitleCells = 40;
+
+function wrappedLineCount(text: string, measure: number): number {
+  let lines = 1;
+  let column = 0;
+  for (const word of plainText(text).split(" ")) {
+    const width = [...word].length;
+    if (column > 0 && column + 1 + width > measure) {
+      lines += 1;
+      column = width;
+    } else {
+      column += column > 0 ? 1 + width : width;
+    }
+  }
+  return lines;
+}
+
+// Print flows the docket down one column, then wraps into the second at
+// the container height. Find the smallest height where the remainder
+// still fits, so the two columns balance.
+function balancedDocketLines(lineCounts: readonly number[]): number {
+  const total = lineCounts.reduce((sum, lines) => sum + lines, 0);
+  for (let height = Math.ceil(total / 2); ; height++) {
+    let column = 0;
+    let used = 0;
+    let fits = true;
+    for (const lines of lineCounts) {
+      if (used + lines > height) {
+        column += 1;
+        used = 0;
+        if (column > 1 || lines > height) {
+          fits = false;
+          break;
+        }
+      }
+      used += lines;
+    }
+    if (fits) return height;
+  }
+}
+
 function renderUnorderedListEntry(entry: Entry, slug: (s: string) => string): string {
   const id = slug(entry.heading);
   const rawItems = entry.body.split("\n")
@@ -233,6 +277,9 @@ function renderUnorderedListEntry(entry: Entry, slug: (s: string) => string): st
     .map((line) => line.slice(2));
   const parsedItems = rawItems.map(parseDocketItem);
   const codeCells = registerCells(parsedItems.map((parsed) => parsed?.code ?? ""), 5, 7);
+  const docketLines = balancedDocketLines(
+    rawItems.map((item, index) => wrappedLineCount(parsedItems[index]?.title ?? item, docketPrintTitleCells)),
+  );
   const items = rawItems
     .map((item, index) => renderDocketItem(item, parsedItems[index]))
     .join("\n                ");
@@ -241,7 +288,7 @@ function renderUnorderedListEntry(entry: Entry, slug: (s: string) => string): st
               <h4${attrs([["class", "record__title"]])}>${inline(entry.heading)}</h4>
             </header>
             <div${attrs([["class", "record__body"]])}>
-              <ul${attrs([["class", "docket-list"], ["style", styleVars([["docket-code-cols", `${codeCells}ch`]])]])}>
+              <ul${attrs([["class", "docket-list"], ["style", styleVars([["docket-code-cols", `${codeCells}ch`], ["docket-lines", docketLines]])]])}>
                 ${items}
               </ul>
             </div>

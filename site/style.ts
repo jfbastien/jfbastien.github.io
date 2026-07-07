@@ -1071,10 +1071,20 @@ main,
   break-inside: avoid;
 }
 
+/* Two independently packed columns, not CSS multicol (WebKit's print
+   pipeline ignores columns) and not a row grid (coupled row heights
+   waste a line for every wrapped partner). The renderer counts each
+   title's printed lines — exact in a monospace measure — and sets the
+   balanced column height. */
 .docket-list {
+  display: flex;
+  flex-flow: column wrap;
+  block-size: calc(var(--docket-lines) * 1lh);
   column-gap: 4ch;
-  columns: 2;
-  display: block;
+}
+
+.docket-list > li {
+  inline-size: calc((100% - 4ch) / 2);
 }
 
 .docket-list > li {

@@ -109,8 +109,7 @@ test("preserves unordered and ordered list semantics", () => {
   }];
 
   const html = renderSections(sections)[0].html;
-  expect(html).toContain('<ul class=docket-list style=--docket-code-cols:5ch>');
-  expect(html).toContain('style=--docket-code-cols:5ch');
+  expect(html).toContain('<ul class=docket-list style=--docket-code-cols:5ch;--docket-lines:2>');
   expect(html).toContain('<span class=doc-code>P3477</span>');
   expect(html).toContain('<h3 class=artifact-group__title>Standards Docket</h3>');
   expect(html).toContain('<h3 class=artifact-group__title>Ongoing Series</h3>');
