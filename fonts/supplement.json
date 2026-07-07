@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "glyphs": [
+    {
+      "codepoint": "U+0191",
+      "char": "Ƒ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+01B6",
+      "char": "ƶ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+0244",
+      "char": "Ʉ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+0291",
+      "char": "ʑ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+0305",
+      "char": "̅",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+03A9",
+      "char": "Ω",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+0489",
+      "char": "҉",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+1DB3",
+      "char": "ᶳ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+1E8D",
+      "char": "ẍ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+1E91",
+      "char": "ẑ",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+203D",
+      "char": "‽",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+203E",
+      "char": "‾",
+      "source": "Noto Sans"
+    },
+    {
+      "codepoint": "U+2299",
+      "char": "⊙",
+      "source": "Noto Sans Symbols 2"
+    },
+    {
+      "codepoint": "U+22C6",
+      "char": "⋆",
+      "source": "Noto Sans Symbols 2"
+    },
+    {
+      "codepoint": "U+29EB",
+      "char": "⧫",
+      "source": "Noto Sans Symbols 2"
+    },
+    {
+      "codepoint": "U+2B22",
+      "char": "⬢",
+      "source": "Noto Sans Symbols 2"
+    },
+    {
+      "codepoint": "U+3068",
+      "char": "と",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+4E0A",
+      "char": "上",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+4EAC",
+      "char": "京",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+4EE5",
+      "char": "以",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+65E5",
+      "char": "日",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+672C",
+      "char": "本",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+6771",
+      "char": "東",
+      "source": "BIZ UDGothic"
+    },
+    {
+      "codepoint": "U+90FD",
+      "char": "都",
+      "source": "BIZ UDGothic"
+    }
+  ]
+}

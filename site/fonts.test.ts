@@ -1,26 +1,33 @@
 import { expect, test } from "bun:test";
-import { fontFaceCSS, fontForStyle, fontRulesCSS, preloadLinks } from "./fonts.ts";
+import { fontFaceCSS, fontStackCSS, preloadLinks, webFonts } from "./fonts.ts";
 
-test("maps used weights to the variable webfont sources", () => {
-  for (const weight of [100, 300, 400, 800]) {
-    expect(fontForStyle("Alegreya Sans", weight, "normal")?.file).toBe("AlegreyaSans-Variable.woff2");
-  }
-
-  expect(fontForStyle("Alegreya Sans", 300, "italic")?.file).toBe("AlegreyaSans-LightItalic.woff2");
-  expect(fontForStyle("Alegreya Sans", 400, "italic")).toBeUndefined();
+test("serves generated Berkeley Mono webfonts", () => {
+  expect(webFonts).toHaveLength(2);
+  expect(webFonts[0].kind).toBe("primary");
+  expect(webFonts[0].file).toMatch(/^BerkeleyMonoSubset\.[0-9a-f]{16}\.woff2$/);
+  expect(webFonts[0].family).toBe("Berkeley Mono");
+  expect(webFonts[0].style).toBe("oblique 0deg 16deg");
+  expect(webFonts[0].weight).toBe("100 900");
+  expect(webFonts[0].stretch).toBe("60% 100%");
+  expect(webFonts[0].staticBoldTtf).toBe("BerkeleyMonoSubsetBoldStatic.ttf");
+  expect(webFonts[1].kind).toBe("supplemental");
+  expect(webFonts[1].file).toMatch(/^DossierMonoSupplement\.[0-9a-f]{16}\.woff2$/);
+  expect(webFonts[1].family).toBe("Dossier Mono Supplement");
 });
 
-test("emits variable font faces without local font bypasses", () => {
+test("emits font face without local font bypasses", () => {
   const css = fontFaceCSS();
-  expect(css).toContain("font-weight: 100 800");
-  expect(css).toContain("url('./fonts/AlegreyaSans-Variable.woff2') format('woff2')");
-  expect(css).toContain("url('./fonts/AlegreyaSans-LightItalic.woff2') format('woff2')");
+  expect(css).toContain("font-family: 'Berkeley Mono'");
+  expect(css).toContain("font-family: 'Dossier Mono Supplement'");
+  expect(css).toContain("font-style: oblique 0deg 16deg");
+  expect(css).toContain("font-stretch: 60% 100%");
   expect(css).not.toContain("local(");
+  for (const font of webFonts) {
+    expect(css).toContain(`url('./fonts/${font.file}') format('woff2')`);
+  }
 });
 
-test("uses OpenType small caps for former SC text", () => {
-  const css = fontRulesCSS();
-  expect(css).toContain("h1 { font-weight: 800; font-variant-caps: small-caps; }");
-  expect(css).toContain("h2 { font-weight: 400; font-variant-caps: small-caps; }");
+test("preloads the generated webfont and exposes the stack", () => {
   expect(preloadLinks().match(/rel=preload/g)?.length).toBe(2);
+  expect(fontStackCSS()).toBe("\"Berkeley Mono\", \"Dossier Mono Supplement\"");
 });

@@ -1,22 +1,28 @@
 import { chmod } from "fs/promises";
 import { join } from "path";
-import { parseFrontMatter, splitSections, type SiteMeta, type Section } from "./parse.ts";
+import { parseFrontMatter, splitSections, type SiteMeta } from "./parse.ts";
+import { renderLlmsTxt, renderRobotsTxt, renderSitemapXml } from "./meta-files.ts";
 import { renderHead } from "./head.ts";
-import { renderHeader, renderFooter, renderSection } from "./html.ts";
+import { attrs } from "./attrs.ts";
+import { renderDispatch, renderFooter, renderHeader, renderIndex, renderSections, type RenderedSection } from "./html.ts";
 
 const root = join(import.meta.dir, "..");
 const sitemapInputs = ["content.md", "site"] as const;
 
-function renderPage(meta: SiteMeta, sections: readonly Section[]): string {
+function renderPage(meta: SiteMeta, sections: readonly RenderedSection[]): string {
   return `<!DOCTYPE html>
-<html lang="en">
+<html${attrs([["lang", "en"]])}>
 ${renderHead(meta)}
   <body>
+    <div${attrs([["class", "page"]])}>
 ${renderHeader(meta)}
-    <main>
-${sections.map(renderSection).join("\n")}
-    </main>
+${renderIndex(sections)}
+      <main>
+${sections.map((section) => section.html).join("\n")}
+      </main>
+${renderDispatch(meta)}
 ${renderFooter(meta)}
+    </div>
   </body>
 </html>
 `;
@@ -28,49 +34,6 @@ function renderMarkdown(meta: SiteMeta, body: string): string {
 > ${meta.tagline}
 
 ${body}`;
-}
-
-function renderLlmsTxt(meta: SiteMeta): string {
-  const socialLinks = meta.social
-    .filter((s) => s.url.startsWith("http"))
-    .map((s) => `- ${s.label}: ${s.url}`)
-    .join("\n");
-  return `# ${meta.name}
-
-> ${meta.description}
-
-## Links
-
-- Website: ${meta.url}
-- Full content: ${meta.url}/index.md
-- Email: ${meta.email}
-${socialLinks}
-`;
-}
-
-function siteRoot(meta: SiteMeta): string {
-  return meta.url.endsWith("/") ? meta.url : `${meta.url}/`;
-}
-
-function renderRobotsTxt(meta: SiteMeta): string {
-  return `User-agent: *
-Allow: /
-
-Content-Signal: ai-train=yes, search=yes, ai-input=yes
-
-Sitemap: ${siteRoot(meta)}sitemap.xml
-`;
-}
-
-function renderSitemapXml(meta: SiteMeta, lastmod: string): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${siteRoot(meta)}</loc>
-    <lastmod>${lastmod}</lastmod>
-  </url>
-</urlset>
-`;
 }
 
 async function gitLastmod(paths: readonly string[]): Promise<string> {
@@ -93,9 +56,10 @@ const raw = await Bun.file(join(root, "content.md")).text();
 const { meta, body } = parseFrontMatter(raw);
 const sections = splitSections(body);
 const lastmod = await gitLastmod(sitemapInputs);
+const renderedSections = renderSections(sections);
 
 const outputs: readonly [string, string][] = [
-  ["index.html", renderPage(meta, sections)],
+  ["index.html", renderPage(meta, renderedSections)],
   ["index.md", renderMarkdown(meta, body)],
   ["llms.txt", renderLlmsTxt(meta)],
   ["robots.txt", renderRobotsTxt(meta)],
@@ -107,5 +71,5 @@ for (const [name, content] of outputs) {
   if (await Bun.file(path).exists()) await chmod(path, 0o644);
   await Bun.write(path, content);
   await chmod(path, 0o444);
-  console.log(`\u2713 ${name} (${content.length} bytes)`);
+  console.log(`✓ ${name} (${content.length} bytes)`);
 }

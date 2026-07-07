@@ -1,7 +1,11 @@
-import { type SiteMeta } from "./parse.ts";
+import { siteRoot, type SiteMeta } from "./parse.ts";
 import { preloadLinks } from "./fonts.ts";
 import { screenCSS, printCSS } from "./style.ts";
 import { attrs } from "./attrs.ts";
+
+function indentBlock(css: string, prefix: string): string {
+  return css.split("\n").map((line) => (line === "" ? line : prefix + line)).join("\n");
+}
 
 function jsonLdSchema(meta: SiteMeta): string {
   const sameAs = meta.social
@@ -22,19 +26,19 @@ function jsonLdSchema(meta: SiteMeta): string {
 }
 
 export function renderHead(meta: SiteMeta): string {
-  const rootUrl = meta.url.endsWith("/") ? meta.url : `${meta.url}/`;
+  const rootUrl = siteRoot(meta);
   return `  <head>
     <meta${attrs([["charset", "utf-8"]])}>
     <meta${attrs([["name", "viewport"], ["content", "width=device-width,minimum-scale=1,initial-scale=1"]])}>
     <title>${Bun.escapeHTML(meta.name)}</title>
     ${preloadLinks()}
     <style>
-      ${screenCSS()}
+${indentBlock(screenCSS(), "      ")}
     </style>
     <style${attrs([["media", "print"]])}>
-      ${printCSS()}
+${indentBlock(printCSS(meta), "      ")}
     </style>
-    <meta${attrs([["name", "description"], ["content", `${meta.name} — ${meta.tagline}.`]])}>
+    <meta${attrs([["name", "description"], ["content", meta.description]])}>
     <link${attrs([["rel", "canonical"], ["href", rootUrl]])}>
     <meta${attrs([["property", "og:type"], ["content", "website"]])}>
     <meta${attrs([["property", "og:url"], ["content", rootUrl]])}>

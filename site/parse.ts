@@ -1,9 +1,8 @@
 export interface SocialLink {
-  readonly icon: string;
+  readonly kind: string;
   readonly label: string;
   readonly url: string;
   readonly rel?: string;
-  readonly printOnly?: boolean;
 }
 
 export interface OgMeta {
@@ -22,6 +21,7 @@ export interface SiteMeta {
   readonly url: string;
   readonly email: string;
   readonly description: string;
+  readonly location: string;
   readonly social: readonly SocialLink[];
   readonly og: OgMeta;
   readonly twitter: TwitterMeta;
@@ -34,6 +34,11 @@ export interface Section {
 
 export interface Entry {
   readonly heading: string;
+  /**
+   * Positional metadata; each section's renderer assigns the meaning:
+   * Service Record [role, term]; Education [degree, field, term];
+   * Public Record [year]; Patent Register [title, family].
+   */
   readonly blockquoteLines: readonly string[];
   readonly body: string;
 }
@@ -67,11 +72,10 @@ function parseSocialLinks(raw: readonly unknown[]): readonly SocialLink[] {
     if (!item || typeof item !== "object") throw new Error(`content.md: social[${i}] must be an object`);
     const o = item as Record<string, unknown>;
     return {
-      icon: requireString(o, "icon"),
+      kind: requireString(o, "kind"),
       label: requireString(o, "label"),
       url: requireString(o, "url"),
       ...("rel" in o ? { rel: requireString(o, "rel") } : {}),
-      ...("printOnly" in o && o.printOnly === true ? { printOnly: true } : {}),
     };
   });
 }
@@ -89,19 +93,23 @@ export function parseFrontMatter(raw: string): { readonly meta: SiteMeta; readon
 
   const og = requireObject(p, "og");
   const twitter = requireObject(p, "twitter");
-
   const meta: SiteMeta = {
     name: requireString(p, "name"),
     tagline: requireString(p, "tagline"),
     url: requireString(p, "url"),
     email: requireString(p, "email"),
     description: requireString(p, "description"),
+    location: requireString(p, "location"),
     social: parseSocialLinks(requireArray(p, "social")),
     og: { image: requireString(og, "image"), width: requireNumber(og, "width"), height: requireNumber(og, "height") },
     twitter: { site: requireString(twitter, "site") },
   };
 
   return { meta, body };
+}
+
+export function siteRoot(meta: SiteMeta): string {
+  return meta.url.endsWith("/") ? meta.url : `${meta.url}/`;
 }
 
 export function splitSections(body: string): readonly Section[] {

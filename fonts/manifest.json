@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "fonts": [
+    {
+      "kind": "primary",
+      "family": "Berkeley Mono",
+      "style": "oblique 0deg 16deg",
+      "weight": "100 900",
+      "stretch": "60% 100%",
+      "display": "block",
+      "file": "BerkeleyMonoSubset.35358cb734b3baf1.woff2",
+      "ttf": "BerkeleyMonoSubset.ttf",
+      "staticTtf": "BerkeleyMonoSubsetStatic.ttf",
+      "staticBoldTtf": "BerkeleyMonoSubsetBoldStatic.ttf"
+    },
+    {
+      "kind": "supplemental",
+      "family": "Dossier Mono Supplement",
+      "style": "normal",
+      "weight": "400",
+      "display": "block",
+      "file": "DossierMonoSupplement.3c716cd531c7d2d8.woff2",
+      "ttf": "DossierMonoSupplement.ttf"
+    }
+  ]
+}

@@ -38,8 +38,6 @@ jobs:
           actual="${actual%% *}"
           test "$actual" = "$EXPECTED_BUN_SHA256"
       - run: bun install --frozen-lockfile --ignore-scripts
-      - run: bun run typecheck
-      - run: bun test
       - run: bun audit
       - name: Install pinned pngquant
         # If Ubuntu prunes this exact .deb, bump PNGQUANT_VERSION and both SHA256 values together.
@@ -60,7 +58,22 @@ jobs:
           actual_bin="$(sha256sum "$(command -v pngquant)")"
           actual_bin="${actual_bin%% *}"
           test "$actual_bin" = "$PNGQUANT_BIN_SHA256"
-      - run: bun run build
+      - name: Install pinned mupdf-tools
+        # print-audit.ts shells out to mutool. If Ubuntu prunes this exact
+        # .deb, bump MUPDF_VERSION and the SHA256 together.
+        env:
+          MUPDF_VERSION: 1.23.10+ds1-1build3
+          MUPDF_DEB: mupdf-tools_1.23.10+ds1-1build3_amd64.deb
+          MUPDF_DEB_SHA256: f6fe032e350dab068a7f6debeed5c064b4170f46fbd2997dd5ec44d6207205e9
+        run: |
+          cd "$RUNNER_TEMP"
+          apt-get download "mupdf-tools=$MUPDF_VERSION"
+          actual_deb="$(sha256sum "$MUPDF_DEB")"
+          actual_deb="${actual_deb%% *}"
+          test "$actual_deb" = "$MUPDF_DEB_SHA256"
+          sudo apt-get install -y --no-install-recommends "./$MUPDF_DEB"
+          test "$(dpkg-query -W -f='${Version}' mupdf-tools)" = "$MUPDF_VERSION"
+      - run: bun run check
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: _site

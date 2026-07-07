@@ -4,26 +4,23 @@ tagline: build & scale platforms
 url: https://jfbastien.com
 email: me@jfbastien.com
 description: Systems and compiler engineer building and scaling platforms.
+location: 日本 東京都
 social:
-  - icon: "\U0001F4E7"
+  - kind: email
     label: me@jfbastien.com
     url: mailto:me@jfbastien.com
     rel: me
-  - icon: "\U0001F310"
-    label: jfbastien.com
-    url: https://jfbastien.com
-    printOnly: true
-  - icon: "\U0001D54F"
+  - kind: x
     label: "@jfbastien"
     url: https://x.com/jfbastien
-  - icon: "\U0001F418"
+  - kind: mastodon
     label: "@jfbastien@mastodon.social"
     url: https://mastodon.social/@jfbastien
     rel: me
-  - icon: "\U0001F98B"
+  - kind: bluesky
     label: "@jfbastien.com"
     url: https://bsky.app/profile/jfbastien.com
-  - icon: "\U0001F419"
+  - kind: github
     label: jfbastien
     url: https://github.com/jfbastien
 og:
@@ -34,13 +31,13 @@ twitter:
   site: "@jfbastien"
 ---
 
-## About Me
+## Profile
 
 Systems and compiler engineer building and scaling platforms: security engineering, standardization, open source. Chair of the [C++ Language Evolution Working Group](https://isocpp.org/std/the-committee); former chair of the [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) community group. At the hardware/software boundary, from silicon-aware optimization to user-facing platforms.
 
-## Work Experience
+## Service Record
 
-### Stealth Physical Systems Startup
+### Genki Robotics
 > VP, Software Platform
 > 2025-06/present
 
@@ -121,7 +118,7 @@ Majority of coursework toward Master’s degree while working full-time; compile
 - Thesis: *Rapid Decompression Simulation in an Aircraft and Related Hardware Optimization*, used to automatically optimize aircraft design while meeting FAA/JAA regulations; Bombardier Aerospace.
 - Final project: *Aircraft Assembly Optimization*; Bombardier Aerospace.
 
-## Selected Publications & Public Speaking
+## Public Record
 
 ### arXiv
 > 2026
@@ -132,8 +129,8 @@ Majority of coursework toward Master’s degree while working full-time; compile
 > 2017
 
 [Bringing the Web up to Speed with WebAssembly](https://github.com/WebAssembly/spec/blob/main/papers/pldi2017.pdf).
-*Best paper award.*
-*Re-published as a [Communications of the ACM Research Highlight](https://cacm.acm.org/research/bringing-the-web-up-to-speed-with-webassembly/).*
+Best paper award.
+Re-published as a [Communications of the ACM Research Highlight](https://cacm.acm.org/research/bringing-the-web-up-to-speed-with-webassembly/).
 
 ### ASPLOS
 > 2017
@@ -193,25 +190,25 @@ Majority of coursework toward Master’s degree while working full-time; compile
 > 2023
 
 [`*(char*)0 = 0;`](https://youtu.be/dFIqNZ8VbRY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-*328k views! 3<sup>rd</sup> most viewed C++ conference talk ever!*
+328k views! 3<sup>rd</sup> most viewed C++ conference talk ever!
 
 ### C++Online
 > 2024
 
 [The bytes before the types: unveiling uninitialized uses](https://youtu.be/n7Tl1qJxTew?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-*Conference keynote.*
+Conference keynote.
 
 ### Autosar
 > 2024
 
 [From software craft to engineering](https://youtu.be/N8ZiUyQ3phw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-*Conference keynote.*
+Conference keynote.
 
 ### C++Now
 > 2023
 
 [Safety と Security: The Future of C++](https://youtu.be/Gh79wcGJdTg?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-*Conference keynote.*
+Conference keynote.
 
 ### WWDC
 > 2019
@@ -237,7 +234,7 @@ Migrating to C++14, and beyond!
 > 2015
 
 [WebAssembly: Here Be Dragons](https://youtu.be/5W7NkofUtAw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-*Conference keynote.*
+Conference keynote.
 
 ### EuroLLVM
 > 2015
@@ -284,7 +281,7 @@ Migrating to C++14, and beyond!
 
 [WebAssembly](https://cppcast.com/jf-bastien-webassembly).
 
-### Tokyo University
+### UTokyo
 > 2023
 
 [Future Mobility: The Relation Between Humans and Services](https://youtu.be/Us_GcPkxFr8?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
@@ -305,74 +302,74 @@ Migrating to C++14, and beyond!
 0. [Integrating security into your build pipeline](https://youtu.be/rkDTgkN7FIY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC)
 0. [Reflection in C++26: the renaissance of C++](https://youtu.be/vRda0mGYg_A?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC)
 
-### TLB hit 💥
+### TLB hit
 0. [`mov fp, sp`](https://tlbh.it/000_mov_fp_sp.html)
 0. [`*(char*)0 = 0`](https://tlbh.it/001_deref_char_star_0_eq_0.html)
 0. [`https://tlbh.it^M`](https://tlbh.it/002_https_tlbh_dot_it_CR.html)
 0. [`__builtin_expect(!!(x), 0)`](https://tlbh.it/003_builtin_expect_bang_bang_x_0.html)
 0. [`t-r-a-c-/e̅‾\-o-m-p-i-l-e`](https://tlbh.it/004_trace_compilers.html)
 0. [`Parsers`](https://tlbh.it/005_parsers.html)
-0. [`ƑẍɄʑʑ҉⟆Ƒu𝔷𝔷⧫ᶳΩ𝓕𝕦𝘇𝘇֍⧩ `](https://tlbh.it/006_fuzz.html)
+0. [`ƑẍɄʑʑ҉⋆Ƒuẑẑ⧫ᶳΩƑūƶƶ⊙⬢`](https://tlbh.it/006_fuzz.html)
 
-## Patents
+## Patent Register
 
 ### [US20260133957A1](https://patents.google.com/patent/US20260133957A1/en)
-> Atomicity in OTA updates for vehicle systems
+> Atomicity in OTA updates for vehicle systems.
 
 ### [US20260010358A1](https://patents.google.com/patent/US20260010358A1/en)
-> System, method, and computer program for managing vehicle software updates
+> System, method, and computer program for managing vehicle software updates.
 > [JP2026008698A](https://patents.google.com/patent/JP2026008698A/en), [CN121277530A](https://patents.google.com/patent/CN121277530A/en)
 
 ### [US12423471B2](https://patents.google.com/patent/US12423471B2/en)
-> Program operation sequence determination for reduced potential leakage of personally identifiable information
+> Program operation sequence determination for reduced potential leakage of personally identifiable information.
 > [US20250021687A1](https://patents.google.com/patent/US20250021687A1/en), [JP2025013165A](https://patents.google.com/patent/JP2025013165A/en), [JP7692083B2](https://patents.google.com/patent/JP7692083B2/en), [CN119316177A](https://patents.google.com/patent/CN119316177A/en)
 
 ### [US20250238572A1](https://patents.google.com/patent/US20250238572A1/en)
-> System and method for managing components of a vehicle system
+> System and method for managing components of a vehicle system.
 > [JP2025114463A](https://patents.google.com/patent/JP2025114463A/en), [JP7796196B2](https://patents.google.com/patent/JP7796196B2/en), [CN120389957A](https://patents.google.com/patent/CN120389957A/en)
 
 ### [US20250147864A1](https://patents.google.com/patent/US20250147864A1/en)
-> System and method for performing validations of software
+> System and method for performing validations of software.
 > [JP2025076992A](https://patents.google.com/patent/JP2025076992A/en), [JP7757483B2](https://patents.google.com/patent/JP7757483B2/en), [CN119938485A](https://patents.google.com/patent/CN119938485A/en)
 
 ### [US20250060490A1](https://patents.google.com/patent/US20250060490A1/en)
-> Vehicle recording based terrain objective characteristic determination
+> Vehicle recording based terrain objective characteristic determination.
 > [JP2025027979A](https://patents.google.com/patent/JP2025027979A/en), [JP7759441B2](https://patents.google.com/patent/JP7759441B2/en), [CN119493114A](https://patents.google.com/patent/CN119493114A/en)
 
 ### [US20250060943A1](https://patents.google.com/patent/US20250060943A1/en)
-> Providing timing-independence for software
+> Providing timing-independence for software.
 > [JP2025027966A](https://patents.google.com/patent/JP2025027966A/en), [JP7809163B2](https://patents.google.com/patent/JP7809163B2/en), [CN119493593A](https://patents.google.com/patent/CN119493593A/en)
 
 ### [US12216672B2](https://patents.google.com/patent/US12216672B2/en)
-> Mobile computing network programming for queried content capture
+> Mobile computing network programming for queried content capture.
 > [US20240330313A1](https://patents.google.com/patent/US20240330313A1/en), [JP2024146718A](https://patents.google.com/patent/JP2024146718A/en), [JP7690008B2](https://patents.google.com/patent/JP7690008B2/en), [CN118733642A](https://patents.google.com/patent/CN118733642A/en)
 
 ### [US12204493B2](https://patents.google.com/patent/US12204493B2/en)
-> Mobile computing network queried content capture
+> Mobile computing network queried content capture.
 > [US20240427731A1](https://patents.google.com/patent/US20240427731A1/en), [JP2025003315A](https://patents.google.com/patent/JP2025003315A/en), [JP7742450B2](https://patents.google.com/patent/JP7742450B2/en), [CN119179740A](https://patents.google.com/patent/CN119179740A/en)
 
 ### [US12169394B2](https://patents.google.com/patent/US12169394B2/en)
-> Method of optimizing execution of a function on a control system and apparatus for the same
+> Method of optimizing execution of a function on a control system and apparatus for the same.
 > [US20230350354A1](https://patents.google.com/patent/US20230350354A1/en), [EP4270189A1](https://patents.google.com/patent/EP4270189A1/en), [JP2023164278A](https://patents.google.com/patent/JP2023164278A/en), [JP7458521B2](https://patents.google.com/patent/JP7458521B2/en), [CN117008982A](https://patents.google.com/patent/CN117008982A/en)
 
 ### [US12045602B2](https://patents.google.com/patent/US12045602B2/en)
-> Correctness verification system, method, device, and program
+> Correctness verification system, method, device, and program.
 > [US20230305829A1](https://patents.google.com/patent/US20230305829A1/en), [EP4250091A1](https://patents.google.com/patent/EP4250091A1/en), [EP4250091B1](https://patents.google.com/patent/EP4250091B1/en), [JP2023143729A](https://patents.google.com/patent/JP2023143729A/en), [JP7499366B2](https://patents.google.com/patent/JP7499366B2/en), [CN116841861A](https://patents.google.com/patent/CN116841861A/en)
 
 ### [US11954034B2](https://patents.google.com/patent/US11954034B2/en)
-> Cache coherency protocol for encoding a cache line with a domain shared state
+> Cache coherency protocol for encoding a cache line with a domain shared state.
 > [US20230305961A1](https://patents.google.com/patent/US20230305961A1/en), [EP4254202A1](https://patents.google.com/patent/EP4254202A1/en), [EP4254202B1](https://patents.google.com/patent/EP4254202B1/en), [JP2023145337A](https://patents.google.com/patent/JP2023145337A/en), [CN116860663A](https://patents.google.com/patent/CN116860663A/en)
 
 ### [US11860996B1](https://patents.google.com/patent/US11860996B1/en)
-> Security concepts for web frameworks
+> Security concepts for web frameworks.
 
 ### [US9189375B1](https://patents.google.com/patent/US9189375B1/en)
-> Dynamic sandboxing
+> Dynamic sandboxing.
 > [US10031832B1](https://patents.google.com/patent/US10031832B1/en)
 
 ### [US9563424B2](https://patents.google.com/patent/US9563424B2/en)
-> Native code instruction selection
+> Native code instruction selection.
 > [US20140052971A1](https://patents.google.com/patent/US20140052971A1/en), [WO2014028215A1](https://patents.google.com/patent/WO2014028215A1/en)
 
 ### [US9223550B1](https://patents.google.com/patent/US9223550B1/en)
-> Portable handling of primitives for concurrent execution
+> Portable handling of primitives for concurrent execution.

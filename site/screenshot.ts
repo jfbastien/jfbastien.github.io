@@ -27,4 +27,4 @@ try {
   await browser.close();
 }
 
-console.log(`\u2713 ${out} (${(Bun.file(out).size / 1024).toFixed(0)} KB)`);
+console.log(`✓ ${out} (${(Bun.file(out).size / 1024).toFixed(0)} KB)`);

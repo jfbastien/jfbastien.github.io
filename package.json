@@ -4,11 +4,16 @@
   "scripts": {
     "test": "bun test",
     "typecheck": "tsc --noEmit",
+    "font:prepare": "bun run build:site && bun run site/prepare-fonts.ts",
+    "font:check": "bun run site/check-fonts.ts",
     "build:site": "bun run site/build.ts",
     "build:og": "bun run social/generate.ts",
     "build:assemble": "bun run site/assemble.ts",
     "build:screenshot": "bun run site/screenshot.ts",
-    "build": "bun run build:site && bun run build:og && bun run build:assemble && bun run build:screenshot"
+    "print:audit": "bun run site/print-audit.ts",
+    "layout:check": "bun run site/layout-check.ts",
+    "check": "bun run typecheck && bun test && bun run build && bun run print:audit",
+    "build": "bun run build:site && bun run font:check && bun run build:og && bun run build:assemble && bun run build:screenshot && bun run layout:check"
   },
   "overrides": {
     "basic-ftp": "5.3.1",
@@ -21,7 +26,6 @@
     "bun-types": "1.3.10",
     "puppeteer-core": "24.37.5",
     "satori": "0.12.2",
-    "subset-font": "2.4.0",
     "typescript": "5.9.3"
   }
 }

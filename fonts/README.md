@@ -1,18 +1,56 @@
-# Font Sources
+# Webfont Subsets
 
-The webfont build uses variable Alegreya Sans sources vendored from:
+This directory contains generated font subsets for `jfbastien.com`.
 
-- Repository: https://github.com/googlefonts/Alegreya-Sans
-- Commit: `fcc2eebac904e0af34a67565fd2701ba67f54a3d`
-- License: SIL Open Font License 1.1, see `OFL.txt`
+The site serves checked-in WOFF2 subsets only:
 
-Vendored source hashes:
+- `BerkeleyMonoSubset.<hash>.woff2`
+  - primary Berkeley Mono variable face;
+  - preserves `wght`, `wdth`, `slnt`, and `calt`;
+  - served as `Berkeley Mono`.
+- `DossierMonoSupplement.<hash>.woff2`
+  - supplemental monospaced face for page glyphs Berkeley Mono does not cover;
+  - generated from a Berkeley Mono metrics shell plus fallback outlines;
+  - served as `Dossier Mono Supplement`.
 
-```text
-10401cfd3af9c3a58dc72d3ac75057b8c1ca78869449057e8351e938a17f41a4  AlegreyaSans[wght].ttf
-2acdbaa8cb22cadc43e379fd7ab489e63862aab75788a7528efb73dbf587b096  AlegreyaSans-Italic[wght].ttf
+The local TTF subsets are used by checks and Open Graph generation:
+
+- `BerkeleyMonoSubset.ttf`
+- `BerkeleyMonoSubsetStatic.ttf`
+- `BerkeleyMonoSubsetBoldStatic.ttf`
+- `DossierMonoSupplement.ttf`
+
+`supplement.json` is generated provenance: it records which visible missing
+glyphs came from which fallback source. It is not an input allowlist.
+
+Full source fonts are intentionally not committed.
+
+## Local Sources
+
+Set `BERKELEY_MONO_SOURCE` to a licensed Berkeley Mono variable source when
+regenerating the subsets.
+
+Fallback outlines come from local OFL fonts:
+
+- `SUPPLEMENT_LATIN_SOURCE` for Noto Sans;
+- `SUPPLEMENT_SYMBOL_SOURCE` for Noto Sans Symbols 2;
+- `SUPPLEMENT_JP_SOURCE` for BIZ UDGothic Regular.
+
+Set those variables if the fonts are not installed in the local locations known
+to `site/prepare-fonts.ts`.
+
+The fallback licenses are in `OFL-Noto.txt` and `OFL-BIZ-UDGothic.txt`.
+
+## Rebuild
+
+```sh
+bun run font:prepare
 ```
 
-`site/assemble.ts` subsets these sources into WOFF2 files for the exact rendered
-page content. The remaining static TTFs are used by `social/generate.ts` for
-the Open Graph image.
+The command renders the page, extracts visible screen/print text and
+CSS-generated text, then subsets only what the page actually uses. Decorative
+leaders, rules, closing marks, and Japanese location text are included because
+they render on the page, not because a separate allowlist names them.
+
+Do not commit full source fonts, purchase identifiers, license keys, or local
+account details.
