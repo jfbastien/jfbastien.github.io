@@ -906,8 +906,12 @@ export function printCSS(meta: SiteMeta): string {
   --accent-warm: #000;
 }
 
+/* The body hugs the dossier instead of the window: Safari's shrink-to-fit
+   measures the document width against the paper, so a window-wide body
+   makes every print scale with whatever size the window happened to be. */
 html, body {
-  width: 100%;
+  inline-size: fit-content;
+  margin-inline: auto;
   min-height: 100%;
   background: white;
   color: black;
