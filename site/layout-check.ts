@@ -85,22 +85,22 @@ try {
       }
 
       function unitProbe(): { readonly ch: number; readonly lh: number } {
-        const probe = document.createElement("span");
-        probe.textContent = "0";
+        // Measure the CSS ch unit itself, not a rendered "0" glyph: layout
+        // uses the unit, and Linux Chromium's rasterized glyph advance runs
+        // ~0.17% wide of it, which would skew every long measurement.
+        const probe = document.createElement("div");
         probe.style.position = "absolute";
         probe.style.inset = "0 auto auto 0";
         probe.style.visibility = "hidden";
+        probe.style.width = "100ch";
         probe.style.font = getComputedStyle(document.body).font;
         document.body.append(probe);
-        const ch = probe.getBoundingClientRect().width;
+        const ch = probe.getBoundingClientRect().width / 100;
         probe.remove();
         return { ch, lh: Number.parseFloat(getComputedStyle(document.body).lineHeight) };
       }
 
-      // Linux and macOS Chromium disagree by ~0.15ch on integer CSS ch boxes
-      // after font rasterization; keep the audit on character-grid failures,
-      // not cross-platform subpixel rounding.
-      function offGrid(value: number, unit: number, tolerance = 0.2): number {
+      function offGrid(value: number, unit: number, tolerance = 0.08): number {
         const position = value / unit;
         return Math.abs(position - Math.round(position)) <= tolerance ? 0 : position;
       }

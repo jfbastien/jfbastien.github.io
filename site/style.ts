@@ -962,6 +962,19 @@ main,
   -webkit-box-decoration-break: clone;
 }
 
+/* Safari's print pipeline drops pseudo content written with the
+   "string / alt" syntax; print needs no alt text, so restate the
+   leaders and rules plainly for the pseudos that survive into print. */
+.record-index li::before,
+.dispatch-list li::before,
+.artifact-venue::after {
+  content: var(--leader-dots);
+}
+
+.artifact-group__title::after {
+  content: var(--rule-glyphs);
+}
+
 .masthead,
 .record-index {
   break-inside: avoid;
@@ -1072,7 +1085,7 @@ main,
 }
 
 .series-list > li::before {
-  content: var(--leader-dots) / "";
+  content: var(--leader-dots);
   grid-column: 3;
   grid-row: 1;
   overflow: hidden;
