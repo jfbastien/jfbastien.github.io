@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { fontFaceCSS, fontStackCSS, preloadLinks, webFonts } from "./fonts.ts";
+import { fontFaceCSS, fontStackCSS, webFonts } from "./fonts.ts";
 
 test("serves generated Berkeley Mono webfonts", () => {
   expect(webFonts).toHaveLength(2);
@@ -27,7 +27,6 @@ test("emits font face without local font bypasses", () => {
   }
 });
 
-test("preloads the generated webfont and exposes the stack", () => {
-  expect(preloadLinks().match(/rel=preload/g)?.length).toBe(2);
+test("exposes the two-face font stack", () => {
   expect(fontStackCSS()).toBe("\"Berkeley Mono\", \"Dossier Mono Supplement\"");
 });

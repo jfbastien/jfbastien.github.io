@@ -1,4 +1,3 @@
-import { attrs } from "./attrs.ts";
 import { readFileSync } from "fs";
 import { join } from "path";
 
@@ -39,10 +38,4 @@ export function fontFaceCSS(): string {
 
 export function fontStackCSS(): string {
   return [...new Set(webFonts.map((f) => f.family))].map((family) => `"${family}"`).join(", ");
-}
-
-export function preloadLinks(): string {
-  return webFonts.map((f) =>
-    `<link${attrs([["rel", "preload"], ["as", "font"], ["type", "font/woff2"], ["href", `./fonts/${f.file}`], ["crossorigin", true]])}>`
-  ).join("\n    ");
 }
