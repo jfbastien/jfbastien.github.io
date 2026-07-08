@@ -964,11 +964,25 @@ main,
 }
 
 /* Panels keep the screen box-and-straddling-title grammar; sections that
-   span a page break get a complete box on every fragment. */
+   span a page break get a complete box on every fragment. The box is a
+   real border, not shadow ink: at least one Safari print path culls one
+   strip of an inset box-shadow while painting the other three, and
+   shadows are background ink a Print Backgrounds toggle may drop
+   wholesale. The padding hands back the border's 1px so the interior —
+   wrapping, pagination, the ch grid — is unchanged, and the straddling
+   title follows its padding-box corner. */
 .panel {
   break-inside: auto;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+  border: 1px solid var(--rule);
+  box-shadow: none;
+  padding: calc(1lh - 1px) calc(var(--panel-pad-x) - 1px);
+}
+
+.panel__title {
+  inset-block-start: -1px;
+  inset-inline-start: calc(var(--panel-pad-x) - 1px);
 }
 
 /* WebKit's print pipeline paints a clipped pseudo-element as invisible
@@ -1016,13 +1030,28 @@ main,
   break-before: page;
 }
 
-/* WebKit truncates margins at forced page starts, which would leave the
-   straddling title's upper half clipped on the previous page; a
-   transparent leading border survives fragmentation and keeps the title
-   inside its page on every engine. */
+/* WebKit clips a forced-break fragment's paint at its border-box top, so
+   the straddling title must overhang inside the box: half a line of
+   transparent top border makes room for it, and padding gives back what
+   the missing 1px top border no longer takes. The rule the title
+   straddles is the ::before's own border, drawn at the padding edge; its
+   paper background also masks the side rails' rise through the
+   transparent region, keeping closed corners. */
 #education,
 #patent-register {
   border-block-start: 0.5lh solid transparent;
+  padding-block-start: 1lh;
+}
+
+#education::before,
+#patent-register::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -0.5lh;
+  inset-inline: -1px;
+  block-size: 0.5lh;
+  background: var(--paper);
+  border-block-end: 1px solid var(--rule);
 }
 
 .masthead .location span::before {
