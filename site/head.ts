@@ -1,4 +1,5 @@
 import { siteRoot, type SiteMeta } from "./parse.ts";
+import { preloadLinks } from "./fonts.ts";
 import { screenCSS, printCSS } from "./style.ts";
 import { attrs } from "./attrs.ts";
 
@@ -30,6 +31,7 @@ export function renderHead(meta: SiteMeta): string {
     <meta${attrs([["charset", "utf-8"]])}>
     <meta${attrs([["name", "viewport"], ["content", "width=device-width,minimum-scale=1,initial-scale=1"]])}>
     <title>${Bun.escapeHTML(meta.name)}</title>
+    ${preloadLinks()}
     <style>
 ${indentBlock(screenCSS(), "      ")}
     </style>
