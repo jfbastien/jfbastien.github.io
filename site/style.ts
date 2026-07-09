@@ -1177,6 +1177,15 @@ main,
   break-inside: avoid;
 }
 
+/* Keep a section's first row with its straddling title. A panel that starts
+   low on a page would otherwise print its section title alone at the bottom
+   edge — an orphaned heading — and flow the first row onto the next page;
+   break-before: avoid moves the break above the whole panel instead. */
+.records > .record:first-child,
+.artifact-group:first-of-type {
+  break-before: avoid;
+}
+
 .record--patent {
   grid-template-columns: var(--patent-id-cols, 15ch) minmax(0, 1fr);
   column-gap: 2ch;
