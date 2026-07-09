@@ -28,6 +28,7 @@ export function screenCSS(): string {
     --rule: ${colors.rule};
     --accent: ${colors.accent};
     --accent-warm: ${colors.accentWarm};
+    --japan-red: ${colors.japanRed};
     --content-cols: 84ch;
     --panel-pad-x: 2ch;
     --panel-cols: calc(var(--content-cols) + var(--panel-pad-x) + var(--panel-pad-x));
@@ -249,7 +250,7 @@ export function screenCSS(): string {
 
   .masthead .location span::before {
     content: "•";
-    color: ${colors.japanRed};
+    color: var(--japan-red);
     margin-inline-end: 1ch;
   }
 
@@ -543,6 +544,8 @@ export function screenCSS(): string {
 
   .docket-list a:hover .doc-title {
     text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
   }
 
   .docket-list a::before {
@@ -929,7 +932,7 @@ html, body {
     content: "${cssString(`${meta.name} · ${meta.tagline} · page `)}" counter(page) " of " counter(pages);
     font-family: ${fontStackCSS()};
     font-size: 8.5pt;
-    color: #555;
+    color: var(--muted);
   }
 }
 

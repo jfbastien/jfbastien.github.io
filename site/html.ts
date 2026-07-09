@@ -121,19 +121,22 @@ function renderBodyParagraphs(body: string): string {
   return parts.join("\n            ");
 }
 
+// An open-ended interval uses ISO 8601-2 notation: `2025-06/..` reads "ongoing".
+function endTerm(end: string): string {
+  return end === ".." ? ".." : timeTag(end);
+}
+
 function renderTerm(raw: string): string {
-  const monthRange = raw.match(/^(\d{4}-\d{2})\/(\d{4}-\d{2}|present)$/);
+  const monthRange = raw.match(/^(\d{4}-\d{2})\/(\d{4}-\d{2}|\.\.)$/);
   if (monthRange) {
     const [, start, end] = monthRange;
-    const endHtml = end === "present" ? "present" : timeTag(end);
-    return `${timeTag(start)}/${endHtml}`;
+    return `${timeTag(start)}/${endTerm(end)}`;
   }
 
-  const yearRange = raw.match(/^(\d{4})\/(\d{4}|present)$/);
+  const yearRange = raw.match(/^(\d{4})\/(\d{4}|\.\.)$/);
   if (yearRange) {
     const [, start, end] = yearRange;
-    const endHtml = end === "present" ? "present" : timeTag(end);
-    return `${timeTag(start)}/${endHtml}`;
+    return `${timeTag(start)}/${endTerm(end)}`;
   }
 
   if (/^\d{4}$/.test(raw)) {
@@ -226,10 +229,10 @@ function renderDocketItem(item: string, parsed: DocketItem | undefined): string 
   return `<li><a${attrs([["href", parsed.href]])}><span${attrs([["class", "doc-code"]])}>${Bun.escapeHTML(parsed.code)}</span><span${attrs([["class", "doc-title"]])}>${inline(parsed.title)}</span></a></li>`;
 }
 
-// The print docket title measure: A4 gives the panel a 96ch content box,
-// each of the two grid columns 46ch, minus the code cell and its gap.
-// Monospace makes renderer-side line counting exact.
-const docketPrintTitleCells = 40;
+// Print lays each docket panel's 96ch A4 content box into two 46ch grid
+// columns; a title's print measure is that column minus the derived code cell
+// and its 1ch gap. Monospace makes renderer-side line counting exact.
+const docketPrintColumnCells = 46;
 
 function wrappedLineCount(text: string, measure: number): number {
   let lines = 1;
@@ -277,8 +280,9 @@ function renderUnorderedListEntry(entry: Entry, slug: (s: string) => string): st
     .map((line) => line.slice(2));
   const parsedItems = rawItems.map(parseDocketItem);
   const codeCells = registerCells(parsedItems.map((parsed) => parsed?.code ?? ""), 5, 7);
+  const titleCells = docketPrintColumnCells - codeCells - 1;
   const docketLines = balancedDocketLines(
-    rawItems.map((item, index) => wrappedLineCount(parsedItems[index]?.title ?? item, docketPrintTitleCells)),
+    rawItems.map((item, index) => wrappedLineCount(parsedItems[index]?.title ?? item, titleCells)),
   );
   const items = rawItems
     .map((item, index) => renderDocketItem(item, parsedItems[index]))
@@ -451,6 +455,19 @@ ${entries.map(renderEntry).join("\n")}
         </div>`;
 }
 
+function renderPlateSection(
+  entries: readonly Entry[],
+  min: number,
+  max: number,
+  renderEntry: (entry: Entry) => string,
+): string {
+  const cells = entryPlateCells(entries, min, max);
+  return renderRecords(entries, renderEntry, "records", styleVars([
+    ["record-head-cols", `${cells}ch`],
+    ["record-gap", `${fieldGap(cells)}ch`],
+  ]));
+}
+
 function renderSectionBody(section: Section, slug: (s: string) => string): string {
   const entries = parseEntries(section.raw);
   if (entries.length === 0) {
@@ -461,31 +478,9 @@ function renderSectionBody(section: Section, slug: (s: string) => string): strin
 
   switch (section.title) {
     case "Service Record":
-      {
-        const cells = entryPlateCells(entries, 18, 24);
-        return renderRecords(
-          entries,
-          (entry) => renderCareerEntry(entry, slug),
-          "records",
-          styleVars([
-            ["record-head-cols", `${cells}ch`],
-            ["record-gap", `${fieldGap(cells)}ch`],
-          ]),
-        );
-      }
+      return renderPlateSection(entries, 18, 24, (entry) => renderCareerEntry(entry, slug));
     case "Education":
-      {
-        const cells = entryPlateCells(entries, 14, 20);
-        return renderRecords(
-          entries,
-          (entry) => renderEducationEntry(entry, slug),
-          "records",
-          styleVars([
-            ["record-head-cols", `${cells}ch`],
-            ["record-gap", `${fieldGap(cells)}ch`],
-          ]),
-        );
-      }
+      return renderPlateSection(entries, 14, 20, (entry) => renderEducationEntry(entry, slug));
     case "Public Record":
       return renderPublicationSection(entries, slug);
     case "Patent Register":

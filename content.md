@@ -33,15 +33,21 @@ twitter:
 
 ## Profile
 
-Systems and compiler engineer building and scaling platforms: security engineering, standardization, open source. Chair of the [C++ Language Evolution Working Group](https://isocpp.org/std/the-committee); former chair of the [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) community group. At the hardware/software boundary, from silicon-aware optimization to user-facing platforms.
+Systems and compiler engineer building and scaling platforms: security engineering, standardization, open source. Co-designer of [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly); chair of [C++ language evolution](https://isocpp.org/std/the-committee) from C++20 through C++26. At the hardware/software boundary, from silicon-aware optimization to user-facing platforms.
 
 ## Service Record
 
 ### Genki Robotics
 > VP, Software Platform
-> 2025-06/present
+> 2025-06/..
 
-Crafting a platform where code drives the physical world.
+Where code moves the physical world.
+
+### ISO C++
+> Evolution Chair
+> 2018-10/2026-03
+
+Three standards: C++20, C++23, C++26—contracts, reflection, safety. Committee member across Google, Apple, Toyota, and Genki.
 
 ### Woven by Toyota
 > Distinguished Engineer
@@ -53,16 +59,16 @@ Safety-critical software platform driving Toyota’s transformation to a softwar
 - Safety qualification of software toolchains; OEM-controlled development environments across C/C++/Rust.
 - Toyota’s Rust adoption for safety-critical systems; founding of the [Safety-Critical Rust Consortium](https://rustfoundation.org/media/announcing-the-safety-critical-rust-consortium/).
 - Platform security program for emerging automotive cybersecurity regulations.
-- Chair of C++ language evolution: contracts, reflection; safety & security team for C and [MISRA](https://misra.org.uk/).
+- Safety & security for ISO C and [MISRA](https://misra.org.uk/).
 - Toyota’s open-source strategy, with the Open Source Program Office.
-- VP and executive: organizational scaling, startup → production-oriented change agent for Toyota Group.
+- VP and executive: organizational scaling; startup → production discipline for Toyota Group.
 
 ### Apple
 > Compiler Engineer
 > 2016-08/2020-08
 
 Security through compiler technology.
-- C++ lead and compiler engineer on the [LLVM](https://llvm.org) team: iOS/macOS security hardening through compiler technology, targeting high-value attack surfaces. Founder of the [LLVM Security Group](https://www.llvm.org/docs/Security.html).
+- C++ lead and compiler engineer on the [LLVM](https://llvm.org) team: iOS/macOS security hardening, targeting high-value attack surfaces. Founder of the [LLVM Security Group](https://www.llvm.org/docs/Security.html).
 - Compiler engineer on [WebKit](https://webkit.org)’s JavaScriptCore: [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly) implementation, WebAssembly and JavaScript performance tuning, [Spectre](https://meltdownattack.com) mitigations.
 
 ### Google
@@ -70,7 +76,7 @@ Security through compiler technology.
 > 2012-08/2016-08
 
 Portable, fast, and securely sandboxed native code for the Web.
-- Instigator, co-designer, compiler engineer on [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly); [2021 ACM SIGPLAN Programming Languages Software Award](https://www.sigplan.org/Awards/Software/).
+- Instigator, co-designer, compiler engineer, and [Community Group](https://www.w3.org/community/webassembly/) chair on [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly); [2021 ACM SIGPLAN Programming Languages Software Award](https://www.sigplan.org/Awards/Software/).
 - Technical leadership of [Portable Native Client](https://en.wikipedia.org/wiki/Google_Native_Client), shipping LLVM to over a billion users.
 - Implementor of [Native Client](https://en.wikipedia.org/wiki/Google_Native_Client)’s ARM sandbox.
 
@@ -87,7 +93,7 @@ Dynamic binary translation from ARMv8 to VLIW on the [Denver](https://en.wikiped
 > Systems Engineer
 > 2006-05/2009-08
 
-Reduced [aircraft simulation](https://en.wikipedia.org/wiki/CAE_Inc.) development effort by an order of magnitude.
+Order-of-magnitude reduction in [aircraft simulation](https://en.wikipedia.org/wiki/CAE_Inc.) development effort.
 - Modern C++03 runtime.
 - C++ reflection framework.
 - Binary/source compatibility validator.
@@ -125,6 +131,11 @@ Majority of coursework toward Master’s degree while working full-time; compile
 
 [VLMaxxing through FrameMogging](https://arxiv.org/abs/2605.03351): Training-Free Anti-Recomputation for Video Vision-Language Models ([VLMaxxi.ng](https://vlmaxxi.ng)).
 
+### TACAS
+> 2018
+
+[EMME: a formal tool for the ECMAScript Memory Model Evaluation](https://arxiv.org/pdf/1801.10140).
+
 ### PLDI
 > 2017
 
@@ -136,11 +147,6 @@ Re-published as a [Communications of the ACM Research Highlight](https://cacm.ac
 > 2017
 
 [Sound Loop Superoptimization for Google Native Client](https://theory.stanford.edu/~aiken/publications/papers/asplos17.pdf).
-
-### TACAS
-> 2018
-
-[EMME: a formal tool for the ECMAScript Memory Model Evaluation](https://arxiv.org/pdf/1801.10140).
 
 ### C++ Committee
 - [P3477](https://wg21.link/P3477) There are exactly 8 bits in a byte
@@ -186,12 +192,6 @@ Re-published as a [Communications of the ACM Research Highlight](https://cacm.ac
 
 [Much ado about noping (what does a computer do when it has nothing to do?)](https://youtu.be/lgl0WEh5saw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 
-### C++onSea
-> 2023
-
-[`*(char*)0 = 0;`](https://youtu.be/dFIqNZ8VbRY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-328k views! 3<sup>rd</sup> most viewed C++ conference talk ever!
-
 ### C++Online
 > 2024
 
@@ -204,11 +204,42 @@ Conference keynote.
 [From software craft to engineering](https://youtu.be/N8ZiUyQ3phw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 Conference keynote.
 
+### eSOL
+> 2024
+
+[Hardware and software: separation, or deeper integration?](https://youtu.be/FGEQe7DNXMI?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+
+### C++onSea
+> 2023
+
+[`*(char*)0 = 0;`](https://youtu.be/dFIqNZ8VbRY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+328k views! 3<sup>rd</sup> most viewed C++ conference talk ever!
+
 ### C++Now
 > 2023
 
 [Safety と Security: The Future of C++](https://youtu.be/Gh79wcGJdTg?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 Conference keynote.
+
+### C++Now
+> 2023
+
+[Your Favorite Undefined Behavior in C++](https://youtu.be/e-Gl_x1XDiY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+
+### UTokyo
+> 2023
+
+[Future Mobility: The Relation Between Humans and Services](https://youtu.be/Us_GcPkxFr8?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+
+### SAE
+> 2021
+
+[Leadership Summit: Evolution of the Vehicle Architecture](https://www.sae.org/blog/wcx-vehicle-architecture).
+
+### CppCon
+> 2020
+
+[Just-in-Time compilation](https://youtu.be/tWvaSkgVPpA?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 
 ### WWDC
 > 2019
@@ -220,6 +251,11 @@ Conference keynote.
 
 [Making undefined behavior hurt less](https://youtu.be/I-XUHPimq3o?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 
+### CppCon
+> 2019
+
+[Deprecating volatile](https://youtu.be/KJW_DLaVXIY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+
 ### LLVM
 > 2018
 
@@ -228,7 +264,22 @@ Conference keynote.
 ### LLVM
 > 2018
 
-Migrating to C++14, and beyond!
+[Migrating to C++14, and beyond!](https://llvm.org/devmtg/2018-10/talk-abstracts.html#bof3)
+
+### CppCon
+> 2018
+
+[Signed Integers are Two’s Complement](https://youtu.be/JhUxIVf1qok?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+
+### CppCast
+> 2018
+
+[San Diego EWGI trip report](https://cppcast.com/jf-bastien-san-diego-ewgi).
+
+### CppCon
+> 2016
+
+[No sane compiler would optimize atomics](https://youtu.be/IB57wIf9W1k?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 
 ### LLVM
 > 2015
@@ -241,60 +292,15 @@ Conference keynote.
 
 [C++ on the web: ponies for developers without pwn’ing users](https://youtu.be/H-R-yW1-fbQ?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 
-### EuroLLVM
-> 2014
-
-[Portable Native Client. Fast, Secure, Simple: Pick Three](https://youtu.be/iYBSgdvv0BY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### C++Now
-> 2023
-
-[Your Favorite Undefined Behavior in C++](https://youtu.be/e-Gl_x1XDiY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### CppCon
-> 2020
-
-[Just-in-Time compilation](https://youtu.be/tWvaSkgVPpA?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### CppCon
-> 2019
-
-[Deprecating volatile](https://youtu.be/KJW_DLaVXIY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### CppCon
-> 2018
-
-[Signed Integers are Two’s Complement](https://youtu.be/JhUxIVf1qok?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### CppCon
-> 2016
-
-[No sane compiler would optimize atomics](https://youtu.be/IB57wIf9W1k?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### CppCast
-> 2018
-
-[San Diego EWGI trip report](https://cppcast.com/jf-bastien-san-diego-ewgi).
-
 ### CppCast
 > 2015
 
 [WebAssembly](https://cppcast.com/jf-bastien-webassembly).
 
-### UTokyo
-> 2023
+### EuroLLVM
+> 2014
 
-[Future Mobility: The Relation Between Humans and Services](https://youtu.be/Us_GcPkxFr8?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-
-### SAE
-> 2021
-
-[Leadership Summit: Evolution of the Vehicle Architecture](https://www.sae.org/blog/wcx-vehicle-architecture).
-
-### eSOL
-> 2024
-
-[Hardware and software: separation, or deeper integration?](https://youtu.be/FGEQe7DNXMI?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
+[Portable Native Client. Fast, Secure, Simple: Pick Three](https://youtu.be/iYBSgdvv0BY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
 
 ### Tokyo C++
 0. [First meetup](https://youtu.be/FU5Tl_Zdtmw?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC)

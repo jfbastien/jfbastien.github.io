@@ -19,12 +19,33 @@ and print audit.
 
 ## CSS Rules
 
-- Keep the one-size typography direction unless explicitly changed.
-- Use `ch` for horizontal form geometry and `lh` for vertical rhythm.
+- Keep the one-size typography direction; `layout-check.ts` enforces it.
+  Hierarchy comes from weight, spacing, rules, and color, not size — do not
+  reintroduce font-size steps.
+- Use `ch` for horizontal form geometry and `lh` for vertical rhythm; stay on
+  whole units.
 - Use non-layout-affecting borders (`box-shadow`/`outline`) when borders would
   disrupt the grid.
 - Avoid arbitrary spacing; prefer whole line-height rows.
 - Do not use page-wide texture or grid backgrounds.
+- A value that already exists as a custom property is referenced, never
+  re-hardcoded; a duplicated literal is drift, not a shortcut.
+- A `grid-column`/`grid-row` pin set for one layout is reset in every mode that
+  collapses the grid — the narrow-viewport breakpoint and print both.
+- Decorative generated content (leaders, rules) carries alt-text suppression
+  (`content: … / ""`) or an `aria-hidden` wrapper, so it stays out of the
+  accessibility tree; print restates the alt-text away for a documented WebKit
+  paint bug.
+- Register widths derive from content and expose as custom properties;
+  `layout-check.ts` probes each register column for overflow with a
+  cross-platform `ch`-rounding tolerance, so a fit that drifts past its content
+  fails the build.
+- Screen rules go in the matching `@layer` (reset, tokens, base, layout,
+  components, print-hints); there is no `!important`, and reaching for one is a
+  design smell.
+- Print's `:root` overrides only the color tokens; geometry and type tokens
+  inherit from the always-loaded screen `:root`, so both surfaces share one
+  source — do not redeclare them in print.
 
 ## Leader Policy
 
@@ -77,6 +98,22 @@ theater.
 - Avoid sparse non-final pages, broken box fragments, and URL noise.
 - Page footers belong to `@page`; hide the screen footer in print.
 - Print URLs only where they materially help, especially public series rows.
+
+## Loading
+
+The page is one self-contained document — CSS inlined, no external stylesheet
+or script request, no runtime JS. Keep it that way.
+
+- Fewer fetches over cleverness: one HTML document plus its two preloaded woff2
+  subsets (page-derived; see `fonts/AGENTS.md`). The preload stays because it is
+  measured to reach the font sooner on bandwidth-bound connections, not because
+  a checklist asks for it.
+- `font-display: block` keeps the monospace grid from reflowing through a
+  fallback face; the milestone that matters is time to readable text.
+- Webfont filenames are content-hashed, so new glyphs bust the cache instead of
+  serving a stale subset.
+- Test a load claim against a throttled connection before acting on it; a best
+  practice that costs measured milliseconds loses to the number.
 
 ## Audits
 

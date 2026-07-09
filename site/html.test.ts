@@ -58,6 +58,20 @@ Security through compiler technology.`,
   expect(rendered.html).toContain('<p class=record__term><time datetime=2016-08>2016-08</time>/<time datetime=2020-08>2020-08</time></p>');
 });
 
+test("renders an open-ended term as an ISO 8601 interval", () => {
+  const sections: readonly Section[] = [{
+    title: "Service Record",
+    raw: `### Genki Robotics
+> VP, Software Platform
+> 2025-06/..
+
+Where code moves the physical world.`,
+  }];
+
+  const html = renderSections(sections)[0].html;
+  expect(html).toContain('<p class=record__term><time datetime=2025-06>2025-06</time>/..</p>');
+});
+
 test("renders known social labels with their real casing", () => {
   const meta: SiteMeta = {
     name: "JF Bastien",

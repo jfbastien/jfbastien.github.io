@@ -148,7 +148,7 @@ if (pageXmls.length !== pages) {
 // check silently narrows.
 const orphanPageStartPatterns: readonly (readonly [RegExp, string])[] = [
   [/^\.+$/, "leader continuation"],
-  [/^\d{4}(?:-\d{2})?\/(?:\d{4}(?:-\d{2})?|present)$/, "date metadata"],
+  [/^\d{4}(?:-\d{2})?\/(?:\d{4}(?:-\d{2})?|\.\.)$/, "date metadata"],
   [/^(?:Podcast|Conference keynote|Best paper award)\.$/, "artifact note"],
   [/^(?:Re-published\b|328k views!)/, "artifact note"],
   [/^(?:EMAIL|WEB|X|MASTODON|BLUESKY|GITHUB)\b/, "dispatch row"],

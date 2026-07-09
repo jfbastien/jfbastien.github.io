@@ -155,6 +155,7 @@ try {
       }
 
       out.push(...collect(".record__role, .record__degree, .record__field, .record__term", "metadata wrapped", (el) => lineCount(el) > 1.15));
+      out.push(...collect(".record__role, .record__degree, .record__field, .record__term, .record--patent .record__title", "register column overflowed", (el) => (el as HTMLElement).scrollWidth > (el as HTMLElement).clientWidth + 1));
       out.push(...collect(".record-index li > :first-child", "index label wrapped", (el) => lineCount(el) > 1.15));
       out.push(...collect(".artifact-group__title", "artifact group title wrapped", (el) => lineCount(el) > 1.15));
       const bodyFontSize = getComputedStyle(document.body).fontSize;
