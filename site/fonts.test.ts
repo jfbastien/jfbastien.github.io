@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
 import { fontFaceCSS, fontStackCSS, preloadLinks, webFonts } from "./fonts.ts";
+import { isWideCodepoint } from "./font-corpus.ts";
 
 test("serves generated Berkeley Mono webfonts", () => {
   expect(webFonts).toHaveLength(2);
@@ -30,4 +31,18 @@ test("emits font face without local font bypasses", () => {
 test("preloads the generated webfont and exposes the stack", () => {
   expect(preloadLinks().match(/rel=preload/g)?.length).toBe(2);
   expect(fontStackCSS()).toBe("\"Berkeley Mono\", \"Dossier Mono Supplement\"");
+});
+
+test("isWideCodepoint classifies the page's East Asian Width groups", () => {
+  // Wide (two 600-unit cells): CJK, kana, fullwidth Latin.
+  for (const cp of [0x4e00, 0x65e5, 0x3042, 0x30a2, 0xff21]) {
+    expect(isWideCodepoint(cp)).toBe(true);
+  }
+  // Narrow (one cell): Latin, the interrobang, the U+303F carve-out, halfwidth.
+  for (const cp of [0x0041, 0x203d, 0x303f, 0xff61]) {
+    expect(isWideCodepoint(cp)).toBe(false);
+  }
+  // BMP-only by construction; an astral-plane wide glyph would surface as a
+  // bad-advance build failure in check-fonts, not here.
+  expect(isWideCodepoint(0x20000)).toBe(false);
 });

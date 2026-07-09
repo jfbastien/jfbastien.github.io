@@ -12,6 +12,7 @@ import {
 import { homedir, tmpdir } from "os";
 import { basename, join } from "path";
 import { codepointName, fontUsage, uniqueCodepoints } from "./font-corpus.ts";
+import { supplementalCopyright, supplementalVersion } from "./font-meta.ts";
 
 const root = join(import.meta.dir, "..");
 const fontsDir = join(root, "fonts");
@@ -454,6 +455,8 @@ try {
     supplementalFamily,
     "Regular",
     "DossierMonoSupplement-Regular",
+    supplementalCopyright,
+    supplementalVersion,
   ]);
   subset(join(fontsDir, supplementalTtf), supplementalText, join(tmp, supplementalWoff2Base), "woff2", true);
   const supplementalWoff2 = writeHashedWoff2(join(tmp, supplementalWoff2Base), supplementalWoff2Base);

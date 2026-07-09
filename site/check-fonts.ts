@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { codepointName, fontUsage, isWideCodepoint, uniqueCodepoints } from "./font-corpus.ts";
 import { webFonts } from "./fonts.ts";
+import { supplementalCopyright, supplementalVersion } from "./font-meta.ts";
 import { launchChrome, openPage } from "./chrome.ts";
 import { createHash } from "crypto";
 import { brotliDecompressSync } from "zlib";
@@ -286,15 +287,29 @@ function checkNoSourceIdentifiers(names: ReadonlyMap<number, string>, label: str
       throw new Error(`${label}: name table contains source identifier ${JSON.stringify(value)}`);
     }
   }
+  // nameID 0 (copyright) and 5 (version) are the vendor's pass-through fields;
+  // the rename overwrites the others but not these. Allow only their expected
+  // shapes, so a re-issued font cannot route an identifier through a field the
+  // denylist above happens to miss.
+  const copyright = names.get(0) ?? "";
+  const version = names.get(5) ?? "";
+  if (!/^Copyright /.test(copyright)) {
+    throw new Error(`${label}: nameID 0 (copyright) has unexpected shape: ${JSON.stringify(copyright)}`);
+  }
+  if (!/^Version \d/.test(version)) {
+    throw new Error(`${label}: nameID 5 (version) has unexpected shape: ${JSON.stringify(version)}`);
+  }
 }
 
 function checkSupplementalNames(font: FontData, label: string): void {
   const names = nameRecords(font);
   const expected = new Map<number, string>([
+    [0, supplementalCopyright],
     [1, "Dossier Mono Supplement"],
     [2, "Regular"],
     [3, "jfbastien.com;DossierMonoSupplement-Regular"],
     [4, "Dossier Mono Supplement Regular"],
+    [5, supplementalVersion],
     [6, "DossierMonoSupplement-Regular"],
     [16, "Dossier Mono Supplement"],
     [17, "Regular"],
@@ -336,14 +351,23 @@ function checkPrimaryNames(font: FontData, label: string, subfamily: "Regular" |
   checkNoSourceIdentifiers(names, label);
 }
 
-function checkPrimaryStaticFont(file: string | undefined, subfamily: "Regular" | "Bold"): readonly string[] {
+function checkPrimaryStaticFont(
+  file: string | undefined,
+  subfamily: "Regular" | "Bold",
+  primaryCovered: ReadonlySet<number>,
+): readonly string[] {
   if (!file) throw new Error(`primary font manifest missing static ${subfamily} TTF`);
   const path = join(root, "fonts", file);
   if (!existsSync(path)) throw new Error(`${path} missing. Run bun run font:prepare locally.`);
 
   const font = new TrueTypeFont(readFileSync(path));
   checkPrimaryNames(font, file, subfamily);
-  return collectCoverage(font, file, cps).badWidth;
+  const { covered, badWidth } = collectCoverage(font, file, cps);
+  const missing = [...primaryCovered].filter((cp) => !covered.has(cp));
+  if (missing.length > 0) {
+    throw new Error(`${file}: static instance embedded in the OG image is missing ${missing.length} glyph(s) the primary serves: ${missing.map(codepointName).join(", ")}`);
+  }
+  return badWidth;
 }
 
 function features(font: FontData): readonly string[] {
@@ -485,8 +509,8 @@ for (const webFont of webFonts) {
     checkPrimaryNames(woff2Font, webFont.file);
     checkPrimaryFeatures(ttfFont, webFont.ttf);
     checkPrimaryFeatures(woff2Font, webFont.file);
-    badWidth.push(...checkPrimaryStaticFont(webFont.staticTtf, "Regular"));
-    badWidth.push(...checkPrimaryStaticFont(webFont.staticBoldTtf, "Bold"));
+    badWidth.push(...checkPrimaryStaticFont(webFont.staticTtf, "Regular", woff2.covered));
+    badWidth.push(...checkPrimaryStaticFont(webFont.staticBoldTtf, "Bold", woff2.covered));
   }
 
   ttf.covered.forEach((cp) => covered.add(cp));
