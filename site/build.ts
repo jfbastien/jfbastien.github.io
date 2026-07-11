@@ -1,18 +1,19 @@
-import { chmod } from "fs/promises";
+import { chmod, readdir, rm } from "fs/promises";
 import { join } from "path";
 import { parseFrontMatter, splitSections, type SiteMeta } from "./parse.ts";
 import { renderLlmsTxt, renderRobotsTxt, renderSitemapXml } from "./meta-files.ts";
 import { renderHead } from "./head.ts";
+import { renderPrintStylesheet } from "./style.ts";
 import { attrs } from "./attrs.ts";
 import { renderDispatch, renderFooter, renderHeader, renderIndex, renderSections, type RenderedSection } from "./html.ts";
 
 const root = join(import.meta.dir, "..");
 const sitemapInputs = ["content.md", "site"] as const;
 
-function renderPage(meta: SiteMeta, sections: readonly RenderedSection[]): string {
+function renderPage(meta: SiteMeta, sections: readonly RenderedSection[], printStylesheet: string): string {
   return `<!DOCTYPE html>
 <html${attrs([["lang", "en"]])}>
-${renderHead(meta)}
+${renderHead(meta, printStylesheet)}
   <body>
     <div${attrs([["class", "page"]])}>
 ${renderHeader(meta)}
@@ -52,14 +53,26 @@ async function gitLastmod(paths: readonly string[]): Promise<string> {
   return lastmod;
 }
 
+async function removeStalePrintStylesheets(current: string): Promise<void> {
+  const generatedPrintStylesheet = /^print\.[a-f0-9]{16}\.css$/;
+  const stale = (await readdir(root)).filter((name) => name !== current && generatedPrintStylesheet.test(name));
+  await Promise.all(stale.map(async (name) => {
+    const path = join(root, name);
+    await chmod(path, 0o644);
+    await rm(path);
+  }));
+}
+
 const raw = await Bun.file(join(root, "content.md")).text();
 const { meta, body } = parseFrontMatter(raw);
 const sections = splitSections(body);
 const lastmod = await gitLastmod(sitemapInputs);
 const renderedSections = renderSections(sections);
+const printStylesheet = renderPrintStylesheet(meta);
 
 const outputs: readonly [string, string][] = [
-  ["index.html", renderPage(meta, renderedSections)],
+  ["index.html", renderPage(meta, renderedSections, printStylesheet.filename)],
+  [printStylesheet.filename, printStylesheet.css],
   ["index.md", renderMarkdown(meta, body)],
   ["llms.txt", renderLlmsTxt(meta)],
   ["robots.txt", renderRobotsTxt(meta)],
@@ -73,3 +86,5 @@ for (const [name, content] of outputs) {
   await chmod(path, 0o444);
   console.log(`✓ ${name} (${content.length} bytes)`);
 }
+
+await removeStalePrintStylesheets(printStylesheet.filename);

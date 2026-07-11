@@ -3,7 +3,7 @@ import { join } from "path";
 import { codepointName, fontUsage, isWideCodepoint, uniqueCodepoints } from "./font-corpus.ts";
 import { webFonts } from "./fonts.ts";
 import { supplementalCopyright, supplementalVersion } from "./font-meta.ts";
-import { launchChrome, openPage } from "./chrome.ts";
+import { emulatePrintMedia, launchChrome, openPage } from "./chrome.ts";
 import { createHash } from "crypto";
 import { brotliDecompressSync } from "zlib";
 
@@ -657,7 +657,12 @@ try {
   }
 
   async function platformFonts(media: "screen" | "print"): Promise<readonly string[]> {
-    await page.emulateMediaType(media);
+    if (media === "print") {
+      await emulatePrintMedia(page);
+    } else {
+      await page.emulateMediaType(media);
+      await page.evaluateHandle("document.fonts.ready");
+    }
     const { root } = await client.send("DOM.getDocument", { depth: -1, pierce: true }) as { root: DomNode };
     const fallback = new Set<string>();
 

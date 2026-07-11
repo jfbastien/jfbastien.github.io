@@ -2,7 +2,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "fs";
 import { chmod } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
-import { launchChrome, openPage } from "./chrome.ts";
+import { emulatePrintMedia, launchChrome, openPage } from "./chrome.ts";
 import { parseFrontMatter } from "./parse.ts";
 
 const root = join(import.meta.dir, "..");
@@ -84,7 +84,7 @@ const browser = await launchChrome();
 
 try {
   const page = await openPage(browser, html);
-  await page.emulateMediaType("print");
+  await emulatePrintMedia(page);
 
   if (existsSync(out)) await chmod(out, 0o644);
   await page.pdf({

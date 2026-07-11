@@ -101,17 +101,23 @@ theater.
 
 ## Loading
 
-The page is one self-contained document — CSS inlined, no external stylesheet
-or script request, no runtime JS. Keep it that way.
+The screen surface is one self-contained critical document: screen CSS stays
+inline, with no runtime JS. Print is a distinct deferred surface: its generated,
+content-hashed stylesheet follows the inline screen rules as a normal
+`rel=stylesheet media=print` link.
 
-- Fewer fetches over cleverness: one HTML document plus its two preloaded woff2
-  subsets (page-derived; see `fonts/AGENTS.md`). The preload stays because it is
-  measured to reach the font sooner on bandwidth-bound connections, not because
-  a checklist asks for it.
+- The print stylesheet is not preloaded. `media=print` keeps it off the screen
+  render-blocking path while allowing the browser to fetch it at low priority
+  for reliable immediate printing; it does not promise a network request only
+  after the user opens Print.
+- Fewer critical fetches over cleverness: the HTML document plus its two
+  preloaded woff2 subsets (page-derived; see `fonts/AGENTS.md`) form the screen
+  path. The font preload stays because it is measured to reach the font sooner
+  on bandwidth-bound connections, not because a checklist asks for it.
 - `font-display: block` keeps the monospace grid from reflowing through a
   fallback face; the milestone that matters is time to readable text.
-- Webfont filenames are content-hashed, so new glyphs bust the cache instead of
-  serving a stale subset.
+- Webfont and print-stylesheet filenames are content-hashed, so changed output
+  busts the cache instead of serving a stale subset or print surface.
 - Test a load claim against a throttled connection before acting on it; a best
   practice that costs measured milliseconds loses to the number.
 

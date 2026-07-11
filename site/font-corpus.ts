@@ -1,6 +1,6 @@
 import { existsSync } from "fs";
 import { join } from "path";
-import { launchChrome, openPage } from "./chrome.ts";
+import { emulatePrintMedia, launchChrome, openPage } from "./chrome.ts";
 
 function htmlPath(root: string): string {
   const path = join(root, "index.html");
@@ -24,8 +24,12 @@ export async function fontUsage(root = join(import.meta.dir, "..")): Promise<Fon
     const code: string[] = [];
 
     for (const media of ["screen", "print"] as const) {
-      await page.emulateMediaType(media);
-      await page.evaluateHandle("document.fonts.ready");
+      if (media === "print") {
+        await emulatePrintMedia(page);
+      } else {
+        await page.emulateMediaType(media);
+        await page.evaluateHandle("document.fonts.ready");
+      }
       const usage = await page.evaluate(() => {
         function visible(el: Element | null): boolean {
           for (let node = el; node; node = node.parentElement) {

@@ -6,12 +6,20 @@ const root = join(import.meta.dir, "..");
 const out = join(root, "_site");
 const tmp = join(root, "_site.tmp");
 
+function printStylesheetFromPage(html: string): string {
+  const stylesheet = html.match(/<link rel=stylesheet href=\.\/(print\.[a-f0-9]{16}\.css) media=print>/)?.[1];
+  if (!stylesheet) throw new Error("index.html is missing its generated print stylesheet link");
+  return stylesheet;
+}
+
 await rm(tmp, { recursive: true, force: true });
 await mkdir(tmp);
 await mkdir(join(tmp, "fonts"));
 
+const printStylesheet = printStylesheetFromPage(await Bun.file(join(root, "index.html")).text());
+
 const files = [
-  "index.html", "index.md", "llms.txt", "robots.txt", "sitemap.xml", "og.png", "CNAME",
+  "index.html", printStylesheet, "index.md", "llms.txt", "robots.txt", "sitemap.xml", "og.png", "CNAME",
   "favicon.ico", "favicon-16.png", "favicon-32.png", "favicon-64.png", "favicon-128.png", "favicon-256.png",
 ] as const;
 

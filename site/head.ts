@@ -1,6 +1,6 @@
 import { siteRoot, type SiteMeta } from "./parse.ts";
 import { preloadLinks } from "./fonts.ts";
-import { screenCSS, printCSS } from "./style.ts";
+import { screenCSS } from "./style.ts";
 import { attrs } from "./attrs.ts";
 
 function indentBlock(css: string, prefix: string): string {
@@ -25,7 +25,7 @@ function jsonLdSchema(meta: SiteMeta): string {
   return JSON.stringify(schema);
 }
 
-export function renderHead(meta: SiteMeta): string {
+export function renderHead(meta: SiteMeta, printStylesheet: string): string {
   const rootUrl = siteRoot(meta);
   return `  <head>
     <meta${attrs([["charset", "utf-8"]])}>
@@ -35,9 +35,7 @@ export function renderHead(meta: SiteMeta): string {
     <style>
 ${indentBlock(screenCSS(), "      ")}
     </style>
-    <style${attrs([["media", "print"]])}>
-${indentBlock(printCSS(meta), "      ")}
-    </style>
+    <link${attrs([["rel", "stylesheet"], ["href", `./${printStylesheet}`], ["media", "print"]])}>
     <meta${attrs([["name", "description"], ["content", meta.description]])}>
     <link${attrs([["rel", "canonical"], ["href", rootUrl]])}>
     <meta${attrs([["property", "og:type"], ["content", "website"]])}>

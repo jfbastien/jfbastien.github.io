@@ -6,6 +6,11 @@ function cssString(s: string): string {
   return s.replace(/[\\"]/g, "\\$&");
 }
 
+export interface PrintStylesheet {
+  readonly filename: string;
+  readonly css: string;
+}
+
 export function screenCSS(): string {
   return `${fontFaceCSS()}
 
@@ -1239,4 +1244,10 @@ p, li {
 .endmark {
   display: none;
 }`;
+}
+
+export function renderPrintStylesheet(meta: SiteMeta): PrintStylesheet {
+  const css = printCSS(meta);
+  const digest = new Bun.CryptoHasher("sha256").update(css).digest("hex").slice(0, 16);
+  return { filename: `print.${digest}.css`, css };
 }
