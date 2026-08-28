@@ -39,7 +39,7 @@ Systems and compiler engineer building and scaling platforms: security engineeri
 
 ### Genki Robotics
 > VP, Software Platform
-> 2025-06/..
+> 2025-06/2026-08
 
 Where code moves the physical world.
 
