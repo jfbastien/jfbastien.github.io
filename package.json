@@ -16,6 +16,7 @@
     "build": "bun run build:site && bun run font:check && bun run build:og && bun run build:assemble && bun run build:screenshot && bun run layout:check"
   },
   "overrides": {
+    "fflate": "0.7.5",
     "lodash": "4.18.1",
     "ws": "8.21.3"
   },
