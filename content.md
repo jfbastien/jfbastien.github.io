@@ -213,7 +213,7 @@ Conference keynote.
 > 2023
 
 [`*(char*)0 = 0;`](https://youtu.be/dFIqNZ8VbRY?list=PLhdfQEWYjzHXFmvFxLWMcBpx1Zms6fscC).
-328k views! 3<sup>rd</sup> most viewed C++ conference talk ever!
+331k views! 3<sup>rd</sup> most viewed C++ conference talk ever!
 
 ### C++Now
 > 2023
