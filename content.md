@@ -319,8 +319,19 @@ Conference keynote.
 
 ## Patent Register
 
+### [US20260236397A1](https://patents.google.com/patent/US20260236397A1/en)
+> System and method for WebAssembly memory management.
+
+### [US20260178787A1](https://patents.google.com/patent/US20260178787A1/en)
+> System and method for management of vehicle software design material.
+
+### [US20260169719A1](https://patents.google.com/patent/US20260169719A1/en)
+> System and method for facilitating differential software update on an automotive operating system.
+> [EP4760490A1](https://patents.google.com/patent/EP4760490A1/en), [JP2026104789A](https://patents.google.com/patent/JP2026104789A/en)
+
 ### [US20260133957A1](https://patents.google.com/patent/US20260133957A1/en)
 > Atomicity in OTA updates for vehicle systems.
+> [EP4745813A1](https://patents.google.com/patent/EP4745813A1/en), [CN122044611A](https://patents.google.com/patent/CN122044611A/en)
 
 ### [US20260010358A1](https://patents.google.com/patent/US20260010358A1/en)
 > System, method, and computer program for managing vehicle software updates.
