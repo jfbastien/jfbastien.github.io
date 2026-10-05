@@ -12,7 +12,9 @@ Primary face:
 Supplement face:
 
 - family: `Dossier Mono Supplement`;
-- only for glyphs Berkeley Mono does not cover;
+- holds only the page glyphs Berkeley Mono lacks, the Berkeley Mono characters
+  that share a grapheme cluster with one of them (so the cluster shapes in one
+  face), and the `0` that anchors the cell width;
 - must preserve Berkeley Mono's 600-unit monospace cell for visible glyphs:
   half-width glyphs advance 600, East Asian wide glyphs advance exactly two
   cells (1200) at full size.

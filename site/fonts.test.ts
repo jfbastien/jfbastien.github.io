@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { fontFaceCSS, fontStackCSS, preloadLinks, webFonts } from "./fonts.ts";
-import { isWideCodepoint } from "./font-corpus.ts";
+import { clusterCompanions, isWideCodepoint } from "./font-corpus.ts";
 
 test("serves generated Berkeley Mono webfonts", () => {
   expect(webFonts).toHaveLength(2);
@@ -45,4 +45,14 @@ test("isWideCodepoint classifies the page's East Asian Width groups", () => {
   // BMP-only by construction; an astral-plane wide glyph would surface as a
   // bad-advance build failure in check-fonts, not here.
   expect(isWideCodepoint(0x20000)).toBe(false);
+});
+
+test("clusterCompanions returns covered codepoints that share a cluster with uncovered ones", () => {
+  const covered = new Set([0x0065, 0x00e9]);
+  // e + U+0305 COMBINING OVERLINE: the covered base ships with the mark.
+  expect(clusterCompanions("e̅", covered)).toEqual([0x0065]);
+  // Fully covered, fully uncovered, and precomposed clusters need nothing.
+  expect(clusterCompanions("e", covered)).toEqual([]);
+  expect(clusterCompanions("日̅", covered)).toEqual([]);
+  expect(clusterCompanions("é", covered)).toEqual([]);
 });

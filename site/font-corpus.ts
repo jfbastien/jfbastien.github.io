@@ -11,7 +11,6 @@ function htmlPath(root: string): string {
 export interface FontUsage {
   readonly all: string;
   readonly italic: string;
-  readonly code: string;
 }
 
 export async function fontUsage(root = join(import.meta.dir, "..")): Promise<FontUsage> {
@@ -21,7 +20,6 @@ export async function fontUsage(root = join(import.meta.dir, "..")): Promise<Fon
     const page = await openPage(browser, htmlPath(root));
     const all: string[] = [];
     const italic: string[] = [];
-    const code: string[] = [];
 
     for (const media of ["screen", "print"] as const) {
       if (media === "print") {
@@ -73,29 +71,20 @@ export async function fontUsage(root = join(import.meta.dir, "..")): Promise<Fon
           return "";
         }
 
-        function add(
-          parts: string[],
-          italicParts: string[],
-          codeParts: string[],
-          text: string,
-          style: CSSStyleDeclaration,
-          el?: Element | null,
-        ): void {
+        function add(parts: string[], italicParts: string[], text: string, style: CSSStyleDeclaration): void {
           if (!text) return;
           parts.push(text);
           if (style.fontStyle !== "normal") italicParts.push(text);
-          if (el?.closest("code,kbd,samp")) codeParts.push(text);
         }
 
         const parts: string[] = [];
         const italicParts: string[] = [];
-        const codeParts: string[] = [];
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
           const text = walker.currentNode.textContent;
           const parent = walker.currentNode.parentElement;
           if (text && parent && visible(parent)) {
-            add(parts, italicParts, codeParts, text, getComputedStyle(parent), parent);
+            add(parts, italicParts, text, getComputedStyle(parent));
           }
         }
 
@@ -103,19 +92,18 @@ export async function fontUsage(root = join(import.meta.dir, "..")): Promise<Fon
           if (!visible(el)) continue;
           for (const pseudo of ["::before", "::after", "::marker"] as const) {
             const style = getComputedStyle(el, pseudo);
-            add(parts, italicParts, codeParts, pseudoText(el, style.content), style, el);
+            add(parts, italicParts, pseudoText(el, style.content), style);
           }
-          add(parts, italicParts, codeParts, markerText(el), getComputedStyle(el, "::marker"), el);
+          add(parts, italicParts, markerText(el), getComputedStyle(el, "::marker"));
         }
 
-        return { all: parts.join("\n"), italic: italicParts.join("\n"), code: codeParts.join("\n") };
+        return { all: parts.join("\n"), italic: italicParts.join("\n") };
       });
       all.push(usage.all);
       italic.push(usage.italic);
-      code.push(usage.code);
     }
 
-    return { all: all.join("\n"), italic: italic.join("\n"), code: code.join("\n") };
+    return { all: all.join("\n"), italic: italic.join("\n") };
   } finally {
     await browser.close();
   }
@@ -123,6 +111,18 @@ export async function fontUsage(root = join(import.meta.dir, "..")): Promise<Fon
 
 export function uniqueCodepoints(text: string): readonly number[] {
   return [...new Set([...text].map((ch) => ch.codePointAt(0)!))].sort((a, b) => a - b);
+}
+
+// Browsers shape a grapheme cluster in one font, so a covered codepoint that
+// shares a cluster with an uncovered one must also exist in the fallback face.
+export function clusterCompanions(text: string, covered: ReadonlySet<number>): readonly number[] {
+  const companions = new Set<number>();
+  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text)) {
+    const cps = uniqueCodepoints(segment).filter((cp) => cp >= 0x20);
+    if (cps.every((cp) => covered.has(cp))) continue;
+    for (const cp of cps) if (covered.has(cp)) companions.add(cp);
+  }
+  return [...companions].sort((a, b) => a - b);
 }
 
 export function codepointName(cp: number): string {

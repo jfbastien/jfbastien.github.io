@@ -41,7 +41,7 @@ def main(argv: list[str]) -> int:
     cps = load_codepoints(cps_path)
     base_cmap = charmap(base)
     fallback_cmap = charmap(fallback)
-    base_width = base["hmtx"].metrics.get("zero", (600, 0))[0]
+    base_width = base["hmtx"]["zero"][0]
 
     missing = [cp for cp in cps if cp not in base_cmap]
     unavailable = [cp for cp in missing if cp not in fallback_cmap]

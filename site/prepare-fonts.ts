@@ -11,7 +11,7 @@ import {
 } from "fs";
 import { homedir, tmpdir } from "os";
 import { basename, join } from "path";
-import { codepointName, fontUsage, uniqueCodepoints } from "./font-corpus.ts";
+import { clusterCompanions, codepointName, fontUsage, uniqueCodepoints } from "./font-corpus.ts";
 import { supplementalCopyright, supplementalVersion } from "./font-meta.ts";
 
 const root = join(import.meta.dir, "..");
@@ -278,16 +278,14 @@ try {
   requirePrimaryVariableFont(berkeleySource, "Berkeley Mono source", ligatureGlyphs);
   const cps = uniqueCodepoints(usage.all).filter((cp) => cp >= 0x20);
   const italicCps = uniqueCodepoints(usage.italic).filter((cp) => cp >= 0x20);
-  const codeCps = uniqueCodepoints(usage.code).filter((cp) => cp >= 0x20);
   const allCpsPath = join(tmp, "all-cps.txt");
   writeCps(allCpsPath, cps);
 
   const berkeleyCovered = coveredCodepoints(berkeleySource, allCpsPath);
   const primaryCps = cps.filter((cp) => berkeleyCovered.has(cp));
   const supplementalSeedCps = [...new Set([
-    0x20,
-    0x30,
-    ...codeCps.filter((cp) => berkeleyCovered.has(cp)),
+    0x30, // merge-fonts.py takes the cell width from `0`.
+    ...clusterCompanions(usage.all, berkeleyCovered),
   ])].sort((a, b) => a - b);
   const missingItalic = italicCps.filter((cp) => !berkeleyCovered.has(cp));
   if (missingItalic.length > 0) {

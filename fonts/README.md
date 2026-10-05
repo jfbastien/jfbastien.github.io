@@ -9,7 +9,10 @@ The site serves checked-in WOFF2 subsets only:
   - preserves `wght`, `wdth`, `slnt`, and `calt`;
   - served as `Berkeley Mono`.
 - `DossierMonoSupplement.<hash>.woff2`
-  - supplemental monospaced face for page glyphs Berkeley Mono does not cover;
+  - supplemental monospaced face for page glyphs Berkeley Mono does not cover,
+    plus the Berkeley Mono characters sharing a grapheme cluster with one of
+    them (so the cluster shapes in one face) and the `0` that anchors the cell
+    width;
   - generated from a Berkeley Mono metrics shell plus fallback outlines;
   - served as `Dossier Mono Supplement`.
 
