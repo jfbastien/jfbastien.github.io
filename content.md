@@ -152,40 +152,57 @@ Re-published as a [Communications of the ACM Research Highlight](https://cacm.ac
 - [P3477](https://wg21.link/P3477) There are exactly 8 bits in a byte
 - [P2809](https://wg21.link/P2809) Trivial infinite loops are not Undefined Behavior
 - [P1152](https://wg21.link/P1152) Deprecating `volatile`
+- [P1831](https://wg21.link/P1831) Deprecating `volatile`: library
 - [P0907](https://wg21.link/P0907) Signed integers are two’s complement
-- [P1860](https://wg21.link/P1860) C++ networking must be secure by default
-- [N4455](https://wg21.link/N4455) No sane compiler would optimize atomics
-- [P0323](https://wg21.link/P0323) `std::expected`
 - [P2723](https://wg21.link/P2723) Zero-initialize objects of automatic storage duration
-- [P1225](https://wg21.link/P1225) Feedback on 2D graphics
-- [P1482](https://wg21.link/P1482) Modules feedback
-- [P1746](https://wg21.link/P1746) Feedback on `std::audio`
 - [P0476](https://wg21.link/P0476) Bit-casting object representations
-- [P1382](https://wg21.link/P1382) `volatile` load and `volatile` store
-- [P0750](https://wg21.link/P0750) Consume
-- [P0690](https://wg21.link/P0690) Tearable atomics
-- [P0995](https://wg21.link/P0995) Improving `atomic_flag`
-- [P1135](https://wg21.link/P1135) The C++20 synchronization library
-- [N4509](https://wg21.link/N4509) `constexpr atomic::is_always_lock_free`
-- [P0502](https://wg21.link/P0502) Throwing out of a parallel algorithm terminates
-- [P0154](https://wg21.link/P0154) Hardware constructive/destructive interference size
-- [P1119](https://wg21.link/P1119) ABI for interference size
-- [P0528](https://wg21.link/P0528) Padding bits, atomic compare-and-exchange
-- [P1205](https://wg21.link/P1205) Teleportation via `co_await`
-- [P0193](https://wg21.link/P0193) Where is vectorization in C++‽
-- [P0394](https://wg21.link/P0394r4) Hotel Parallelifornia
-- [P0020](https://wg21.link/P0020) Floating point atomic
-- [P0153](https://wg21.link/P0153) Atomic object fence
-- [P0097](https://wg21.link/P0097) Use cases for thread-local storage
-- [P0566](https://wg21.link/P0566) Hazard pointer, RCU
-- [P0418](https://wg21.link/P0418) Fail or succeed: there is no atomic lattice
 - [P1102](https://wg21.link/P1102) Down with `()!`
+- [P2186](https://wg21.link/P2186) Removing garbage collection support
 - [P1110](https://wg21.link/P1110) A placeholder with no name
+- [P1382](https://wg21.link/P1382) `volatile` load and `volatile` store
 - [P1153](https://wg21.link/P1153) Copying volatile subobjects is not trivial
-- [P1245](https://wg21.link/P1245) export module containing `[[attribute]];`
 - [P1246](https://wg21.link/P1246) The `no_float` function attribute
 - [P1247](https://wg21.link/P1247) Disabling `static` destructors
-- [P2186](https://wg21.link/P2186) Removing garbage collection support
+- [P1482](https://wg21.link/P1482) Modules feedback
+- [P1245](https://wg21.link/P1245) export module containing `[[attribute]];`
+- [P1860](https://wg21.link/P1860) C++ networking must be secure by default
+- [P1861](https://wg21.link/P1861) Secure networking in C++
+- [P0323](https://wg21.link/P0323) `std::expected`
+- [P1225](https://wg21.link/P1225) Feedback on 2D graphics
+- [P1746](https://wg21.link/P1746) Feedback on `std::audio`
+- [N4455](https://wg21.link/N4455) No sane compiler would optimize atomics
+- [P0062](https://wg21.link/P0062) When should compilers optimize atomics?
+- [P1135](https://wg21.link/P1135) The C++20 synchronization library
+- [P0995](https://wg21.link/P0995) Improving `atomic_flag`
+- [P0528](https://wg21.link/P0528) Padding bits, atomic compare-and-exchange
+- [N4130](https://wg21.link/N4130) Pad thy atomics
+- [P0020](https://wg21.link/P0020) Floating point atomic
+- [P0440](https://wg21.link/P0440) Floating point atomic view
+- [P0152](https://wg21.link/P0152) `constexpr atomic<T>::is_always_lock_free`
+- [P0418](https://wg21.link/P0418) Fail or succeed: there is no atomic lattice
+- [P0154](https://wg21.link/P0154) Hardware constructive/destructive interference size
+- [P1119](https://wg21.link/P1119) ABI for interference size
+- [P0394](https://wg21.link/P0394) Hotel Parallelifornia
+- [P0502](https://wg21.link/P0502) Throwing out of a parallel algorithm terminates
+- [P2530](https://wg21.link/P2530) Hazard pointers for C++26
+- [P2545](https://wg21.link/P2545) Read-copy update (RCU)
+- [P2414](https://wg21.link/P2414) Pointer lifetime-end zap: atomics and `volatile`
+- [P3347](https://wg21.link/P3347) Invalid pointer operations
+- [P3790](https://wg21.link/P3790) Pointer lifetime-end zap: bag-of-bits pointer class
+- [P0690](https://wg21.link/P0690) Tearable atomics
+- [P0153](https://wg21.link/P0153) Atomic object fence
+- [P0750](https://wg21.link/P0750) Consume
+- [P0190](https://wg21.link/P0190) New `memory_order_consume` definition
+- [P0462](https://wg21.link/P0462) Marking `memory_order_consume` dependency chains
+- [P0097](https://wg21.link/P0097) Use cases for thread-local storage
+- [P0108](https://wg21.link/P0108) Skeleton proposal for thread-local storage
+- [P0193](https://wg21.link/P0193) Where is vectorization in C++‽
+- [P1205](https://wg21.link/P1205) Teleportation via `co_await`
+- [P1018](https://wg21.link/P1018) C++ language evolution status
+- [P2145](https://wg21.link/P2145) Evolving C++ remotely
+- [P2026](https://wg21.link/P2026) A constituent study group for safety-critical applications
+- [N4961](https://wg21.link/N4961) 2024-03 Tokyo meeting information
+- [N4636](https://wg21.link/N4636) 2017-07 Toronto meeting information
 
 ### NDC TechTown
 > 2025

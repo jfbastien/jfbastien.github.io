@@ -43,8 +43,9 @@ someone who checks.
 
 - **Order is legible or it is wrong.** Service Record and Education by end date
   descending; papers and talks by year descending; the standards docket by
-  impact; undated series last. An order the reader cannot reconstruct reads as
-  neglect.
+  theme (language, library, concurrency, administrative), then impact, a
+  companion paper under its lead; undated series last. An order the reader
+  cannot reconstruct reads as neglect.
 
 - **The mechanics are the message.** ISO 8601 dates and intervals
   (`YYYY-MM/YYYY-MM`, `YYYY/YYYY`, open end `YYYY-MM/..`); a standards reader
