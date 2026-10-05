@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { codepointName, fontUsage, isWideCodepoint, uniqueCodepoints } from "./font-corpus.ts";
+import { codepointName, fontUsage, isWideCodepoint, markClusterProblems, uniqueCodepoints } from "./font-corpus.ts";
 import { webFonts } from "./fonts.ts";
 import { supplementalCopyright, supplementalVersion } from "./font-meta.ts";
 import { emulatePrintMedia, launchChrome, openPage } from "./chrome.ts";
@@ -9,6 +9,8 @@ import { brotliDecompressSync } from "zlib";
 
 const root = join(import.meta.dir, "..");
 const htmlPath = join(root, "index.html");
+// Berkeley Mono's monospace cell, in font units.
+const cell = 600;
 
 interface Table {
   readonly offset: number;
@@ -411,7 +413,52 @@ function checkPrimaryFeatures(font: FontData, label: string): void {
 }
 
 function expectedAdvance(cp: number): number {
-  return isCombining(cp) ? 0 : isWideCodepoint(cp) ? 1200 : 600;
+  return isCombining(cp) ? 0 : isWideCodepoint(cp) ? 2 * cell : cell;
+}
+
+// A supplement file as Chrome loads it: the page's own @font-face, or the
+// file's base64 bytes under a family of their own.
+interface SupplementFile {
+  readonly label: string;
+  readonly family: string;
+  readonly bytes: string | null;
+  readonly advances: ReadonlyMap<number, number>;
+}
+
+// One codepoint drawn alone: its ink's horizontal extent in font units from
+// the drawing origin, or null when no pixel is inked.
+interface Ink {
+  readonly cp: number;
+  readonly extent: { readonly left: number; readonly right: number } | null;
+  readonly clipped: boolean;
+}
+
+const invisible = /^[\p{White_Space}\p{Default_Ignorable_Code_Point}]$/u;
+
+// Drawn at one pixel per font unit, each measured edge lies within one unit of
+// the outline's, so the measured centre does too; merge-fonts.py centres an
+// integer outline within half a unit of -cell/2.
+const markCentreTolerance = 1.5;
+
+// The supplement has no GPOS to place a mark, so merge-fonts.py centres each
+// zero-advance glyph on the cell before its origin, where its base sits.
+function checkSupplementalInk(file: SupplementFile, inks: readonly Ink[]): void {
+  const problems: string[] = [];
+
+  for (const { cp, extent, clipped } of inks) {
+    if (clipped) {
+      problems.push(`${codepointName(cp)} ink reaches the edge of the measuring canvas`);
+    } else if (!extent) {
+      if (!invisible.test(String.fromCodePoint(cp))) problems.push(`${codepointName(cp)} draws nothing`);
+    } else if (file.advances.get(cp) === 0) {
+      const centre = (extent.left + extent.right) / 2;
+      if (Math.abs(centre + cell / 2) > markCentreTolerance) {
+        problems.push(`${codepointName(cp)} zero-advance ink centred at x=${centre}, expected ${-cell / 2}`);
+      }
+    }
+  }
+
+  if (problems.length > 0) throw new Error(`${file.label} as drawn by Chrome:\n${problems.join("\n")}`);
 }
 
 function checkHashInName(file: string): void {
@@ -457,24 +504,27 @@ function supplementManifest(): SupplementManifest {
 
 function collectCoverage(font: FontData, fontName: string, cps: readonly number[]): {
   readonly covered: ReadonlySet<number>;
+  readonly advances: ReadonlyMap<number, number>;
   readonly badWidth: readonly string[];
 } {
   const glyphs = cmap(font, cps);
   const widths = advances(font);
   const covered = new Set<number>();
+  const advanceOf = new Map<number, number>();
   const badWidth: string[] = [];
 
   for (const [cp, glyph] of glyphs) {
     if (glyph <= 0 || glyph >= widths.length) continue;
     covered.add(cp);
     const adv = widths[glyph]!;
+    advanceOf.set(cp, adv);
     const expected = expectedAdvance(cp);
     if (adv !== expected) {
       badWidth.push(`${fontName}: ${codepointName(cp)} advance ${adv}, expected ${expected}`);
     }
   }
 
-  return { covered, badWidth };
+  return { covered, advances: advanceOf, badWidth };
 }
 
 const usage = await fontUsage(root);
@@ -483,6 +533,7 @@ const italicCps = uniqueCodepoints(usage.italic).filter((cp) => cp >= 0x20);
 const covered = new Set<number>();
 const coveredByKind = new Map<string, ReadonlySet<number>>();
 const badWidth: string[] = [];
+const supplementFiles: SupplementFile[] = [];
 
 for (const webFont of webFonts) {
   const webFontPath = join(root, "fonts", webFont.file);
@@ -504,6 +555,10 @@ for (const webFont of webFonts) {
   if (webFont.kind === "supplemental") {
     checkSupplementalNames(ttfFont, webFont.ttf);
     checkSupplementalNames(woff2Font, webFont.file);
+    supplementFiles.push(
+      { label: webFont.ttf, family: `${webFont.family} TTF`, bytes: ttfFont.data.toString("base64"), advances: ttf.advances },
+      { label: webFont.file, family: webFont.family, bytes: null, advances: woff2.advances },
+    );
   } else if (webFont.kind === "primary") {
     checkPrimaryNames(ttfFont, webFont.ttf);
     checkPrimaryNames(woff2Font, webFont.file);
@@ -691,8 +746,81 @@ try {
   if (fallbackFonts.length > 0) {
     throw new Error(`Browser rendered body text with non-served fonts:\n${fallbackFonts.join("\n")}`);
   }
+
+  // Draw each supplement codepoint alone, one pixel per font unit, and read
+  // its ink back from the pixels. The canvas spans 1500 units either side of
+  // the origin, 1500 above the baseline, and 900 below.
+  const measured = await page.evaluate(async (files, cell) => {
+    const results: { loaded: boolean; inks: Ink[] }[] = [];
+    for (const { family, bytes, cps } of files) {
+      if (bytes !== null) {
+        const face = new FontFace(family, Uint8Array.from(atob(bytes), (ch) => ch.charCodeAt(0)));
+        document.fonts.add(await face.load());
+      }
+      const loaded = [...document.fonts].some((face) =>
+        face.family.replace(/^["']|["']$/g, "") === family && face.status === "loaded"
+      );
+      if (!loaded) {
+        results.push({ loaded, inks: [] });
+        continue;
+      }
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d", { willReadFrequently: true })!;
+      // Returns pixels per font unit: the supplement's `0` advances one cell.
+      const setFont = (size: number): number => {
+        context.font = `${size}px "${family}"`;
+        context.textAlign = "left";
+        context.textBaseline = "alphabetic";
+        return context.measureText("0").width / cell;
+      };
+      const size = Math.ceil(1000 / setFont(1000));
+      const unit = setFont(size);
+      canvas.width = Math.ceil(3000 * unit);
+      canvas.height = Math.ceil(2400 * unit);
+      setFont(size); // resizing the canvas resets its context
+      const { width, height } = canvas;
+      const originX = Math.round(1500 * unit);
+      const originY = Math.round(1500 * unit);
+
+      const inks: Ink[] = [];
+      for (const cp of cps) {
+        context.clearRect(0, 0, width, height);
+        context.fillText(String.fromCodePoint(cp), originX, originY);
+        const { data } = context.getImageData(0, 0, width, height);
+        let left = width;
+        let right = -1;
+        let clipped = false;
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            if (data[(y * width + x) * 4 + 3] === 0) continue;
+            left = Math.min(left, x);
+            right = Math.max(right, x);
+            clipped ||= x === 0 || y === 0 || x === width - 1 || y === height - 1;
+          }
+        }
+        const extent = right < 0 ? null : { left: (left - originX) / unit, right: (right + 1 - originX) / unit };
+        inks.push({ cp, extent, clipped });
+      }
+      results.push({ loaded, inks });
+    }
+    return results;
+  }, supplementFiles.map(({ family, bytes, advances }) => ({ family, bytes, cps: [...advances.keys()] })), cell);
+
+  for (const [i, file] of supplementFiles.entries()) {
+    const { loaded, inks } = measured[i]!;
+    if (!loaded) throw new Error(`${file.label}: Chrome did not load family ${JSON.stringify(file.family)}`);
+    checkSupplementalInk(file, inks);
+    if (file.bytes !== null) continue;
+    // The page draws from the served file; its inked zero-advance glyphs are the marks.
+    const marks = new Set(inks.filter((ink) => ink.extent && file.advances.get(ink.cp) === 0).map((ink) => ink.cp));
+    const problems = markClusterProblems(usage.all, cell, file.advances, marks);
+    if (problems.length > 0) {
+      throw new Error(`Supplement marks need one ${cell}-unit cell before them and no second mark:\n${problems.join("\n")}`);
+    }
+  }
 } finally {
   await browser.close();
 }
 
-console.log(`✓ ${webFonts.length} served Berkeley Mono font files cover ${cps.length} codepoints on the 600-unit cell grid`);
+console.log(`✓ ${webFonts.length} served Berkeley Mono font files cover ${cps.length} codepoints on the ${cell}-unit cell grid`);

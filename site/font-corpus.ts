@@ -125,6 +125,35 @@ export function clusterCompanions(text: string, covered: ReadonlySet<number>): r
   return [...companions].sort((a, b) => a - b);
 }
 
+// A supplement mark has no GPOS to place it; it draws on the one cell before
+// its origin. A cluster holding one shapes wholly in the supplement, so it must
+// advance exactly that cell before the mark and hold no second one.
+export function markClusterProblems(
+  text: string,
+  cell: number,
+  advances: ReadonlyMap<number, number>,
+  marks: ReadonlySet<number>,
+): readonly string[] {
+  const problems: string[] = [];
+  for (const { segment } of new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text)) {
+    const cps = [...segment].map((ch) => ch.codePointAt(0)!);
+    const markAt = cps.findIndex((cp) => marks.has(cp));
+    if (markAt < 0) continue;
+    const cluster = JSON.stringify(segment);
+    const unmapped = cps.filter((cp) => !advances.has(cp));
+    const markCount = cps.filter((cp) => marks.has(cp)).length;
+    if (unmapped.length > 0) {
+      problems.push(`${cluster} has ${unmapped.map(codepointName).join(", ")} outside the supplement`);
+    } else if (markCount > 1) {
+      problems.push(`${cluster} holds ${markCount} supplement marks`);
+    } else {
+      const before = cps.slice(0, markAt).reduce((sum, cp) => sum + advances.get(cp)!, 0);
+      if (before !== cell) problems.push(`${cluster} advances ${before} before its mark, expected ${cell}`);
+    }
+  }
+  return problems;
+}
+
 export function codepointName(cp: number): string {
   return `U+${cp.toString(16).toUpperCase()} ${String.fromCodePoint(cp)}`;
 }

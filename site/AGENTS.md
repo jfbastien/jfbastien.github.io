@@ -128,3 +128,10 @@ rows, and accidental font-size escapes.
 
 `print-audit.ts` should catch page count issues, missing footers, fallback fonts,
 sparse non-final pages, and print-only URL regressions.
+
+`check-fonts.ts` should catch missing glyphs, off-cell advances, and text the
+browser draws from a non-served font. It draws each page codepoint the
+supplement maps in Chrome, from both the TTF and the served WOFF2, and fails on
+a visible one with no inked pixels or a zero-advance one whose ink is not
+centred on the preceding cell; and it fails a page cluster that holds a
+supplement mark without exactly one cell of advance before its only mark.

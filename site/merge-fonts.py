@@ -2,6 +2,7 @@
 import sys
 import unicodedata
 from fontTools.misc.transform import Transform
+from fontTools.pens.recordingPen import DecomposingRecordingPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
@@ -15,19 +16,14 @@ def usage() -> None:
     )
 
 
-def transform_glyph(font: TTFont, glyph_name: str, scale: float):
+def outline(font: TTFont, glyph_name: str, transform: Transform):
+    # Composites are flattened: their component names belong to the fallback.
     glyph_set = font.getGlyphSet()
-    pen = TTGlyphPen(glyph_set)
-    glyph_set[glyph_name].draw(TransformPen(pen, Transform(scale, 0, 0, scale, 0, 0)))
+    recording = DecomposingRecordingPen(glyph_set)
+    glyph_set[glyph_name].draw(recording)
+    pen = TTGlyphPen(None)
+    recording.replay(TransformPen(pen, transform))
     return pen.glyph()
-
-
-def rename_components(glyph, rename: dict[str, str]) -> None:
-    if not glyph.isComposite():
-        return
-    for component in glyph.components:
-        if component.glyphName in rename:
-            component.glyphName = rename[component.glyphName]
 
 
 def main(argv: list[str]) -> int:
@@ -38,6 +34,8 @@ def main(argv: list[str]) -> int:
     base_path, fallback_path, cps_path, out_path = argv[1:]
     base = TTFont(base_path, recalcTimestamp=False)
     fallback = TTFont(fallback_path)
+    if "glyf" not in fallback:
+        raise SystemExit(f"{fallback_path}: no glyf table; cubic CFF outlines cannot be copied into glyf")
     cps = load_codepoints(cps_path)
     base_cmap = charmap(base)
     fallback_cmap = charmap(fallback)
@@ -50,13 +48,13 @@ def main(argv: list[str]) -> int:
         raise SystemExit(f"fallback font does not cover: {formatted}")
 
     base_order = list(base.getGlyphOrder())
-    fallback_order = fallback.getGlyphOrder()
+    encoded: dict[str, list[int]] = {}
+    for cp in missing:
+        encoded.setdefault(fallback_cmap[cp], []).append(cp)
     rename: dict[str, str] = {}
 
-    for name in fallback_order:
-        if name == ".notdef":
-            continue
-        if name not in fallback["glyf"].glyphs:
+    for name in fallback.getGlyphOrder():
+        if name not in encoded:
             continue
         new_name = f"jf_fallback_{name}"
         i = 2
@@ -65,34 +63,46 @@ def main(argv: list[str]) -> int:
             i += 1
         rename[name] = new_name
 
-    # Add every glyph in the fallback subset, including unencoded components.
     for old_name, new_name in rename.items():
         base_order.append(new_name)
 
     base.setGlyphOrder(base_order)
 
-    fallback_glyf = fallback["glyf"]
     fallback_hmtx = fallback["hmtx"]
     base_glyf = base["glyf"]
     base_hmtx = base["hmtx"]
 
     for old_name, new_name in rename.items():
-        glyph = fallback_glyf[old_name]
-        rename_components(glyph, rename)
-
-        advance, lsb = fallback_hmtx.metrics.get(old_name, (base_width, 0))
-        encoded_cps = [cp for cp, name in fallback_cmap.items() if name == old_name]
+        advance, lsb = fallback_hmtx[old_name]
+        encoded_cps = encoded[old_name]
         is_mark = any(unicodedata.category(chr(cp)).startswith("M") for cp in encoded_cps)
         # East Asian Wide glyphs keep their full size and take two cells.
         is_wide = any(unicodedata.east_asian_width(chr(cp)) in ("W", "F") for cp in encoded_cps)
 
         if is_mark or advance == 0:
-            base_hmtx.metrics[new_name] = (0, lsb)
+            formatted = ", ".join(f"U+{cp:04X}" for cp in encoded_cps)
+            if advance != 0:
+                raise SystemExit(f"{formatted}: mark advances {advance} in the fallback; only a zero-advance mark can sit on the preceding cell without GPOS")
+            glyph = outline(fallback, old_name, Transform())
+            if glyph.numberOfContours == 0:
+                # No ink, nothing to place: a zero-width format character.
+                base_glyf.glyphs[new_name] = glyph
+                base_hmtx.metrics[new_name] = (0, lsb)
+                continue
+            # Without GPOS the mark draws where the pen stops after its base.
+            # Moving its ink onto the cell before the origin keeps its place on
+            # that base only when the fallback centres the ink on its own origin.
+            x_min, _, x_max, _ = glyph.coordinates.calcIntBounds()
+            if abs(x_min + x_max) > 2:
+                raise SystemExit(f"{formatted}: fallback ink spans x={x_min}..{x_max}, centred at {(x_min + x_max) / 2}, not within one unit of its origin; placing it needs GPOS")
+            shift = (-base_width - x_min - x_max) // 2
+            glyph.coordinates.translate((shift, 0))
             base_glyf.glyphs[new_name] = glyph
+            base_hmtx.metrics[new_name] = (0, x_min + shift)
         else:
             target_width = base_width * 2 if is_wide else base_width
             scale = target_width / advance
-            base_glyf.glyphs[new_name] = transform_glyph(fallback, old_name, scale)
+            base_glyf.glyphs[new_name] = outline(fallback, old_name, Transform(scale, 0, 0, scale, 0, 0))
             base_hmtx.metrics[new_name] = (target_width, round(lsb * scale))
 
     for table in base["cmap"].tables:

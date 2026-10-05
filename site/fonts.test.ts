@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { fontFaceCSS, fontStackCSS, preloadLinks, webFonts } from "./fonts.ts";
-import { clusterCompanions, isWideCodepoint } from "./font-corpus.ts";
+import { clusterCompanions, isWideCodepoint, markClusterProblems } from "./font-corpus.ts";
 
 test("serves generated Berkeley Mono webfonts", () => {
   expect(webFonts).toHaveLength(2);
@@ -55,4 +55,16 @@ test("clusterCompanions returns covered codepoints that share a cluster with unc
   expect(clusterCompanions("e", covered)).toEqual([]);
   expect(clusterCompanions("日̅", covered)).toEqual([]);
   expect(clusterCompanions("é", covered)).toEqual([]);
+});
+
+test("markClusterProblems requires one cell before a lone supplement mark", () => {
+  const advances = new Map([[0x0065, 600], [0x0291, 600], [0x65e5, 1200], [0x0305, 0], [0x0489, 0]]);
+  const marks = new Set([0x0305, 0x0489]);
+  const problems = (text: string) => markClusterProblems(text, 600, advances, marks);
+  // The page's clusters: e + U+0305 COMBINING OVERLINE, ʑ + U+0489 MILLIONS SIGN.
+  expect(problems("e̅ ʑ҉")).toEqual([]);
+  expect(problems("日̅")).toEqual([`"日̅" advances 1200 before its mark, expected 600`]);
+  expect(problems("̅")).toEqual([`"̅" advances 0 before its mark, expected 600`]);
+  expect(problems("e̅҉")).toEqual([`"e̅҉" holds 2 supplement marks`]);
+  expect(problems("x̅")).toEqual([`"x̅" has U+78 x outside the supplement`]);
 });
