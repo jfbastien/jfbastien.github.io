@@ -352,7 +352,7 @@ Conference keynote.
 
 ### [US20260010358A1](https://patents.google.com/patent/US20260010358A1/en)
 > System, method, and computer program for managing vehicle software updates.
-> [JP2026008698A](https://patents.google.com/patent/JP2026008698A/en), [CN121277530A](https://patents.google.com/patent/CN121277530A/en)
+> [JP2026008698A](https://patents.google.com/patent/JP2026008698A/en), [JP7910639 (grant)](https://jglobal.jst.go.jp/detail?JGLOBAL_ID=202603019729663883), [CN121277530A](https://patents.google.com/patent/CN121277530A/en)
 
 ### [US12423471B2](https://patents.google.com/patent/US12423471B2/en)
 > Program operation sequence determination for reduced potential leakage of personally identifiable information.
