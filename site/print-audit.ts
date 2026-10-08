@@ -114,8 +114,8 @@ if (pageTexts.length !== pages) {
 }
 
 // Orphan checks need lines in PAGE order, not extraction order: absolutely
-// positioned elements (straddling panel titles) extract out of place, so
-// sort structured-text lines by their y coordinate.
+// positioned elements (straddling panel titles) extract out of place. Sort
+// by baseline, then x: glyph tops differ even within one register row.
 function decodeEntities(text: string): string {
   return text
     .replace(/&lt;/g, "<")
@@ -126,14 +126,15 @@ function decodeEntities(text: string): string {
 }
 
 function contentLinesInPageOrder(pageXml: string): string[] {
-  const lines: { readonly y: number; readonly text: string }[] = [];
-  for (const line of pageXml.matchAll(/<line bbox="[\d.]+ ([\d.]+) [\d.]+ [\d.]+"[^>]*>(.*?)<\/line>/gs) ?? []) {
-    const text = decodeEntities([...line[2]!.matchAll(/<char[^>]* c="([^"]*)"/g)].map((m) => m[1]!).join("")).trim();
+  const lines: { readonly x: number; readonly y: number; readonly text: string }[] = [];
+  for (const line of pageXml.matchAll(/<line\b[^>]*>(.*?)<\/line>/gs)) {
+    const text = decodeEntities([...line[1]!.matchAll(/<char[^>]* c="([^"]*)"/g)].map((m) => m[1]!).join("")).trim();
     if (text !== "" && !text.startsWith(footerPrefix)) {
-      lines.push({ y: Number.parseFloat(line[1]!), text });
+      const origin = requireMatch(line[1]!, /<char\b[^>]*\bx="([-\d.]+)"[^>]*\by="([-\d.]+)"/, "PDF text line missing glyph origin");
+      lines.push({ x: Number.parseFloat(origin[1]!), y: Number.parseFloat(origin[2]!), text });
     }
   }
-  return lines.sort((a, b) => a.y - b.y).map((line) => line.text);
+  return lines.sort((a, b) => a.y - b.y || a.x - b.x).map((line) => line.text);
 }
 
 const structured = run(["mutool", "draw", "-F", "stext", "-o", "-", out]);

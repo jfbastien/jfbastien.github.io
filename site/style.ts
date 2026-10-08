@@ -1198,12 +1198,12 @@ main,
   padding-block: 0;
 }
 
-/* Print keeps a dense patent register: a quarter-line above each
-   hairline clears the previous row's descenders, and the following
-   ID row's capitals sit safely under it. A real border, not an inset
+/* Print keeps a dense patent register: each quarter-line separator
+   includes its border, so hairlines add no height beyond the grid.
+   A real border, not an inset
    shadow: PDF rasterizers paint phantom side edges for offset shadows. */
 .record--patent + .record--patent {
-  margin-block-start: 0.25lh;
+  margin-block-start: calc(0.25lh - 1px);
   border-block-start: 1px solid var(--faint);
 }
 

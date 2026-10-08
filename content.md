@@ -338,9 +338,11 @@ Conference keynote.
 
 ### [US20260236397A1](https://patents.google.com/patent/US20260236397A1/en)
 > System and method for WebAssembly memory management.
+> [JP2026135515A](https://jglobal.jst.go.jp/detail?JGLOBAL_ID=202603012752228162)
 
 ### [US20260178787A1](https://patents.google.com/patent/US20260178787A1/en)
 > System and method for management of vehicle software design material.
+> [JP2026109544A](https://jglobal.jst.go.jp/en/detail?JGLOBAL_ID=202603014673762113)
 
 ### [US20260169719A1](https://patents.google.com/patent/US20260169719A1/en)
 > System and method for facilitating differential software update on an automotive operating system.
