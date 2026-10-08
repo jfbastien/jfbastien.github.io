@@ -1,5 +1,8 @@
 # Agent Instructions
 
+For patent-register maintenance and source rechecks, read [TODO.md](TODO.md)
+before changing `content.md`.
+
 This repository builds `jfbastien.com`, a static, semantic, single-page systems
 record generated from `content.md`.
 
