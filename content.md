@@ -346,7 +346,7 @@ Conference keynote.
 
 ### [US20260169719A1](https://patents.justia.com/patent/20260169719)
 > System and method for facilitating differential software update on an automotive operating system.
-> [EP4760490A1](https://patents.google.com/patent/EP4760490A1/en), [JP2026104789A](https://patents.google.com/patent/JP2026104789A/en)
+> [EP4760490A1](https://eureka.patsnap.com/patent/EP4760490A1), [JP2026104789A](https://eureka.patsnap.com/patent/JP2026104789A)
 
 ### [US20260133957A1](https://patents.google.com/patent/US20260133957A1/en)
 > Atomicity in OTA updates for vehicle systems.
