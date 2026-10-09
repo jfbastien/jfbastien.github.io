@@ -29,6 +29,8 @@
   Atomicity family. Keep it unlisted unless an authoritative record confirms
   the publication, inventor metadata, and priority to US18/946,821
   (US20260133957A1).
-- [ ] Identify the exact grant kind code for JP7910639 before migrating its
-  J-GLOBAL link to Google Patents. Preserve the current link until the exact
-  grant record and metadata are confirmed.
+- [ ] Recheck Google Patents for JP7910639 and migrate its J-GLOBAL link only
+  after verifying the exact grant record, kind code, and metadata. The grant
+  is already listed; this follow-up only concerns the link destination.
+  Confirm the kind code against the official grant gazette or JPO authority
+  record.
