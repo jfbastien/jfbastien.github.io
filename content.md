@@ -336,6 +336,21 @@ Conference keynote.
 
 ## Patent Register
 
+### [US20260339690A1](https://patents.justia.com/patent/20260339690)
+> System and method for centralized power management for electronic control unit in vehicle.
+
+### [US20260329668A1](https://patents.justia.com/patent/20260329668)
+> System and method for API orchestration in automotive systems.
+
+### [US20260322878A1](https://patents.justia.com/patent/20260322878)
+> System and method for operating system extendibility in automotive systems.
+
+### [US20260319878A1](https://patents.justia.com/patent/20260319878)
+> System and method for centralized resource information management with standard compliant lookup.
+
+### [US20260310480A1](https://patents.justia.com/patent/20260310480)
+> System and method for centralized resource information management in a vehicle.
+
 ### [US20260236397A1](https://patents.justia.com/patent/20260236397)
 > System and method for WebAssembly memory management.
 > [JP2026135515A](https://jglobal.jst.go.jp/detail?JGLOBAL_ID=202603012752228162)
